@@ -273,7 +273,7 @@ void process_fastq_to_sff(char *sff_file) {
     for (int i = 0; i < numreads; i++) {
         //if(reads[i]->discarded == 1) continue;
         //printf("%d\n",reads[i]->rh.header_len);
-        write_sff_read_header(sff_fp, &(reads[i]->rh));
+        
         
         
         /*Writing the read data*/
@@ -291,21 +291,23 @@ void process_fastq_to_sff(char *sff_file) {
         {
         
                 /*Quality points*/
-                if(reads[i]->lucy_lclip > reads[i]->rh.clip_qual_left)
-                        reads[i]->rh.clip_qual_left = reads[i]->lucy_lclip;
-                if( (reads[i]->lucy_rclip < reads[i]->rh.clip_qual_right) && (reads[i]->lucy_rclip > 1))
-                        reads[i]->rh.clip_qual_right = reads[i]->lucy_rclip;
+                //if(reads[i]->lucy_lclip > reads[i]->rh.clip_qual_left)
+                        reads[i]->rh.clip_qual_left = reads[i]->lclip;//reads[i]->lucy_lclip;
+                //if( (reads[i]->lucy_rclip < reads[i]->rh.clip_qual_right) && (reads[i]->lucy_rclip > 1))
+                        reads[i]->rh.clip_qual_right = reads[i]->rclip;//reads[i]->lucy_rclip;
         
                 /*Adapter clip points*/
-                if(pcr_flag == true) {
-                        reads[i]->rh.clip_adapter_left = reads[i]->fwdP_end;
-                        reads[i]->rh.clip_adapter_right = reads[i]->revP_start;
-                } else {
-                        reads[i]->rh.clip_adapter_left = reads[i]->rlmid.lmid_end;
-                        reads[i]->rh.clip_adapter_right = reads[i]->rlmid.rmid_start;
-                }
+                //if(pcr_flag == true) {
+                //        reads[i]->rh.clip_adapter_left = reads[i]->fwdP_end;
+                //        reads[i]->rh.clip_adapter_right = reads[i]->revP_start;
+                //} else {
+                        reads[i]->rh.clip_adapter_left = reads[i]->lclip;//reads[i]->rlmid.lmid_end;
+                        reads[i]->rh.clip_adapter_right = reads[i]->rclip;//reads[i]->rlmid.rmid_start;
+                //}
             
         }
+        
+        write_sff_read_header(sff_fp, &(reads[i]->rh));
         
         write_sff_read_data(sff_fp,  &(reads[i]->rd), htobe16(ch.flow_len), htobe32(reads[i]->rh.nbases));
         //free(rd.bases);

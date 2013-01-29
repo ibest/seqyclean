@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.2.4"; 
+string version = "1.2.5"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -742,79 +742,13 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        if((vector_flag ) && (contaminants_flag ) && (qual_trim_flag ))
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_vec_cont_qual_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_adp_vec_cont_qual_Report.csv";
-                pe_output_filename1 =  output_prefix + "_PE1_adp_vec_cont_qual.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2_adp_vec_cont_qual.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp_vec_cont_qual.fastq";
-                se_filename = output_prefix + "_SE_adp_vec_cont_qual.fastq";
-        }
-        else if((vector_flag ) && (contaminants_flag ) && ( !qual_trim_flag ) )
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_vec_cont_Report.csv";
-                rep_file_name2 = output_prefix + + "_PE2_adp_vec_cont_Report.csv";
-                pe_output_filename1 =  output_prefix + + "_PE1_adp_vec_cont.fastq" ;
-                pe_output_filename2 =  output_prefix + + "_PE2_adp_vec_cont.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp_vec_cont.fastq";
-                se_filename = output_prefix + "_SE_adp_vec_cont.fastq";
-        }
-        else if((vector_flag ) && ( !contaminants_flag ) && ( !qual_trim_flag ))
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_vec_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_adp_vec_Report.csv";
-                pe_output_filename1 =  output_prefix + "_PE1_adp_vec.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2_adp_vec.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp_vec.fastq";
-                se_filename = output_prefix + "_SE_adp_vec.fastq";
-        }
-        else if((!vector_flag) && (contaminants_flag ) && (qual_trim_flag ))
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_cont_qual_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_adp_cont_qual_Report.csv";
-                pe_output_filename1 = output_prefix + "_PE1_adp_cont_qual.fastq" ;
-                pe_output_filename2 = output_prefix + "_PE2_adp_cont_qual.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp_cont_qual.fastq";
-                se_filename = output_prefix + "_SE_adp_cont_qual.fastq";
-        }
-        else if((vector_flag ) && (!contaminants_flag) && (qual_trim_flag ))
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_vec_qual_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_adp_vec_qual_Report.csv";
-                pe_output_filename1 =  output_prefix + "_PE1_adp_vec_qual.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2_adp_vec_qual.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp_vec_qual.fastq";
-                se_filename = output_prefix + "_SE_adp_vec_qual.fastq";
-        }
-        else if((!vector_flag) && (!contaminants_flag) && (!qual_trim_flag))
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_adp_Report.csv";
-                pe_output_filename1 =  output_prefix + "_PE1_adp.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2_adp.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp.fastq";
-                se_filename = output_prefix + "_SE_adp.fastq";
-        }
-        else if((!vector_flag) && (!contaminants_flag) && (qual_trim_flag ))
-        {
-                rep_file_name1 = output_prefix + "_PE1_adp_qual_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_adp_qual_Report.csv";
-                pe_output_filename1 =  output_prefix + "_PE1_adp_qual.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2_adp_qual.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_adp_qual.fastq";
-                se_filename = output_prefix + "_SE_adp_qual.fastq";
-        }
-        if( lucy_only_flag )
-        {
-                rep_file_name1 = output_prefix + "_PE1_qual_Report.csv";
-                rep_file_name2 = output_prefix + "_PE2_qual_Report.csv";
-                pe_output_filename1 =  output_prefix + "_PE1_qual.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2_qual.fastq" ;
-                shuffle_filename = output_prefix + "_shuffle_qual.fastq";
-                se_filename = output_prefix + "_SE_qual.fastq";
-        }
-    
+        rep_file_name1 = output_prefix + "_PE1_Report.csv";
+        rep_file_name2 = output_prefix + "_PE2_Report.csv";
+        pe_output_filename1 =  output_prefix + "_PE1.fastq" ;
+        pe_output_filename2 =  output_prefix + "_PE2.fastq" ;
+        shuffle_filename = output_prefix + "_shuffled.fastq";
+        se_filename = output_prefix + "_SE.fastq";
+        
         cout << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
         sum_stat << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
         
@@ -827,8 +761,8 @@ int main(int argc, char *argv[])
         } 
         else
         {
-                cout << "Shuffle file: " << shuffle_filename << endl;
-                sum_stat << "Shuffle file: " << shuffle_filename << endl;
+                cout << "Shuffled file: " << shuffle_filename << endl;
+                sum_stat << "Shuffled file: " << shuffle_filename << endl;
         }    
         cout << "Single-end reads: "<< se_filename << endl;
         sum_stat << "Single-end reads: "<< se_filename << endl;
@@ -912,49 +846,9 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        if((vector_flag == true) && (contaminants_flag == true) && (qual_trim_flag == true))
-        {
-            roche_output_file_name = output_prefix + (output_fastqfile_flag ? "_adp_vec_cont_qual.fastq" : "_adp_vec_cont_qual.sff" );
-            roche_rep_file_name = output_prefix + "_adp_vec_cont_qual_Report.csv" ;
-        }
-        else if((vector_flag == true) && (contaminants_flag == true) && (qual_trim_flag == false))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ? "_adp_vec_cont.fastq" : "_adp_vec_cont.sff") ;
-            roche_rep_file_name = output_prefix + "_adp_vec_cont_Report.csv" ;
-        }
-        else if((vector_flag == true) && (contaminants_flag == false) && (qual_trim_flag == false))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ? "_adp_vec.fastq" : "_adp_vec.sff" );
-            roche_rep_file_name = output_prefix + "_adp_vec_Report.csv" ;
-        }
-        else if((vector_flag == false) && (contaminants_flag == true) && (qual_trim_flag == true))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ? "_adp_cont_qual.fastq" : "_adp_cont_qual.sff");
-            roche_rep_file_name = output_prefix + "_adp_cont_qual_Report.csv" ;
-        }
-        else if((vector_flag == true) && (contaminants_flag == false) && (qual_trim_flag == true))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ?  "_adp_vec_qual.fastq" :  "_adp_vec_qual.sff" );
-            roche_rep_file_name = output_prefix + "_adp_vec_qual_Report.csv" ;
-        }
-        else if((vector_flag == false) && (contaminants_flag == false) && (qual_trim_flag == false))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ? "_adp.fastq" : "_adp.sff" );
-            roche_rep_file_name = output_prefix + "_adp_Report.csv" ;
-        }
-        else if((vector_flag == false) && (contaminants_flag == false) && (qual_trim_flag == true))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ? "_adp_qual.fastq" : "_adp_qual.sff" );
-            roche_rep_file_name = output_prefix + "_adp_qual_Report.csv" ;
-        }
-        else if((vector_flag == false) && (contaminants_flag == true) && (qual_trim_flag == false))
-        {
-            roche_output_file_name = output_prefix + ( output_fastqfile_flag ? "_adp_cont.fastq" : "_adp_cont.sff" );
-            roche_rep_file_name = output_prefix + "_adp_cont_Report.csv" ;
-        }
+        roche_output_file_name = output_prefix + (output_fastqfile_flag ? "_.fastq" : "_.sff" );
+        roche_rep_file_name = output_prefix + "_Report.csv" ;
         
-        
-    
         cout << "Report file: " << roche_rep_file_name << "\n";
         sum_stat << "Report file: " << roche_rep_file_name << "\n";
         
