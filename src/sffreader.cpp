@@ -271,38 +271,24 @@ void process_fastq_to_sff(char *sff_file) {
     
     int numreads = reads.size();
     for (int i = 0; i < numreads; i++) {
-        //if(reads[i]->discarded == 1) continue;
-        //printf("%d\n",reads[i]->rh.header_len);
-        
-        
         
         /*Writing the read data*/
         
-        
-
         /*Working with clip points*/
         if(reads[i]->discarded == 1) 
         {
-            reads[i]->rh.clip_qual_left = 1;
-            reads[i]->rh.clip_qual_right = 1;
-            reads[i]->rh.clip_adapter_left = 1;
-            reads[i]->rh.clip_adapter_right = 1;
+            reads[i]->lclip = reads[i]->rclip = 16;
+            reads[i]->rh.clip_qual_left = 16;
+            reads[i]->rh.clip_qual_right = 16;
+            reads[i]->rh.clip_adapter_left = 16;
+            reads[i]->rh.clip_adapter_right = 16;
         } else 
         {
+            reads[i]->rh.clip_qual_left = reads[i]->lclip;//reads[i]->lucy_lclip;
+            reads[i]->rh.clip_qual_right = reads[i]->rclip;//reads[i]->lucy_rclip;
         
-                /*Quality points*/
-                //if(reads[i]->lucy_lclip > reads[i]->rh.clip_qual_left)
-                        reads[i]->rh.clip_qual_left = reads[i]->lclip;//reads[i]->lucy_lclip;
-                //if( (reads[i]->lucy_rclip < reads[i]->rh.clip_qual_right) && (reads[i]->lucy_rclip > 1))
-                        reads[i]->rh.clip_qual_right = reads[i]->rclip;//reads[i]->lucy_rclip;
-        
-                /*Adapter clip points*/
-                //if(pcr_flag == true) {
-                //        reads[i]->rh.clip_adapter_left = reads[i]->fwdP_end;
-                //        reads[i]->rh.clip_adapter_right = reads[i]->revP_start;
-                //} else {
-                        reads[i]->rh.clip_adapter_left = reads[i]->lclip;//reads[i]->rlmid.lmid_end;
-                        reads[i]->rh.clip_adapter_right = reads[i]->rclip;//reads[i]->rlmid.rmid_start;
+            reads[i]->rh.clip_adapter_left = reads[i]->lclip;//reads[i]->rlmid.lmid_end;
+            reads[i]->rh.clip_adapter_right = reads[i]->rclip;//reads[i]->rlmid.rmid_start;
                 //}
             
         }

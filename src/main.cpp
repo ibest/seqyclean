@@ -1227,9 +1227,9 @@ void RocheRoutine()
        /*Run the main routine: Adaptor + Vector/Contaminants trimming or only Adaptors*/
        cout << "Running the main pipeline..." << endl;
        MainPipeLine();
-       //Make statistics and output files
-       cout << "Making a report..." << endl;
-       MakeReport( roche_rep_file_name );
+       cout << "Making clip points..." << endl;
+       MakeClipPoints();
+       
        cout << "Making output files..." << endl;
         
        if( output_fastqfile_flag ) 
@@ -1240,7 +1240,11 @@ void RocheRoutine()
        {
            WriteToSFF( roche_output_file_name );
        }
-           
+       
+       
+       cout << "Making a report..." << endl;
+       MakeReport( roche_rep_file_name );
+       
        //---End of making statistics----
        MakeFinalStatistics(sum_stat);
         

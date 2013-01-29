@@ -72,6 +72,7 @@ void CreateOutputFiles(string file_name);
 void MakeLucyFastq(string custom_file_name);
 void MakeLucyReport2(char *filename, vector<Read*>& reads);
 void MakeFinalStatistics(fstream &sum_stat);
+void MakeClipPoints();
 
 #endif	/* REPORT_H */
 

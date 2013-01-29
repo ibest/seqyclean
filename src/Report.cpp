@@ -1,23 +1,13 @@
 #include "Report.h"
 
-
-void MakeReport(string rep_file_name) {
-    FILE* rep_file;
-    
-    rep_file = fopen( rep_file_name.c_str(), "w");
-    
-    //Making a Table :
-    fputs("ReadID\tlclip\trclip\tRaw_read_length\tLMHamming\tLMStart\tLMEnd\tLMErr\tLMId\tVecStart\tVecEnd\tVecErr\tVecLen\tVecStartPos\tVecID\tCont\tRMHamming\tRMStart\tRMEnd\tRMErr\tRMId\tRAHamming\tRAStart\tRAEnd\tRAErr\tDiscarded\tLUCY_lclip\tLUCY_rclip\tRoche_left_clip\tRoche_right_clip\n", rep_file );
-       
+void MakeClipPoints()
+{
     for(int ff = 0; ff < (int)reads.size(); ff++)
     {
-       //Read ID
+        //Read ID
        if( reads[ff]->rlmid.rmid_name.length() == 0 ) reads[ff]->rlmid.rmid_start = 0;
        if( reads[ff]->b_adapter.length() == 0 ) reads[ff]->b_adapter_pos = 0;
-                
-       reads[ff]->readID[0] == '@' ?  fputs((reads[ff]->readID.substr(1, reads[ff]->readID.length() - 1 )).c_str(), rep_file ) : fputs(reads[ff]->readID.c_str(), rep_file );
-       fputs("\t", rep_file );
-                
+       
        //Clip points
        if( (vector_flag == true) && (qual_trim_flag == true) )
        {
@@ -228,7 +218,23 @@ void MakeReport(string rep_file_name) {
                reads[ff]->lclip = reads[ff]->rclip = 1;
            }
        }
-           
+    }
+}
+
+void MakeReport(string rep_file_name) {
+    FILE* rep_file;
+    
+    rep_file = fopen( rep_file_name.c_str(), "w");
+    
+    //Making a Table :
+    fputs("ReadID\tlclip\trclip\tRaw_read_length\tLMHamming\tLMStart\tLMEnd\tLMErr\tLMId\tVecStart\tVecEnd\tVecErr\tVecLen\tVecStartPos\tVecID\tCont\tRMHamming\tRMStart\tRMEnd\tRMErr\tRMId\tRAHamming\tRAStart\tRAEnd\tRAErr\tDiscarded\tLUCY_lclip\tLUCY_rclip\tRoche_left_clip\tRoche_right_clip\n", rep_file );
+       
+    for(int ff = 0; ff < (int)reads.size(); ff++)
+    {
+                
+       reads[ff]->readID[0] == '@' ?  fputs((reads[ff]->readID.substr(1, reads[ff]->readID.length() - 1 )).c_str(), rep_file ) : fputs(reads[ff]->readID.c_str(), rep_file );
+       fputs("\t", rep_file );
+                
        fputs( reads[ff]->lclip == 0 ? "1" : itoa(reads[ff]->lclip,new char[5],10),  rep_file ); //Left clip point
        fputs("\t", rep_file );
        fputs( reads[ff]->rclip == 0 ? "1" : itoa(reads[ff]->rclip,new char[5],10),  rep_file ); //Right clip point
@@ -458,22 +464,23 @@ void WriteToFASTQ(string file_name) {
             {
                 reads[i]->discarded = 1;
                 reads[i]->discarded_by_read_length = 1;
+                reads[i]->lclip = reads[i]->rclip = 1;
                 continue;
             }
             
             if(reads[i]->readID[0] != '@')
                 reads[i]->readID = "@" + reads[i]->readID;
             
-            if( reads[i]->lclip >= reads[i]->rclip ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; continue;}
-            if( reads[i]->lclip >= (int)reads[i]->read.length() ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; continue;}
-            if( reads[i]->rclip > (int)reads[i]->read.length() ) {reads[i]->rclip = reads[i]->discarded_by_read_length = 1; continue;}
+            if( reads[i]->lclip >= reads[i]->rclip ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
+            if( reads[i]->lclip >= (int)reads[i]->read.length() ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
+            if( reads[i]->rclip > (int)reads[i]->read.length() ) {reads[i]->rclip = reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
             reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
             reads[i]->quality = reads[i]->quality.substr(0,reads[i]->rclip) ; 
             reads[i]->read = reads[i]->read.substr( reads[i]->lclip-1, reads[i]->read.length() - reads[i]->lclip-1 );
             reads[i]->quality = reads[i]->quality.substr( reads[i]->lclip-1, reads[i]->quality.length() - reads[i]->lclip-1 );
             
-            if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; continue;}
+            if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
             fputs( reads[i]->readID.c_str(), output_file );
             fputc( '\n', output_file );
@@ -491,36 +498,41 @@ void WriteToFASTQ(string file_name) {
 
 void WriteToSFF(string file_name) {
     
-    for(int i=0; i<(int)reads.size(); i++) {
-        if(reads[i]->discarded == 0) {
+    for(int i=0; i<(int)reads.size(); i++) 
+    {
+        if(reads[i]->discarded == 0) 
+        {
             if(reads[i]->lclip >= (int)reads[i]->read.length()  ) {
                 reads[i]->discarded = 1;
                 reads[i]->discarded_by_read_length = 1;
+                reads[i]->lclip = reads[i]->rclip = 1;
                 continue;
             }
             
-            /*Make left & right clip points: */
-            if(qual_trim_flag == true) {
-                if(reads[i]->lucy_rclip < reads[i]->rclip) 
-                    reads[i]->rclip = reads[i]->lucy_rclip;
-                        
-                if(reads[i]->lucy_lclip > reads[i]->lclip) 
-                    reads[i]->lclip = reads[i]->lucy_lclip;
-            } else {
-                if( !( (reads[i]->rclip > 0) && (reads[i]->rclip <= (int)reads[i]->read.length()) ) ) {
-                    reads[i]->discarded = 1; 
-                    reads[i]->discarded_by_read_length = 1;
-                    continue;
-                } 
-                
-                if(  !( (reads[i]->lclip > 0) && (reads[i]->lclip <= reads[i]->rclip) ) ) {
-                    reads[i]->discarded = 1; 
-                    reads[i]->discarded_by_read_length = 1;
-                    continue;
-                } 
+        /*    if(reads[i]->rclip > (int)reads[i]->read.length()  ) {
+                reads[i]->discarded = 1;
+                reads[i]->discarded_by_read_length = 1;
+                reads[i]->lclip = reads[i]->rclip = 1;
+                continue;
+            }
+        **/    
+            if( reads[i]->lclip >= reads[i]->rclip  ) {
+                reads[i]->discarded = 1;
+                reads[i]->discarded_by_read_length = 1;
+                reads[i]->lclip = reads[i]->rclip = 1;
+                continue;
             }
             
-            
+            if( (reads[i]->rclip - reads[i]->lclip) < minimum_read_length ) {
+                reads[i]->discarded = 1;
+                reads[i]->discarded_by_read_length = 1;
+                reads[i]->lclip = reads[i]->rclip = 1;
+                continue;
+            }
+        }
+        else
+        {
+            reads[i]->lclip = reads[i]->rclip = 1;
         }
     }
     
@@ -691,15 +703,12 @@ void MakeFinalStatistics( fstream &sum_stat )
            cnt_avg_len+=1;
            avg_read_len = GetAvg( avg_read_len, cnt_avg_len, reads[i]->read.length() );
            
-           if( reads[i]->initial_length > reads[i]->read.length() )
-           {
-                cnt_avg+=1;
-                avg_trim_len = GetAvg( avg_trim_len, cnt_avg, reads[i]->initial_length - reads[i]->read.length() );
-           }
-           
            //Average right and left trimmed lengths
            if( reads[i]->initial_length > reads[i]->rclip )
            {
+               cnt_avg+=1;
+               avg_trim_len = GetAvg( avg_trim_len, cnt_avg, reads[i]->rclip - reads[i]->lclip );
+               
                cnt_avg_right_trim_len+=1;
                avg_right_trim_len = GetAvg( avg_right_trim_len, cnt_avg_right_trim_len, reads[i]->initial_length - reads[i]->rclip );
            }
