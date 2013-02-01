@@ -155,7 +155,7 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         //Create new read
         Read *read = new Read();
         //memcpy(read.rh,rh,sizeof(rh));
-        read->rh = rh;
+        //read->rh = rh;
         read->readID = string(rh.name);
         read->initial_length = nbases;
         read->read = string(bases);
@@ -247,9 +247,15 @@ void process_fastq_to_sff(char *sff_file) {
         exit(1);
     }
     
+    h.nreads = htobe32(h.nreads);
+    
     for(int kk=0; kk<reads.size(); kk++)
     {
-        if(reads[kk]->discarded == 1) discarded_reads++;
+        if(reads[kk]->discarded == 1) 
+        {
+            //h.nreads -= 1;
+            discarded_reads++;
+        }
     }
     
     sff_common_header ch;
@@ -266,43 +272,78 @@ void process_fastq_to_sff(char *sff_file) {
     ch.flowgram_format = h.flowgram_format;//0x01;
     ch.key = h.key;//"GACT";
     char v[4] = {0x00,0x00,0x00,0x01};
+    //ch.version = ;
     memcpy(ch.version,v,4);
     write_sff_common_header(sff_fp, &ch);
     
     int numreads = reads.size();
-    for (int i = 0; i < numreads; i++) {
+    for (int i = 0; i < numreads; i++) 
+    {
         
-        /*Writing the read data*/
+        sff_read_header readHeader;
+        readHeader.nbases = reads[i]->read.length();
+        
+        readHeader.name = (char*)(reads[i]->readID).c_str();
+        readHeader.name_len = strlen(readHeader.name);
+    
+        readHeader.header_len = sizeof(readHeader.name_len)
+                                    + sizeof(readHeader.nbases)
+                                    + sizeof(readHeader.clip_qual_left)
+                                    + sizeof(readHeader.clip_qual_right)
+                                    + sizeof(readHeader.clip_adapter_left)
+                                    + sizeof(readHeader.clip_adapter_right)
+                                    + (sizeof(char) * readHeader.name_len);
+    
+    
+    
+    if ( !( readHeader.header_len % 8 == 0) )
+    {
+      int remainder = 8 - (readHeader.header_len % 8);
+      for(int i=0; i< remainder; ++i)
+        readHeader.header_len += 1;
+    }
         
         /*Working with clip points*/
         if(reads[i]->discarded == 1) 
         {
-            reads[i]->lclip = reads[i]->rclip = 16;
-            reads[i]->rh.clip_qual_left = 16;
-            reads[i]->rh.clip_qual_right = 16;
-            reads[i]->rh.clip_adapter_left = 16;
-            reads[i]->rh.clip_adapter_right = 16;
+            readHeader.clip_qual_left = 16;
+            readHeader.clip_qual_right = 16;
+            readHeader.clip_adapter_left = 16;
+            readHeader.clip_adapter_right = 16;
+            
+            //reads[i]->lclip = reads[i]->rclip = 16;
+            //reads[i]->rh.clip_qual_left = 16;
+            //reads[i]->rh.clip_qual_right = 16;
+            //reads[i]->rh.clip_adapter_left = 16;
+            //reads[i]->rh.clip_adapter_right = 16;
+            //continue;
         } else 
         {
-            reads[i]->rh.clip_qual_left = reads[i]->lclip;//reads[i]->lucy_lclip;
-            reads[i]->rh.clip_qual_right = reads[i]->rclip;//reads[i]->lucy_rclip;
+            //reads[i]->rh.clip_qual_left = reads[i]->lclip;//reads[i]->lucy_lclip;
+            //reads[i]->rh.clip_qual_right = reads[i]->rclip;//reads[i]->lucy_rclip;
         
-            reads[i]->rh.clip_adapter_left = reads[i]->lclip;//reads[i]->rlmid.lmid_end;
-            reads[i]->rh.clip_adapter_right = reads[i]->rclip;//reads[i]->rlmid.rmid_start;
-                //}
+            //reads[i]->rh.clip_adapter_left = reads[i]->lclip;//reads[i]->rlmid.lmid_end;
+            //reads[i]->rh.clip_adapter_right = reads[i]->rclip;//reads[i]->rlmid.rmid_start;
+            
+            readHeader.clip_qual_left = reads[i]->lclip;;
+            readHeader.clip_qual_right = reads[i]->rclip;
+            
+            readHeader.clip_adapter_left = reads[i]->lclip;
+            readHeader.clip_adapter_right = reads[i]->rclip;
             
         }
         
-        write_sff_read_header(sff_fp, &(reads[i]->rh));
+        write_sff_read_header(sff_fp, &(readHeader));
         
-        write_sff_read_data(sff_fp,  &(reads[i]->rd), htobe16(ch.flow_len), htobe32(reads[i]->rh.nbases));
+        write_sff_read_data(sff_fp,  &(reads[i]->rd), htobe16(ch.flow_len), htobe32(readHeader.nbases));
         //free(rd.bases);
         //free(rd.flow_index);
         //free(rd.flowgram);
         //free(rd.quality);
         
         //free(&rd);
-        //free(&rh);
+        //free(&h);
+        //free(&ch);
     }
     
     write_manifest(sff_fp);

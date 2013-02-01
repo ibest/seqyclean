@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./seqyclean -454 /home/ilya/bio/seqyclean_test_data/yeast/454/HXY4Z3X01.sff -o ./test1/test --keep_fastq_orig --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 Small454* -o ./test1/test --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 /test_data/Small454* -o ./test1/test --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 /test_data/Small454* -o ../test1/test --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454* -o ../test1/test --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 -2  -o ../test1/test --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7 -2 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7  -o ../test1/test --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R1_001.fastq.gz -2 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R2_001.fastq.gz  -o ../test1/test --fastq -v ../../</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R1_001.fastq.gz -2 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R2_001.fastq.gz  -o ../test1/test --fastq -v ../../Rosenblum_whitesands/Screening/combined_vectors.fasta</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R1_001.fastq.gz -2 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R2_001.fastq.gz  -o ../test1/test --fastq -v ../../../Rosenblum_whitesands/Screening/combined_vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 /test_data/Small454* -o ../test1/test --fastq</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 /test_data/Small454Test.sff -o ../test1/ -d</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -d -o ../test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/out.sff -d -o ../test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test1/ -d</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test1/test -v ../test_data/combined_</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/test_.sff -o ../test1/test -v ../test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test1/test -v ../test_data/vectors.fasta</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -1 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R1_001.fastq.gz -2 /home/ilya/bio/Rosenblum_whitesands/CaptureSeq/Sample_CP37_index7/CP37_index7_CAGATC_L001_R2_001.fastq.gz  -o ../test1/test --fastq -v ../../../Rosenblum_whitesands/Screening/combined_vectors.fasta</runcommand>
+        <runcommand>./seqyclean -454 ../test_data/Small454Test.sff -o ../test1/test -v ../test_data/vectors.fasta</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

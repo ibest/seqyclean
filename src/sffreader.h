@@ -35,7 +35,7 @@ using namespace std;
 extern vector<Read*> reads;
 
 sff_common_header h;
-long discarded_reads = 0;
+int discarded_reads = 0;
 extern bool keep_fastq_orig;
 
 

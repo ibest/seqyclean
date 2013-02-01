@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.2.5"; 
+string version = "1.2.6"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -94,8 +94,10 @@ bool trim_adapters_flag = true;
 
 /*Illumina*/
 bool illumina_flag = false;
+bool illumina_flag_se = false;
 char* illumina_file_name_R1;// = "";
 char* illumina_file_name_R2;// = "";
+char* illumina_file_name_se;
 
 /*Maximim number of mismatches allowed in alignment operation*/
 int max_al_mism = 5; /*5 mismatches by default*/
@@ -163,6 +165,7 @@ void WriteSEFile(fstream &se_output_file, Read *read);
 void *t_IlluminaDynRoutine( void *targs );
 string New2OldNbl(string header);
 void PolyATRoutine();
+void IlluminaDynamicSE();
 /*-------------------------------------*/
 
 bool dynflag = false;
@@ -189,7 +192,7 @@ volatile int shared_var = 0;
 bool shuffle_flag = false;
 
 /*Report files*/
-string rep_file_name1, rep_file_name2, pe_output_filename1, pe_output_filename2, shuffle_filename, se_filename;
+string rep_file_name1, rep_file_name2, pe_output_filename1, pe_output_filename2, shuffle_filename, se_filename, se_output_filename;
 
 long pe1_bases_anal, pe2_bases_anal, pe_bases_kept, pe_bases_discarded, se_pe1_bases_kept, se_pe2_bases_kept;
 long pe_discard_cnt;
@@ -200,9 +203,14 @@ string roche_rep_file_name = "";
 char* polyat_file_name; 
 string polyat_output_file_name;
 
+long se_bases_kept, se_bases_discarded;
+long se_discard_cnt = 0;
+long se_bases_anal = 0;        
+long avg_trim_len_se;
+
 bool wildcart_search_flag = false;
 
-vector<char*> pe1_names, pe2_names, roche_names;
+vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
 int main(int argc, char *argv[]) 
 {
@@ -493,13 +501,22 @@ int main(int argc, char *argv[])
            }
            
            continue;
-        }
+        } 
         if( string(argv[i]) == "-12" ) //single-end file mode
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
               illumina_flag = true;
+              illumina_file_name_se = argv[++i];
+              se_names.push_back(illumina_file_name_se);
               
+              int jj=0;
+              while( ( (i+1+jj)<argc ) && (argv[i+1+jj][0] != '-') )
+              {
+                  se_names.push_back(argv[i+1+jj]);
+                  //printf("%s\n", argv[i+1+jj]);
+                  jj+=1;
+              }
            }
            
            continue;
@@ -525,7 +542,7 @@ int main(int argc, char *argv[])
         }
         if( string(argv[i]) == "--MakeRocheReport" ) 
         {
-            MakeRocheReport((char*)"RocheClipPoints_report.csv", argv[++i]);
+            MakeRocheReport((char*)"RocheClipPoints_report.tsv", argv[++i]);
             return 0;
         }
         if( string(argv[i]) == "-pmax" ) 
@@ -560,26 +577,39 @@ int main(int argc, char *argv[])
     //Check if input files exist
     if (illumina_flag)
     {
-        if(pe1_names.size() != pe2_names.size())
+        if(illumina_se_flag)
         {
-            cout<< "Error: numbers of PE1 files and PE2 files do not match!\n";
-            return 0;
-        } else
-        {
-            for(int i=0; i<(int)pe1_names.size(); ++i)
+            for(int i=0; i<(int)se_names.size(); ++i)
             {
-        
-                if ( !exists( pe1_names[i] ) )
+                if ( !exists( se_names[i] ) )
                 {
-                        cout<< "Error: file " <<  pe1_names[i] << " does not exist\n";
-                        return 0;
-                }
-                if (!exists( pe2_names[i] ) )
-                {
-                        cout<< "Error: file " <<  pe2_names[i] << " does not exist\n";
-                        return 0;
+                  cout<< "Error: file " <<  se_names[i] << " does not exist\n";
+                  return 0;
                 }
             }
+        } else 
+        {
+                if(pe1_names.size() != pe2_names.size())
+                {
+                        cout<< "Error: numbers of PE1 files and PE2 files do not match!\n";
+                        return 0;
+                } else
+                {
+                        for(int i=0; i<(int)pe1_names.size(); ++i)
+                        {
+        
+                                if ( !exists( pe1_names[i] ) )
+                                {
+                                        cout<< "Error: file " <<  pe1_names[i] << " does not exist\n";
+                                        return 0;
+                                }
+                                if (!exists( pe2_names[i] ) )
+                                {
+                                        cout<< "Error: file " <<  pe2_names[i] << " does not exist\n";
+                                        return 0;
+                                }
+                        }
+                }
         }
         
     }
@@ -679,104 +709,194 @@ int main(int argc, char *argv[])
         cout << "--------------------Basic parameters--------------------\n";
         sum_stat << "--------------------Basic parameters--------------------\n";
         
-        cout << "Provided data files : " << endl;
-        sum_stat << "Provided data files : " << endl;
-        for(int i=0; i<(int)pe1_names.size(); ++i)
+        if(!illumina_se_flag)
         {
-            cout << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << endl;
-            sum_stat << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << endl;
-        }
         
+                cout << "Provided data files : " << endl;
+                sum_stat << "Provided data files : " << endl;
+                for(int i=0; i<(int)pe1_names.size(); ++i)
+                {
+                        cout << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << endl;
+                        sum_stat << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << endl;
+                }
         
-        cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
-        sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
+                cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
+                sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
     
-        if(vector_flag)
-        {
-           cout << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-           sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-           cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
-           sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
-           cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
-           sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
+                if(vector_flag)
+                {
+                        cout << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
+                        sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
+                        cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
+                        sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
+                        cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
+                        sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
     
-        } 
-        else
-        {
-           cout << "Vector screening: NO" << endl;
-           sum_stat << "Vector screening: NO" << endl;
-        }
+                } 
+                else
+                {
+                        cout << "Vector screening: NO" << endl;
+                        sum_stat << "Vector screening: NO" << endl;
+                }
         
         
-        if(contaminants_flag)
-        {
-           cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-           sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-           cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
-           sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
-        } 
-        else
-        {
-           cout << "Contaminants screening: NO" << endl;
-           sum_stat << "Contaminants screening: NO" << endl;
-        }
+                if(contaminants_flag)
+                {
+                        cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
+                        sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
+                        cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
+                        sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
+                } 
+                else
+                {
+                        cout << "Contaminants screening: NO" << endl;
+                        sum_stat << "Contaminants screening: NO" << endl;
+                }
         
-        if(qual_trim_flag)
-        {
-           cout << "Quality trimming: YES" << endl;
-           sum_stat << "Quality trimming: YES" << endl;
-           cout << "Maximim error: " << max_a_error << endl;
-           sum_stat << "Maximim error: " << max_a_error << endl;
-           cout << "Maximim error at ends: " << max_e_at_ends << endl;
-           sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
-        }
-        else
-        {
-           cout << "Quality trimming: NO" << endl;
-           sum_stat << "Quality trimming: NO" << endl;
-        }
+                if(qual_trim_flag)
+                {
+                        cout << "Quality trimming: YES" << endl;
+                        sum_stat << "Quality trimming: YES" << endl;
+                        cout << "Maximim error: " << max_a_error << endl;
+                        sum_stat << "Maximim error: " << max_a_error << endl;
+                        cout << "Maximim error at ends: " << max_e_at_ends << endl;
+                        sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
+                }
+                else
+                {
+                        cout << "Quality trimming: NO" << endl;
+                        sum_stat << "Quality trimming: NO" << endl;
+                }
         
-        cout << "--------------------Output files--------------------\n";
-        sum_stat << "--------------------Output files--------------------\n";
+                cout << "--------------------Output files--------------------\n";
+                sum_stat << "--------------------Output files--------------------\n";
         
-        cout << "Output prefix: " << output_prefix << endl;
-        sum_stat << "Output prefix: " << output_prefix << endl;
+                cout << "Output prefix: " << output_prefix << endl;
+                sum_stat << "Output prefix: " << output_prefix << endl;
         
-        rep_file_name1 = output_prefix + "_PE1_Report.csv";
-        rep_file_name2 = output_prefix + "_PE2_Report.csv";
-        pe_output_filename1 =  output_prefix + "_PE1.fastq" ;
-        pe_output_filename2 =  output_prefix + "_PE2.fastq" ;
-        shuffle_filename = output_prefix + "_shuffled.fastq";
-        se_filename = output_prefix + "_SE.fastq";
+                rep_file_name1 = output_prefix + "_PE1_Report.tsv";
+                rep_file_name2 = output_prefix + "_PE2_Report.tsv";
+                pe_output_filename1 =  output_prefix + "_PE1.fastq" ;
+                pe_output_filename2 =  output_prefix + "_PE2.fastq" ;
+                shuffle_filename = output_prefix + "_shuffled.fastq";
+                se_filename = output_prefix + "_SE.fastq";
         
-        cout << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
-        sum_stat << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
+                cout << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
+                sum_stat << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
         
-        if (!shuffle_flag)
-        {
-                cout << "PE1 file: " << pe_output_filename1 << endl;
-                sum_stat << "PE1 file: " << pe_output_filename1 << endl;
-                cout << "PE2 file: " << pe_output_filename2 << endl;
-                sum_stat << "PE2 file: " << pe_output_filename2 << endl;
-        } 
-        else
-        {
-                cout << "Shuffled file: " << shuffle_filename << endl;
-                sum_stat << "Shuffled file: " << shuffle_filename << endl;
-        }    
-        cout << "Single-end reads: "<< se_filename << endl;
-        sum_stat << "Single-end reads: "<< se_filename << endl;
+                if (!shuffle_flag)
+                {
+                        cout << "PE1 file: " << pe_output_filename1 << endl;
+                        sum_stat << "PE1 file: " << pe_output_filename1 << endl;
+                        cout << "PE2 file: " << pe_output_filename2 << endl;
+                        sum_stat << "PE2 file: " << pe_output_filename2 << endl;
+                } 
+                else
+                {
+                        cout << "Shuffled file: " << shuffle_filename << endl;
+                        sum_stat << "Shuffled file: " << shuffle_filename << endl;
+                }    
+                cout << "Single-end reads: "<< se_filename << endl;
+                sum_stat << "Single-end reads: "<< se_filename << endl;
         
-        cout << "--------------------Other parameters--------------------\n";
-        sum_stat << "--------------------Other parameters--------------------\n";
-        cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
-        sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+                cout << "--------------------Other parameters--------------------\n";
+                sum_stat << "--------------------Other parameters--------------------\n";
+                cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+                sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
     
-        cout << "Minimum read length to accept: " << minimum_read_length << endl;
-        sum_stat << "Minimum read length to accept: " << minimum_read_length << endl;
+                cout << "Minimum read length to accept: " << minimum_read_length << endl;
+                sum_stat << "Minimum read length to accept: " << minimum_read_length << endl;
         
-        cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
-        sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+                cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+                sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+        }
+        else
+        {
+                cout << "Provided data file(s) : " << endl;
+                sum_stat << "Provided data file(s) : " << endl;
+                for(int i=0; i<(int)se_names.size(); ++i)
+                {
+                        cout << "SE: " << se_names[i] << endl;
+                        sum_stat << "SE: " << se_names[i] << endl;
+                }
+        
+                cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
+                sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
+    
+                if(vector_flag)
+                {
+                        cout << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
+                        sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
+                        cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
+                        sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
+                        cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
+                        sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
+    
+                } 
+                else
+                {
+                        cout << "Vector screening: NO" << endl;
+                        sum_stat << "Vector screening: NO" << endl;
+                }
+        
+        
+                if(contaminants_flag)
+                {
+                        cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
+                        sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
+                        cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
+                        sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
+                } 
+                else
+                {
+                        cout << "Contaminants screening: NO" << endl;
+                        sum_stat << "Contaminants screening: NO" << endl;
+                }
+        
+                if(qual_trim_flag)
+                {
+                        cout << "Quality trimming: YES" << endl;
+                        sum_stat << "Quality trimming: YES" << endl;
+                        cout << "Maximim error: " << max_a_error << endl;
+                        sum_stat << "Maximim error: " << max_a_error << endl;
+                        cout << "Maximim error at ends: " << max_e_at_ends << endl;
+                        sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
+                }
+                else
+                {
+                        cout << "Quality trimming: NO" << endl;
+                        sum_stat << "Quality trimming: NO" << endl;
+                }
+        
+                cout << "--------------------Output files--------------------\n";
+                sum_stat << "--------------------Output files--------------------\n";
+        
+                cout << "Output prefix: " << output_prefix << endl;
+                sum_stat << "Output prefix: " << output_prefix << endl;
+        
+                rep_file_name1 = output_prefix + "_SE_Report.tsv";
+                se_output_filename =  output_prefix + "_SE.fastq" ;
+                
+                cout << "Report file: " << rep_file_name1 << endl;
+                sum_stat << "Report file: " << rep_file_name1<< endl;
+        
+                cout << "SE file: " << se_output_filename << endl;
+                sum_stat << "SE file: " << se_output_filename << endl;
+                    
+                cout << "Single-end reads: "<< se_filename << endl;
+                sum_stat << "Single-end reads: "<< se_filename << endl;
+        
+                cout << "--------------------Other parameters--------------------\n";
+                sum_stat << "--------------------Other parameters--------------------\n";
+                cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+                sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+    
+                cout << "Minimum read length to accept: " << minimum_read_length << endl;
+                sum_stat << "Minimum read length to accept: " << minimum_read_length << endl;
+        
+                cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+                sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+        }
         
     }
     if(roche_flag)
@@ -847,7 +967,7 @@ int main(int argc, char *argv[])
         sum_stat << "Output prefix: " << output_prefix << endl;
         
         roche_output_file_name = output_prefix + (output_fastqfile_flag ? "_.fastq" : "_.sff" );
-        roche_rep_file_name = output_prefix + "_Report.csv" ;
+        roche_rep_file_name = output_prefix + "_Report.tsv" ;
         
         cout << "Report file: " << roche_rep_file_name << "\n";
         sum_stat << "Report file: " << roche_rep_file_name << "\n";
@@ -950,7 +1070,14 @@ int main(int argc, char *argv[])
     
     if(illumina_flag ) 
     {
-        IlluminaDynamic(illumina_file_name_R1, illumina_file_name_R2);
+        if(!illumina_se_flag)
+        {
+            IlluminaDynamic(illumina_file_name_R1, illumina_file_name_R2);
+        }
+        else
+        {
+            IlluminaDynamicSE();
+        }
     }
     
     if( roche_flag  )
@@ -1153,7 +1280,7 @@ void RocheRoutine()
         cout << "Making cleaned output data file...\n";
         MakeLucyFastq( output_prefix + "_qual.fastq" );
            
-        string report_filename =  output_prefix + "_qual_Report.csv"; 
+        string report_filename =  output_prefix + "_qual_Report.tsv"; 
         MakeLucyReport2( (char*)report_filename.c_str(), reads );
         cout << "Done Lucy ONLY quality trimming.\n";
            
@@ -2798,3 +2925,303 @@ void *t_IlluminaDynRoutine( void *targs )
     return 0;
     
 }
+
+//Dynamic Illumina: does not need space to store reads:
+void IlluminaDynamicSE()
+{
+    se_bases_kept = se_bases_discarded = 0;
+    se_discard_cnt = 0;
+    se_bases_anal = 0;        
+    avg_trim_len_se = 0;
+    
+    long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
+    long cnt_avg_len; cnt_avg_len = 0;
+                 
+    double avg_len_se; avg_len_se = 0.0;
+    double cnt_right_trim_se, avg_right_trim_len_se; 
+    double cnt_left_trim_se, avg_left_trim_len_se;
+    
+    cnt_right_trim_se = avg_right_trim_len_se = 0;
+    cnt_left_trim_se = avg_left_trim_len_se = 0;
+    
+    long cnt; cnt = 0;
+    long se_accept_cnt; se_accept_cnt = 0;
+    int ts_adapters; ts_adapters = 0;
+    int num_vectors; num_vectors = 0;
+    int num_contaminants; num_contaminants = 0;
+    int accepted; accepted = 0;
+    int discarded; discarded = 0;
+//    int discarded_by_quality1, discarded_by_quality2; discarded_by_quality1 = discarded_by_quality2 = 0;
+    int discarded_by_contaminant; discarded_by_contaminant = 0;
+    int discarded_by_read_length; discarded_by_read_length = 0;
+//    int discarded_by_vector1 , discarded_by_vector2; discarded_by_vector1 = discarded_by_vector2 = 0;
+    /*Left trims*/
+    int left_trimmed_by_quality; left_trimmed_by_quality = 0;
+    int left_trimmed_by_vector; left_trimmed_by_vector = 0;
+    /*Right trims/discards*/
+    int right_trimmed_by_quality; right_trimmed_by_quality = 0;
+    int right_trimmed_by_adapter; right_trimmed_by_adapter = 0;
+    int right_trimmed_by_vector;  right_trimmed_by_vector = 0;
+    
+    fstream rep_file, se_output_file;
+    rep_file.open(rep_file_name1.c_str(),ios::out);
+    rep_file << "ReadID\tlclip\trclip\tTruSeq_pos\tTruSeq_type\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVectorID\tVecStart\tVecEnd\tVecLen\n";
+    
+    cout << "Running the Illumina cleaning process..." << endl;
+    sum_stat << "Running the Illumina cleaning process..." << endl;
+    
+    
+    
+    vector<string> record_block;
+    
+    
+    
+    se_output_file.open( se_output_filename.c_str(), ios::out );
+    
+    for(int jj=0; jj<se_names.size(); ++jj)
+    {
+    
+        bool adapter_found = false;
+        
+        string query_string = "NA";
+        
+        int ii = 0;
+        
+        std::string line;
+        igzstream in(/*fastq_file1*/se_names[jj]); //for R1
+        
+        cout << "Processing files: " << se_names[jj] << "\n";
+        sum_stat << "Processing files: " << se_names[jj] << "\n";
+        
+        while ( getline(in,line) )
+        {
+                /*Read ID*/
+                if(ii==0) 
+                {
+                        record_block.push_back(line); 
+                        
+                        ii++;
+                        continue;
+                }
+                /*DNA string*/
+                if(ii==1) 
+                {
+                        record_block.push_back(line); /*DNA string*/
+                        ii++;
+                        continue;
+                }
+                /*a symbol "+"*/
+                if(ii==2) 
+                {
+                        record_block.push_back(line);
+                        ii++;
+                        continue;
+                }
+                if(ii==3) 
+                {
+                        ii=0;
+           
+                        Read *read = new Read();
+                        read->readID = record_block[0];
+                        read->initial_length = record_block[1].length();
+                        read->read = record_block[1];
+                        read->quality = line;
+                        se_bases_anal += read->read.length();
+          
+                        //Serial realization - useful for debugging if something does not work as expected
+          
+                        IlluminaDynRoutine(read, adapter_found, query_string);
+                        
+                        cnt+=1;
+          
+                        //Report
+                        //Read ID
+                        rep_file << read->readID << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
+                        
+                        if( !VectorOnlyFlag )  
+                        {
+                                if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
+                                if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                                if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
+                                if( (int)read->read.length() < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                                if( (read->rclip - read->lclip) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+              
+                                if( read->discarded == 0 )
+                                {
+                                        
+                                    if(  read->rclip < read->initial_length  )
+                                    {
+                                        cnt_right_trim_se += 1;
+                                        avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
+                                    }
+                                    if(read->lclip > 0)
+                                    {
+                                        cnt_left_trim_se += 1;
+                                        avg_left_trim_len_se = GetAvg( avg_left_trim_len_se, cnt_left_trim_se, read->lclip );
+                                    }
+                                    
+                                    read->read = read->read.substr(0 , read->rclip );
+                                    read->quality = read->quality.substr(0,read->rclip) ; 
+                                    read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
+                                    read->quality = read->quality.substr( read->lclip, read->rclip - read->lclip );
+                 
+                                    WriteSEFile(se_output_file, read);
+                                    se_accept_cnt+=1;
+                                    se_bases_kept += read->read.length();
+                                    
+                                    if( read->initial_length > read->read.length() )
+                                    {
+                                        cnt_avg+=1;
+                                        avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, read->initial_length - read->read.length() );
+                                    }
+                 
+                                    cnt_avg_len+=1; 
+                                    avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
+                                    
+                 
+                                } 
+                                
+                        } 
+                        
+                        if (read->tru_sec_found == 1) ts_adapters++;
+                        if (read->vector_found == 1) num_vectors++;
+                        if (read->contam_found == 1) num_contaminants++;
+                        if (read->discarded == 0) accepted++;
+                        if (read->discarded == 1) discarded++;
+                        //if (read1->discarded_by_quality == 1) discarded_by_quality1++;    
+                        if (read->discarded_by_contaminant == 1) discarded_by_contaminant++;
+                        if (read->discarded_by_read_length == 1) discarded_by_read_length++;
+                        //if (read1->discarded_by_vector == 1) discarded_by_vector1++;
+                        if (read->left_trimmed_by_quality == 1) left_trimmed_by_quality++;
+                        if (read->left_trimmed_by_vector == 1) left_trimmed_by_vector++;
+                        if (read->right_trimmed_by_quality == 1) right_trimmed_by_quality++;
+                        if (read->right_trimmed_by_adapter == 1) right_trimmed_by_adapter++;
+                        if (read->right_trimmed_by_vector == 1) right_trimmed_by_vector++;
+          
+                        record_block.clear();
+                        read->readID.clear(); 
+                        read->quality.clear();
+                        read->read.clear();
+          
+                        delete read;
+                        
+                }
+        }
+        in.close();
+        
+    }
+    
+    se_output_file.close();
+    
+    rep_file.close();
+    
+    
+    cout << "====================Summary Statistics====================\n";
+    sum_stat << "====================Summary Statistics====================\n";
+    cout << "SE reads analyzed: " << cnt << ", Bases:" << se_bases_anal << "\n";
+    sum_stat << "SE reads analyzed: " << cnt << ", Bases:" << se_bases_anal << "\n";
+    
+    cout << "Found ->\n";
+    sum_stat << "Found ->\n";
+    
+    cout << "Adapters: " << ts_adapters << ", " << ( (double)ts_adapters/(double)cnt*100.0) << "%\n";
+    sum_stat << "Adapters: " << ts_adapters << ", " << ( (double)ts_adapters/(double)cnt*100.0) << "%\n";
+    
+    if(vector_flag)
+    {
+        cout << "# of reads with vector: " << num_vectors<< ", " << ( (double)num_vectors/(double)cnt*100.0) << "%\n";
+        sum_stat << "# of reads with vector: " << num_vectors << ", " << ( (double)num_vectors/(double)cnt*100.0) << "%\n";
+    }
+    
+    if(contaminants_flag)
+    {
+        cout << "# of reads with contaminants: " << num_contaminants << ", " << ( (double)num_contaminants/(double)cnt*100.0) << "%\n";
+        sum_stat << "# of reads with contaminants: " << num_contaminants << ", " << ( (double)num_contaminants/(double)cnt*100.0) << "%\n";
+    }
+    
+    if(qual_trim_flag || vector_flag )
+    {
+        cout << "Reads left trimmed ->" << "\n";
+        sum_stat << "Reads left trimmed ->" << "\n";
+    }
+    
+    if(qual_trim_flag)
+    {
+        cout << "By quality: " <<  left_trimmed_by_quality << "\n";
+        sum_stat << "By quality: " <<  left_trimmed_by_quality << "\n";
+    }
+    
+    if(vector_flag)
+    {
+        cout << "By vector: " <<  left_trimmed_by_vector << "\n";
+        sum_stat << "By vector: " <<  left_trimmed_by_vector << "\n";
+    }
+    
+    cout << "Average left trimmed length: " << avg_left_trim_len_se << " bp\n";
+    sum_stat << "Average left trimmed length: " << avg_left_trim_len_se << " bp\n";
+    
+    cout << "Reads right trimmed ->" << "\n";
+    sum_stat << "Reads right trimmed ->" << "\n";
+    
+    cout << "By adapter: " <<  right_trimmed_by_adapter << "\n";
+    sum_stat << "By adapter: " <<  right_trimmed_by_adapter << "\n";
+    
+    if(qual_trim_flag)
+    {
+        cout << "By quality: " <<  right_trimmed_by_quality << "\n";
+        sum_stat << "By quality: " <<  right_trimmed_by_quality << "\n";
+    }
+    
+    if(vector_flag)
+    {
+        cout << "By vector: " <<  right_trimmed_by_vector << "\n";
+        sum_stat << "By vector: " <<  right_trimmed_by_vector << "\n";
+    }
+    
+    cout << "Average right trimmed length: " << avg_right_trim_len_se << " bp\n";
+    sum_stat << "Average right trimmed length: " << avg_right_trim_len_se << " bp\n";
+    
+    cout << "PE1 reads discarded: " << discarded << "\n";
+    sum_stat << "PE1 reads discarded: " << discarded << "\n";
+    
+    if(contaminants_flag)
+    {
+        cout << "By contaminants: " <<  discarded_by_contaminant << "\n";
+        sum_stat << "By contaminant: " <<  discarded_by_contaminant << "\n";
+    }
+    
+    cout << "By read length: " <<  discarded_by_read_length << "\n";
+    sum_stat << "By read length: " <<  discarded_by_read_length << "\n";
+    
+    cout << "-----------------------------------------------------------\n";
+    sum_stat << "-----------------------------------------------------------\n";
+    
+    
+    cout << "----------------------Summary for SE----------------------\n";
+    sum_stat << "----------------------Summary for SE----------------------\n";
+    
+    cout << "Pairs kept: " << se_accept_cnt << ", " << ( (double)se_accept_cnt/(double)cnt*100.0) << "%, Bases: " << se_bases_kept << ", " << ( (double)se_bases_kept/(double)(se_bases_anal)*100) <<  "%\n";
+    sum_stat << "Pairs kept: " << se_accept_cnt << ", " << ( (double)se_accept_cnt/(double)cnt*100.0) << "%, Bases: " << se_bases_kept << ", " << ( (double)se_bases_kept/(double)(se_bases_anal)*100) <<  "%\n";
+    
+    cout << "Pairs discarded: " << se_discard_cnt << ", " << ( (double)se_discard_cnt/(double)cnt*100.0) << "%, Bases: " << se_bases_discarded << ", " << ( (double)se_bases_discarded/(double)(se_bases_anal)*100) <<  "%\n";
+    sum_stat << "Pairs discarded: " << se_discard_cnt << ", " << ( (double)se_discard_cnt/(double)cnt*100.0) << "%, Bases: " << se_bases_discarded << ", " << ( (double)pe_bases_discarded/(double)(se_bases_anal)*100) <<  "%\n";
+    
+    cout << "Single Reads PE1 kept: " << se_accept_cnt << ", Bases: " << se_bases_kept << "\n";
+    sum_stat << "Single Reads PE1 kept: " << se_accept_cnt << ", Bases: " << se_bases_kept << "\n";
+    
+    cout << "Average trimmed length PE1: " << avg_trim_len_se << " bp\n";
+    sum_stat << "Average trimmed length PE1: " << avg_trim_len_se << " bp\n";
+    
+    cout << "Average trimmed length PE2: " << avg_trim_len_se << " bp\n";
+    sum_stat << "Average trimmed length PE2: " << avg_trim_len_se << " bp\n";
+    
+    cout << "Average read length PE1: " << avg_len_se << " bp\n";
+    sum_stat << "Average read length PE1: " << avg_len_se << " bp\n";
+    
+    
+    cout << "====================Done cleaning====================\n";  
+    sum_stat << "====================Done cleaning====================\n";  
+   
+    
+}
+

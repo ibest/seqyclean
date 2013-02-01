@@ -72,7 +72,7 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
        if the header is not, it is zero-byte padded to make it so */
 
     header_size = sizeof(h->magic)
-                  + sizeof(*(h->version))*4
+                  + sizeof( h->version )
                   + sizeof(h->index_offset)
                   + sizeof(h->index_len)
                   + sizeof(h->nreads)
@@ -83,7 +83,10 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
                   + (sizeof(char) * h->flow_len)
                   + (sizeof(char) * h->key_len);
 
-    if ( !(header_size % PADDING_SIZE == 0) ) {
+    printf("%d\n" , header_size - sizeof(h->flow_len) - sizeof(h->flow_len) - 31 );
+    printf("%d %d\n" , header_size, sizeof(h->header_len) );
+    
+    if ( !( (header_size  % PADDING_SIZE) == 0) ) {
         read_padding(fp, header_size);
     }
     
@@ -105,20 +108,20 @@ void write_sff_common_header(FILE *fp, sff_common_header *h) {
     fwrite(h->flow             , sizeof(char), htobe16(h->flow_len)  , fp);
     fwrite(h->key               , sizeof(char) , htobe16(h->key_len)  , fp);
     
-    int header_size = sizeof(htobe32((*h).magic))
-                  + sizeof(*(h->version))*4 
-                  + sizeof(htobe64((*h).index_offset)) 
-                  + sizeof(htobe32((*h).index_len)) 
-                  + sizeof(htobe32((*h).nreads)) 
-                  + sizeof( htobe16((*h).header_len))
-                  + sizeof(htobe16((*h).key_len))  
-                  + sizeof(htobe16((*h).flow_len)) 
+    int header_size = sizeof(h->magic)
+                  + sizeof(*(h->version))*4
+                  + sizeof(h->index_offset) 
+                  + sizeof(h->index_len) 
+                  + sizeof(h->nreads) 
+                  + sizeof(h->header_len) 
+                  + sizeof(h->key_len)  
+                  + sizeof(h->flow_len) 
                   + sizeof(h->flowgram_format)
-                  + (sizeof(char) * htobe16((*h).flow_len))
-                  + (sizeof(char) * htobe16((*h).key_len));
-
+                  + (sizeof(char) * htobe16(h->flow_len) )
+                  + (sizeof(char) * htobe16(h->key_len) ) ;
+    
     if ( !(header_size % PADDING_SIZE == 0) ) {
-        write_padding(fp, header_size);
+        write_padding(fp, header_size); printf("%d !!!\n" , header_size );
     }
     
 }
@@ -146,11 +149,11 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh) {
    
    int header_size = sizeof(rh->header_len) //sizeof(htobe16((*rh).header_len)) 
                   + sizeof(rh->name_len)
-                  + sizeof(htobe32((*rh).nbases)) 
-                  + sizeof(htobe16((*rh).clip_qual_left))
-                  + sizeof(htobe16((*rh).clip_qual_right)) 
-                  + sizeof(htobe16((*rh).clip_adapter_left)) 
-                  + sizeof(htobe16((*rh).clip_adapter_right)) 
+                  + sizeof(rh->nbases) 
+                  + sizeof(rh->clip_qual_left)
+                  + sizeof(rh->clip_qual_right)
+                  + sizeof(rh->clip_adapter_left) 
+                  + sizeof(rh->clip_adapter_right) 
                   + (sizeof(char) * htobe16(rh->name_len));
    
    
@@ -198,12 +201,20 @@ void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t
 void write_padding(FILE *fp, int header_size) {
     int remainder = PADDING_SIZE - (header_size % PADDING_SIZE);
     uint8_t padding[remainder];
+    int i;
+    for(i=0; i< remainder; ++i)
+      padding[i] = '\0';
+    
+    
     fwrite(padding, sizeof(uint8_t), remainder, fp);
 }
 
 void read_padding(FILE *fp, int header_size) {
     int remainder = PADDING_SIZE - (header_size % PADDING_SIZE);
     uint8_t padding[remainder];
+    
+    //printf("%d %d \n" ,header_size, remainder );
+    
     fread(padding, sizeof(uint8_t), remainder, fp);
 }
 
