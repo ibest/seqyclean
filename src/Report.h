@@ -57,6 +57,7 @@ extern map<int, string > vector_names;
 extern int minimum_read_length;
 extern string output_prefix;
 extern fstream sum_stat;
+extern string stat_str;
 
 void MakeReport(string file_name);
 void MakeLucyReport();

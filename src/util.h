@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <map>
+#include <math.h>
 
 using namespace std;
 //using namespace boost;
@@ -44,6 +45,9 @@ double GetAvg( double past_avg, long n, int cur_diff );
 int MakeDirectory(string path_to_create);
 void GetDirectories(std::vector<string> &out, char *directory);
 vector< vector<string> > GetPEfilenames(string prefix1, string prefix2, char *directory);
+string i2str(int value, char* result, int base);
+string double2str(double num);
+string int2str(int num);
 
 #endif	/* UTIL_H */
 

@@ -182,7 +182,7 @@ void MakeClipPoints()
                 }
                 
                 if(reads[ff]->rclip <= 1) reads[ff]->discarded = 1; 
-                if(reads[ff]->rclip == reads[ff]->read.length()) reads[ff]->right_trimmed_by_adapter = 0;
+                if(reads[ff]->rclip == (int)reads[ff]->read.length()) reads[ff]->right_trimmed_by_adapter = 0;
                 
            }
            else
@@ -211,7 +211,7 @@ void MakeClipPoints()
                 reads[ff]->lclip > 0 ? reads[ff]->left_trimmed_by_adapter = 1 : reads[ff]->left_trimmed_by_adapter = 0;
                 
                 if(reads[ff]->rclip <= 1) reads[ff]->discarded = 1; 
-                if(reads[ff]->rclip == reads[ff]->read.length()) reads[ff]->right_trimmed_by_adapter = 0;
+                if(reads[ff]->rclip == (int)reads[ff]->read.length()) reads[ff]->right_trimmed_by_adapter = 0;
            } 
            else
            {
@@ -723,6 +723,37 @@ void MakeFinalStatistics( fstream &sum_stat )
        
        
     }
+    /*
+    
+    stat_str = "====================Summary Statistics====================\n" +
+                ("Reads analyzed: " +  i2str(reads.size(),new char[15],10)  + ", Bases:" +  i2str(bases_anal, new char[25],10)  + "\n") +
+                "Found ->\n" +
+                "Left mid tag: : " + i2str(left_mid_tag, new char[15], 10) + ", " + str2double( (double)left_mid_tag/(double)reads.size()*100.0, 10) + "%\n" + 
+                        "Right mid tag: : " + i2str(right_mid_tag, new char[15], 10) + ", " + str2double( (double)right_mid_tag/(double)reads.size()*100.0, 10) + "%\n" + 
+                        ( vector_flag ? "# of reads with vector: " + i2str(num_vectors,new char[15],10) + ", " + str2double( (double)num_vectors/(double)reads.size()*100.0, 10) + "%\n" : "") +
+                        ( contaminants_flag ? "# of reads with contaminants: " + i2str(num_contaminants,new char[15],10) + ", " + str2double( (double)num_contaminants/(double)reads.size()*100.0, 10) + "%\n" : "") +
+                        "Reads left trimmed ->\n" +
+                        ( qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality,new char[15], 10) + "\n" : "" ) +
+                        ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector,new char[15], 10) + "\n" : "" ) +
+                        "Average left trimmed length: " + str2double(avg_left_trim_len, 10) + " bp\n" +
+                        "Reads right trimmed ->\n" +
+                        "By adapter: " +  i2str(right_trimmed_by_adapter,new char[15],10) + "\n" +
+                        ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality,new char[15],10) + "\n" : "") +
+                        ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
+                        "Average right trimmed length: " + str2double(avg_right_trim_len,10) + " bp\n" +
+                        "Reads discarded: " + i2str(discarded,new char[15],10) + "\n" +
+                        ( contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant,new char[15],10) + "\n" : "" ) +
+                        "By read length: " +  i2str(discarded_by_read_length,new char[15],10) + "\n" +
+                        "-----------------------------------------------------------\n" +
+                        "----------------------Summary for Roche 454----------------------\n" +
+                        ("Reads accepted: " + i2str(accepted,new char[15],10) + ", " + str2double( (double)accepted/(double)reads.size()*100) + "%\n") +
+                        ("Average trimmed length: " + str2double(avg_trim_len,10) + " bp\n") +
+                        ("Average read length: " + str2double(avg_read_len,10) + " bp\n");
+    
+    cout << stat_str;
+    sum_stat << stat_str;
+    **/
+    /*
     
     cout << "====================Summary Statistics====================\n";
     sum_stat << "====================Summary Statistics====================\n";
@@ -816,7 +847,7 @@ void MakeFinalStatistics( fstream &sum_stat )
     
     cout << "Average read length: " << avg_read_len << " bp\n";
     sum_stat << "Average read length: " << avg_read_len << "\n";
-    
+    */
     cout << "==========================================================\n";
     sum_stat << "==========================================================\n";
 }

@@ -638,7 +638,7 @@ void grim(int length, int *left, int *right)
 	quality_trim(
 		conf_val_raw, 		/* the raw quality values */
 		length, 		/* length of sequence */
-		100,	 		/* minimum acceptable clean range length */
+		minimum_read_length,	 		/* minimum acceptable clean range length */
 		left, 			/* pointer to caller's start index */
 		right			/* pointer to caller's end index */
 		);
@@ -692,7 +692,7 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
         } 
         else 
         {
-            left == 0 ? read->lucy_lclip = 1 : read->lucy_lclip = left;
+            left == 0 ? read->lucy_lclip = 0 : read->lucy_lclip = left;
             right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right;
         }
 	

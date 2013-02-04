@@ -117,6 +117,32 @@ char* itoa(int value, char* result, int base) {
         return result;
 }
 
+string i2str(int value, char* result, int base) {
+        // check that the base if valid
+	if (base < 2 || base > 36) { *result = '\0'; return string(result); }
+	
+        char* ptr = result, *ptr1 = result, tmp_char;
+	int tmp_value;
+	
+	do {
+                tmp_value = value;
+		value /= base;
+		*ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+	} while ( value );
+	
+	// Apply negative sign
+	if (tmp_value < 0) *ptr++ = '-';
+	*ptr-- = '\0';
+	
+        while(ptr1 < ptr) {
+                tmp_char = *ptr;
+		*ptr--= *ptr1;
+		*ptr1++ = tmp_char;
+	}
+	
+        return string(result);
+}
+
 string MakeSeqComplement(string init_str) {
     
     for(int i = 0; i<(int)init_str.length(); i++) {
@@ -341,4 +367,21 @@ vector< vector<string> > GetPEfilenames(string prefix1, string prefix2, char *di
     }
     
     return groups;
+}
+
+string double2str(double num)
+{
+    char buffer[512];  // make sure this is big enough!!!
+    snprintf(buffer, sizeof(buffer), "%g", num);
+    
+    return string(buffer);
+}
+
+string int2str(int num)
+{
+    char buffer[256];  // make sure this is big enough!!!
+    snprintf(buffer, sizeof(buffer), "%d", num);
+    string ans = buffer;
+    
+    return ans;
 }
