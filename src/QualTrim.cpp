@@ -662,7 +662,7 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
         end_limit = end_lim;
         
         i=0;
-        for( i=0; i< (int)read->quality.length(); i++ ) 
+        for( i=0; i< read->read.length(); i++ ) 
         {
             quality[i] = GetNum(read->quality[i]) - 33;
         }

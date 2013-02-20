@@ -320,17 +320,17 @@ void* Illumina::tt_CleanSeq_2(void* targ) {
            if(reads_2[index]->lucy_rclip < reads_2[index]->rclip) 
            {
                reads_2[index]->read = reads_2[index]->read.substr(0 , reads_2[index]->lucy_rclip );
-               reads_2[index]->quality = reads_2[index]->quality.substr(0,reads_2[index]->lucy_rclip) ; 
+               reads_2[index]->illumina_quality_string = reads_2[index]->illumina_quality_string.substr(0,reads_2[index]->lucy_rclip) ; 
            } else 
            {
                reads_2[index]->read = reads_2[index]->read.substr(0 , reads_2[index]->rclip );
-               reads_2[index]->quality = reads_2[index]->quality.substr(0,reads_2[index]->rclip) ; 
+               reads_2[index]->illumina_quality_string = reads_2[index]->illumina_quality_string.substr(0,reads_2[index]->rclip) ; 
            }
         } 
         else 
         {
            reads_2[index]->read = reads_2[index]->read.substr(0 , reads_2[index]->rclip );
-           reads_2[index]->quality = reads_2[index]->quality.substr(0,reads_2[index]->rclip) ; 
+           reads_2[index]->illumina_quality_string = reads_2[index]->illumina_quality_string.substr(0,reads_2[index]->rclip) ; 
         }
     } else 
     {

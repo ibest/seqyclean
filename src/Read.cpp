@@ -9,14 +9,14 @@
 
 Read::Read() 
 {
-    this->readID = "NA";
+    this->illumina_readID = "NA";
     this->contaminants = 0;
                         
     this->initial_length = 0;
     this->lclip = 0;
     this->rclip = 0;
     this->read = "NA";
-    this->quality = "NA";
+    this->illumina_quality_string = "NA";
     this->clip_found = false;
                         
                         

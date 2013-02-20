@@ -83,8 +83,8 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
                   + (sizeof(char) * h->flow_len)
                   + (sizeof(char) * h->key_len);
 
-    printf("%d\n" , header_size - sizeof(h->flow_len) - sizeof(h->flow_len) - 31 );
-    printf("%d %d\n" , header_size, sizeof(h->header_len) );
+    //printf("%d\n" , header_size - sizeof(h->flow_len) - sizeof(h->flow_len) - 31 );
+    //printf("%d %d\n" , header_size, sizeof(h->header_len) );
     
     if ( !( (header_size  % PADDING_SIZE) == 0) ) {
         read_padding(fp, header_size);
@@ -94,6 +94,8 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
 }
 
 void write_sff_common_header(FILE *fp, sff_common_header *h) {
+    
+    h->nreads = be32toh(h->nreads);
     
     /*size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );*/
     fwrite(&(h->magic)          , sizeof(uint32_t), 1, fp);
@@ -121,19 +123,18 @@ void write_sff_common_header(FILE *fp, sff_common_header *h) {
                   + (sizeof(char) * htobe16(h->key_len) ) ;
     
     if ( !(header_size % PADDING_SIZE == 0) ) {
-        write_padding(fp, header_size); printf("%d !!!\n" , header_size );
+        write_padding(fp, header_size);
     }
     
 }
 
 void write_sff_read_header(FILE *fp, sff_read_header *rh) {
-        /*size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );*/
-    
+   
    rh->header_len=be16toh(rh->header_len); 
    rh->name_len=be16toh(rh->name_len);
    rh->nbases=be32toh(rh->nbases);
-   rh->clip_qual_left=be16toh(rh->clip_qual_left);
-   rh->clip_qual_right=be16toh(rh->clip_qual_right);
+   rh->clip_qual_left=be16toh(rh->clip_qual_left); 
+   rh->clip_qual_right=be16toh(rh->clip_qual_right); 
    rh->clip_adapter_left=be16toh(rh->clip_adapter_left);
    rh->clip_adapter_right=be16toh(rh->clip_adapter_right);
    
@@ -144,14 +145,13 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh) {
    fwrite(&(rh->clip_qual_right)    , sizeof(uint16_t), 1, fp);
    fwrite(&(rh->clip_adapter_left)  , sizeof(uint16_t), 1, fp);
    fwrite(&(rh->clip_adapter_right) , sizeof(uint16_t), 1, fp);
-   //printf("%d\n", htobe16(rh->name_len) );
    fwrite(rh->name               , sizeof(char), htobe16(rh->name_len), fp);
    
-   int header_size = sizeof(rh->header_len) //sizeof(htobe16((*rh).header_len)) 
+   int header_size = sizeof(rh->header_len) 
                   + sizeof(rh->name_len)
                   + sizeof(rh->nbases) 
-                  + sizeof(rh->clip_qual_left)
-                  + sizeof(rh->clip_qual_right)
+                  + sizeof(rh->clip_qual_left) 
+                  + sizeof(rh->clip_qual_right) 
                   + sizeof(rh->clip_adapter_left) 
                   + sizeof(rh->clip_adapter_right) 
                   + (sizeof(char) * htobe16(rh->name_len));
@@ -164,21 +164,6 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh) {
 }
 
 void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t nbases) {
-    /* sff files are in big endian notation so adjust appropriately */
-    /*for (int i = 0; i < nflows; i++) {
-        rd->flowgram[i] = be16toh(rd->flowgram[i]);
-       
-    }**/
-    /*for (int j = 0; j < nbases; j++) {
-                rd->quality[j] = be16toh(rd->quality[j] - 33);
-               
-        }**/
-    /*for (int i = 0; i < nbases; i++) {
-        rd->quality[i] = be16toh(rd->quality[i]);
-       
-    }**/
-    
-    
     
     fwrite(rd->flowgram, sizeof(uint16_t), (size_t) nflows, fp);
     fwrite(rd->flow_index, sizeof(uint8_t), (size_t) nbases, fp);
@@ -189,8 +174,8 @@ void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t
 
     int data_size = (sizeof(uint16_t) * nflows)    // flowgram size
                 + (sizeof(uint8_t) * nbases)   // flow_index size
-                + (sizeof(char) * nbases)      // bases size
-                + (sizeof(uint8_t) * nbases);  // quality size
+              +   (sizeof(char) * nbases)      // bases size
+              +   (sizeof(uint8_t) * nbases);  // quality size
                   
     if ( !(data_size % PADDING_SIZE == 0) ) {
         write_padding(fp, data_size);
@@ -203,7 +188,7 @@ void write_padding(FILE *fp, int header_size) {
     uint8_t padding[remainder];
     int i;
     for(i=0; i< remainder; ++i)
-      padding[i] = '\0';
+      padding[i] = 0;
     
     
     fwrite(padding, sizeof(uint8_t), remainder, fp);

@@ -56,13 +56,12 @@ void MainPipeLine();
 void TrimRightEnds();
 void TrimLeftEnds();
 static void *t_FindRLClip(void *targs);
-static void *tt_SSAHA(void *targs);
 static void *t_TrimRightEnds(void *targs);
 static void *t_TrimLeftEnds(void *targs);
 void GetLClip2(Read* read, bool pflag);
 
 static void *t_FindClipAmplicon(void *targs);
-static void *tt_SSAHA_PCR(void *targs);
+void SSAHA(string query_str, int read_len, string ref_str, bool reverse, bool complement, bool reverse_complement,  bool clip_found, long rec_id, int tid );
 pthread_spinlock_t spinlock1;
 pthread_spinlock_t spinlock2;
 

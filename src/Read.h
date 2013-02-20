@@ -40,8 +40,9 @@ public:
    Read(const Read& orig);
    virtual ~Read();
     
-   string readID;
+   char* readID;
    string read;
+   string illumina_readID;
    
    /*----Left clip point----*/
    int lclip;
@@ -55,7 +56,7 @@ public:
    short contaminants;
    int initial_length;
    int clear_length;
-   string quality;
+   uint8_t* quality;
    bool clip_found;
    RL_MID rlmid;
    /*----Lucy clips---*/
@@ -103,8 +104,8 @@ public:
    short index_i7; /*index of TrueSex adapter i7*/
    bool fwd_adapter; /*does the read contain a forward or reverse complement of the adapter*/
    bool partial_adapter; /*does read contain partial or full TrueSec adaptor*/
-   sff_read_header rh;
-   sff_read_data rd;
+   
+   
    int tru_sec_found;
     
    
@@ -133,7 +134,7 @@ public:
    int roche_left_clip;
    int roche_right_clip;
    
-   
+   string illumina_quality_string;
     
     
 private:

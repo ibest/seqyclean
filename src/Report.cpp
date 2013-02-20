@@ -17,7 +17,7 @@ void MakeClipPoints()
                 int b = reads[ff]->read.length() - reads[ff]->v_end;
                 if( a >= b ) //Vector is on the right side
                 {
-                        reads[ff]->rclip = min4(reads[ff]->rlmid.rmid_start,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip, reads[ff]->v_start );
+                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip, reads[ff]->v_start) ) );
 
                         if( reads[ff]->rclip == reads[ff]->lucy_rclip )
                         {
@@ -48,7 +48,7 @@ void MakeClipPoints()
                 }
                 else //Vector is on the left side
                 {
-                        reads[ff]->rclip = min3(reads[ff]->rlmid.rmid_start,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip );
+                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
 
                         if( reads[ff]->rclip == reads[ff]->lucy_rclip )
                         {
@@ -98,7 +98,7 @@ void MakeClipPoints()
                     
                 if( a >= b ) //Vector is on the right side
                 {
-                    reads[ff]->rclip = min3(reads[ff]->rlmid.rmid_start,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos, reads[ff]->v_start );
+                    reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->v_start) );
 
                     if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                     {
@@ -119,7 +119,7 @@ void MakeClipPoints()
                 }
                 else //Vector is on the left side
                 {
-                    reads[ff]->rclip = min( reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos ) );
+                    reads[ff]->rclip = min( reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start ,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos ) );
 
                     if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                     {
@@ -155,7 +155,7 @@ void MakeClipPoints()
        {
            if (reads[ff]->discarded == 0)
            {
-                reads[ff]->rclip = min3(reads[ff]->rlmid.rmid_start,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip );
+                reads[ff]->rclip = min( reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length()  : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
                 
                 if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                 {
@@ -195,7 +195,7 @@ void MakeClipPoints()
            if(reads[ff]->discarded == 0)
            {    
                
-                reads[ff]->rclip = min( reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos ) );
+                reads[ff]->rclip = min( reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start ,reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos ) );
                 
                 if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                 {
@@ -217,6 +217,7 @@ void MakeClipPoints()
            {
                reads[ff]->lclip = reads[ff]->rclip = 1;
            }
+           
        }
     }
 }
@@ -232,7 +233,8 @@ void MakeReport(string rep_file_name) {
     for(int ff = 0; ff < (int)reads.size(); ff++)
     {
                 
-       reads[ff]->readID[0] == '@' ?  fputs((reads[ff]->readID.substr(1, reads[ff]->readID.length() - 1 )).c_str(), rep_file ) : fputs(reads[ff]->readID.c_str(), rep_file );
+       //reads[ff]->readID[0] == '@' ?  fputs((reads[ff]->readID.substr(1, reads[ff]->readID.length() - 1 )).c_str(), rep_file ) : fputs(reads[ff]->readID.c_str(), rep_file );
+       fputs(reads[ff]->readID, rep_file );
        fputs("\t", rep_file );
                 
        fputs( reads[ff]->lclip == 0 ? "1" : itoa(reads[ff]->lclip,new char[5],10),  rep_file ); //Left clip point
@@ -367,89 +369,6 @@ void MakeReport(string rep_file_name) {
     
 }
 
-void MakeLucyReport() {
-    
-    map<string, vector<string> > lucy;//[24];
-    map<string, vector<string> >::iterator it_lucy;
-    
-    std::fstream infile;
-    /*Open given file:*/
-    infile.open("lucy.seq");
-    std::string str;
-    cout << "Parsing screening file " << "lucy.seq" << endl;
-    
-    while ( getline(infile, str) ) {
-        if(str.substr(0,1) == ">") {
-                vector<string> lucy_data;
-                split_str( str, lucy_data, " ");
-                lucy.insert(std::pair<string, vector<string> >(lucy_data[0].substr(1,lucy_data[0].length() - 1), lucy_data));
-                continue;
-        }
-        
-    }
-    
-    /*Making a report*/
-    FILE* rep_file;
-    rep_file = fopen( "LucyReport.csv", "w");
-    fputs("ReadID\tdiscarded\tIZ_lclip\tL_lclip\tldiff\tIZ_rclip\tL_rclip\trdiff\tlucy_lclip\tlucy_rclip\n", rep_file );
-    
-    for(int i=0; i<(int)reads.size(); i++) {
-        if(reads[i]->readID[0] == '@') {
-                fputs((reads[i]->readID.substr(1, reads[i]->readID.length() - 1 )).c_str(), rep_file );
-        } else {
-                fputs(reads[i]->readID.c_str(), rep_file );
-        }
-        
-        fputs("\t", rep_file );
-        fputs(itoa(reads[i]->discarded,new char[5],10),  rep_file );
-        fputs("\t", rep_file );
-        fputs(itoa(reads[i]->lucy_lclip,new char[5],10),  rep_file );
-        //cout << reads[i]->lucy_lclip << endl;
-        fputs("\t", rep_file );
-        
-        it_lucy = lucy.find(reads[i]->readID.substr(1,reads[i]->readID.length()-1));
-        if(it_lucy != lucy.end()) {
-            fputs( (*it_lucy).second[4].c_str(),  rep_file );
-            
-            fputs("\t", rep_file );
-            fputs(itoa( reads[i]->lucy_lclip - atoi((*it_lucy).second[4].c_str() ) ,new char[5],10),  rep_file );
-            fputs("\t", rep_file );
-        } else {
-            fputs( "0",  rep_file );
-            fputs("\t", rep_file );
-            fputs(itoa(reads[i]->lucy_lclip,new char[5],10),  rep_file );
-            fputs("\t", rep_file );
-        }
-        
-        
-        
-        fputs(itoa(reads[i]->lucy_rclip,new char[5],10),  rep_file );
-        fputs("\t", rep_file );
-        
-        it_lucy = lucy.find(reads[i]->readID.substr(1,reads[i]->readID.length()-1));
-        
-        cout << reads[i]->readID.substr(1,reads[i]->readID.length()-1) << endl;
-        
-        if(it_lucy != lucy.end()) {
-            cout << (*it_lucy).second[4].c_str() << endl;
-            fputs( (*it_lucy).second[5].c_str(),  rep_file );
-            fputs("\t", rep_file );
-            fputs(itoa( reads[i]->lucy_rclip - atoi((*it_lucy).second[5].c_str()) ,new char[5],10),  rep_file );
-            //fputs("\t", rep_file );
-        } else {
-            fputs( "0",  rep_file );
-            fputs("\t", rep_file );
-            fputs(itoa(reads[i]->lucy_rclip,new char[5],10),  rep_file );
-            //fputs("\t", rep_file );
-        }
-        
-        fputc( '\n', rep_file );
-        
-    }
-    
-    fclose(rep_file);
-    
-}
 
 void WriteToFASTQ(string file_name) {
     FILE* output_file;
@@ -468,27 +387,29 @@ void WriteToFASTQ(string file_name) {
                 continue;
             }
             
-            if(reads[i]->readID[0] != '@')
-                reads[i]->readID = "@" + reads[i]->readID;
+            string read_id_to_write = string(reads[i]->readID);
+            if(read_id_to_write[0] != '@')
+                read_id_to_write = "@" + read_id_to_write;
             
             if( reads[i]->lclip >= reads[i]->rclip ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             if( reads[i]->lclip >= (int)reads[i]->read.length() ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             if( reads[i]->rclip > (int)reads[i]->read.length() ) {reads[i]->rclip = reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
             reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
-            reads[i]->quality = reads[i]->quality.substr(0,reads[i]->rclip) ; 
+            string quality = string((char*)reads[i]->quality); 
+            quality = quality.substr(0,reads[i]->rclip) ; 
             reads[i]->read = reads[i]->read.substr( reads[i]->lclip-1, reads[i]->read.length() - reads[i]->lclip-1 );
-            reads[i]->quality = reads[i]->quality.substr( reads[i]->lclip-1, reads[i]->quality.length() - reads[i]->lclip-1 );
+            quality = quality.substr( reads[i]->lclip-1, quality.length() - reads[i]->lclip-1 );
             
             if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
-            fputs( reads[i]->readID.c_str(), output_file );
+            fputs( read_id_to_write.c_str(), output_file );
             fputc( '\n', output_file );
             fputs( reads[i]->read.c_str(), output_file );
             fputc( '\n', output_file );
             fputc( '+', output_file );
             fputc( '\n', output_file );
-            fputs( reads[i]->quality.c_str(), output_file );
+            fputs( quality.c_str(), output_file );
             fputc( '\n', output_file );
         } 
     }
@@ -550,11 +471,12 @@ void MakeLucyReport2(char *filename, vector<Read*>& reads) {
     
     for(int i=0; i<(int)reads.size(); i++) 
     {
-        if(reads[i]->readID[0] == '@') {
+        /*if(reads[i]->readID[0] == '@') {
                 fputs((reads[i]->readID.substr(1, reads[i]->readID.length() - 1 )).c_str(), rep_file );
         } else {
                 fputs(reads[i]->readID.c_str(), rep_file );
-        }
+        }**/
+        fputs(reads[i]->readID, rep_file );
         
         fputs("\t", rep_file );
         fputs(itoa(reads[i]->lucy_lclip == 0 ? 1 : reads[i]->lucy_lclip, new char[5],10),  rep_file );
@@ -591,8 +513,9 @@ void MakeLucyFastq(string custom_file_name) {
                 continue;
             }
             
-            if(reads[i]->readID[0] != '@')
-                reads[i]->readID = "@" + reads[i]->readID;
+            string read_id_to_write = reads[i]->readID;
+            if(read_id_to_write[0] != '@')
+                read_id_to_write = "@" + read_id_to_write;
             
             reads[i]->lclip = reads[i]->lucy_lclip;
             reads[i]->rclip = reads[i]->lucy_rclip;
@@ -616,9 +539,10 @@ void MakeLucyFastq(string custom_file_name) {
             
             
             reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
-            reads[i]->quality = reads[i]->quality.substr(0,reads[i]->rclip) ; 
+            string quality = string((char*)reads[i]->quality);
+            quality = quality.substr(0,reads[i]->rclip) ; 
             reads[i]->read = reads[i]->read.substr( reads[i]->lclip-1, reads[i]->read.length() - reads[i]->lclip-1 );
-            reads[i]->quality = reads[i]->quality.substr( reads[i]->lclip-1, reads[i]->quality.length() - reads[i]->lclip-1 );
+            quality = quality.substr( reads[i]->lclip-1, quality.length() - reads[i]->lclip-1 );
             
             if( reads[i]->read.length() < 50 ) 
             {
@@ -636,13 +560,13 @@ void MakeLucyFastq(string custom_file_name) {
                 reads[i]->left_trimmed_by_quality = 1;
             }
             
-            fputs( reads[i]->readID.c_str(), output_file );
+            fputs( read_id_to_write.c_str(), output_file );
             fputc( '\n', output_file );
             fputs( reads[i]->read.c_str(), output_file );
             fputc( '\n', output_file );
             fputc( '+', output_file );
             fputc( '\n', output_file );
-            fputs( reads[i]->quality.c_str(), output_file );
+            fputs( quality.c_str(), output_file );
             fputc( '\n', output_file );
         } 
     }
@@ -723,8 +647,8 @@ void MakeFinalStatistics( fstream &sum_stat )
        
        
     }
-    /*
     
+    /*
     stat_str = "====================Summary Statistics====================\n" +
                 ("Reads analyzed: " +  i2str(reads.size(),new char[15],10)  + ", Bases:" +  i2str(bases_anal, new char[25],10)  + "\n") +
                 "Found ->\n" +
@@ -753,7 +677,7 @@ void MakeFinalStatistics( fstream &sum_stat )
     cout << stat_str;
     sum_stat << stat_str;
     **/
-    /*
+    
     
     cout << "====================Summary Statistics====================\n";
     sum_stat << "====================Summary Statistics====================\n";
@@ -847,7 +771,7 @@ void MakeFinalStatistics( fstream &sum_stat )
     
     cout << "Average read length: " << avg_read_len << " bp\n";
     sum_stat << "Average read length: " << avg_read_len << "\n";
-    */
+    
     cout << "==========================================================\n";
     sum_stat << "==========================================================\n";
 }

@@ -154,26 +154,34 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
 
         //Create new read
         Read *read = new Read();
-        //memcpy(read.rh,rh,sizeof(rh));
-        //read->rh = rh;
-        read->readID = string(rh.name);
+        
+         
+        read->readID = (char *) malloc( rh.name_len * sizeof(char) );
+        //read->readID = rh.name;
+        memcpy(read->readID, rh.name, (size_t) rh.name_len);
+        //printf("%s\n",read->readID);
         read->initial_length = nbases;
         read->read = string(bases);
         uint8_t quality_char;
+        read->quality = (uint8_t*)malloc(sizeof(uint8_t)*nbases);
         for (int j = 0; j < nbases; j++) 
         {
            quality_char = (quality[j] <= 93 ? quality[j] : 93) + 33;
-           read->quality += quality_char;
+           read->quality[j] = quality_char;
         }
        
-        read->rd = rd;
+        //read->rd = rd;
         read->flowgram = new uint16_t[h.flow_len];
         for(int j=0; j<h.flow_len; j++) {
                 read->flowgram[j] = rd.flowgram[j];
                 
         }
         
-        read->flow_index = rd.flow_index;
+        read->flow_index = (uint8_t*)malloc(sizeof(uint8_t)*nbases);
+        for(int j=0; j<nbases; j++) {
+                read->flow_index[j] = rd.flow_index[j];
+                
+        }
         
         read->roche_left_clip = (int) max(1, max(rh.clip_qual_left, rh.clip_adapter_left)) - 1;
         read->roche_right_clip = (int) min( (rh.clip_qual_right    == 0 ? rh.nbases : rh.clip_qual_right   ), (rh.clip_adapter_right == 0 ? rh.nbases : rh.clip_adapter_right) );
@@ -200,11 +208,13 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         if ( keep_fastq_orig == true )
             construct_fastq_entry(fastq_fp, name, bases, quality, nbases);
 
-        //free(name);
-        //free(bases);
-        //free(quality);
-        //free_sff_read_header(&rh);
-        //free_sff_read_data(&rd);
+        free(name);
+        free(bases);
+        free(quality);
+        free_sff_read_header(&rh);
+        free_sff_read_data(&rd);
+        
+        
     }
     
     read_manifest(sff_fp);
@@ -282,27 +292,11 @@ void process_fastq_to_sff(char *sff_file) {
         
         sff_read_header readHeader;
         readHeader.nbases = reads[i]->read.length();
-        
-        readHeader.name = (char*)(reads[i]->readID).c_str();
+        readHeader.name = (char*)malloc(sizeof(char)*strlen(reads[i]->readID));
+        readHeader.name = reads[i]->readID;
+        //printf("%s\n",reads[i]->readID);
         readHeader.name_len = strlen(readHeader.name);
     
-        readHeader.header_len = sizeof(readHeader.name_len)
-                                    + sizeof(readHeader.nbases)
-                                    + sizeof(readHeader.clip_qual_left)
-                                    + sizeof(readHeader.clip_qual_right)
-                                    + sizeof(readHeader.clip_adapter_left)
-                                    + sizeof(readHeader.clip_adapter_right)
-                                    + (sizeof(char) * readHeader.name_len);
-    
-    
-    
-    if ( !( readHeader.header_len % 8 == 0) )
-    {
-      int remainder = 8 - (readHeader.header_len % 8);
-      for(int i=0; i< remainder; ++i)
-        readHeader.header_len += 1;
-    }
-        
         /*Working with clip points*/
         if(reads[i]->discarded == 1) 
         {
@@ -325,7 +319,7 @@ void process_fastq_to_sff(char *sff_file) {
             //reads[i]->rh.clip_adapter_left = reads[i]->lclip;//reads[i]->rlmid.lmid_end;
             //reads[i]->rh.clip_adapter_right = reads[i]->rclip;//reads[i]->rlmid.rmid_start;
             
-            readHeader.clip_qual_left = reads[i]->lclip;;
+            readHeader.clip_qual_left = reads[i]->lclip;
             readHeader.clip_qual_right = reads[i]->rclip;
             
             readHeader.clip_adapter_left = reads[i]->lclip;
@@ -333,13 +327,55 @@ void process_fastq_to_sff(char *sff_file) {
             
         }
         
-        write_sff_read_header(sff_fp, &(readHeader));
+        readHeader.header_len = sizeof(readHeader.name_len)
+                                    + sizeof(readHeader.nbases)
+                                    + sizeof(readHeader.clip_qual_left)
+                                    + sizeof(readHeader.clip_qual_right)
+                                    + sizeof(readHeader.clip_adapter_left)
+                                    + sizeof(readHeader.clip_adapter_right)
+                                    + (sizeof(char) * readHeader.name_len);
+    
+    
+    
+        if ( !( readHeader.header_len % 8 == 0) )
+        {
+                int remainder = 8 - (readHeader.header_len % 8);
+                for(int i=0; i< remainder; ++i)
+                        readHeader.header_len += 1;
+        }
         
-        write_sff_read_data(sff_fp,  &(reads[i]->rd), htobe16(ch.flow_len), htobe32(readHeader.nbases));
+        
+        
+        
+        
+        sff_read_data readData;
+        readData.bases = (char*)reads[i]->read.c_str();
+        //printf("%d %d\n", reads[i]->initial_length, reads[i]->read.length());
+        readData.flow_index = reads[i]->flow_index;
+        readData.flowgram = reads[i]->flowgram;
+        
+        readData.quality = (uint8_t*)malloc(sizeof(uint8_t)*(readHeader.nbases));
+        int j=0;
+        for(j=0; j<readHeader.nbases; ++j)
+        {
+            readData.quality[j] = reads[i]->quality[j] - 33;
+            
+           // printf("%c",readData.quality[j]);
+        }
+        //readData.quality[j] = '\0';
+        
+        
+        
+        
+        write_sff_read_header(sff_fp, &(readHeader));
+        write_sff_read_data(sff_fp,  &(readData), htobe16(ch.flow_len), htobe32(readHeader.nbases));
         //free(rd.bases);
-        //free(rd.flow_index);
-        //free(rd.flowgram);
-        //free(rd.quality);
+        free(readData.flow_index);
+        free(readData.flowgram);
+        free(readData.quality);
+        //free(reads[i]->flow_index);
+        //free(reads[i]->flowgram);
+        
         
         //free(&rd);
         //free(&h);

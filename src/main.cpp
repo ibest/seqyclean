@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.0 (2013-02-03)"; 
+string version = "1.3.1 (2013-02-21)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -1535,7 +1535,7 @@ void ClearNNs( vector<Read*>& reads )
                 for(int s=0; s<10; s++) 
                 {
                         TrimNs(reads[ii]->read);
-                        reads[ii]->quality = reads[ii]->quality.substr(0, reads[ii]->read.length());
+                        reads[ii]->illumina_quality_string = reads[ii]->illumina_quality_string.substr(0, reads[ii]->read.length());
                         reads[ii]->clear_length = reads[ii]->read.length();
                 }
          }
@@ -1587,10 +1587,14 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads)
            record_block.push_back(line); /*Quality scores*/
            
            Read* read = new Read();
-           read->readID = record_block[0];
+           read->readID = (char*)record_block[0].c_str();
            read->initial_length = record_block[1].length();
            read->read = record_block[1];
-           read->quality = record_block[3];
+           read->quality = (uint8_t*)malloc(sizeof(uint8_t)*record_block[3].length());
+           for(int jj=0; jj<record_block[3].length();++jj)
+           {
+               read->quality[jj] = record_block[3][jj];
+           }
                         
            counter++;
            
@@ -1836,10 +1840,10 @@ void IlluminaDynamic()
                         ii=0;
            
                         Read *read1 = new Read();
-                        read1->readID = record_block1[0];
+                        read1->illumina_readID = record_block1[0];
                         read1->initial_length = record_block1[1].length();
                         read1->read = record_block1[1];
-                        read1->quality = line1;
+                        read1->illumina_quality_string = line1;
                         pe1_bases_anal += read1->read.length();
                         
                         if(read1->initial_length <= minimum_read_length)
@@ -1851,10 +1855,10 @@ void IlluminaDynamic()
                         
           
                         Read *read2 = new Read();
-                        read2->readID = record_block2[0];
+                        read2->illumina_readID = record_block2[0];
                         read2->initial_length = record_block2[1].length();
                         read2->read = record_block2[1];
-                        read2->quality = line2;
+                        read2->illumina_quality_string = line2;
                         pe2_bases_anal += read2->read.length();
                         
                         if(read2->initial_length <= minimum_read_length)
@@ -1909,9 +1913,9 @@ void IlluminaDynamic()
                                     }
                                     
                                     read1->read = read1->read.substr(0 , read1->rclip );
-                                    read1->quality = read1->quality.substr(0,read1->rclip) ; 
+                                    read1->illumina_quality_string = read1->illumina_quality_string.substr(0,read1->rclip) ; 
                                     read1->read = read1->read.substr( read1->lclip, read1->rclip - read1->lclip );
-                                    read1->quality = read1->quality.substr( read1->lclip, read1->rclip - read1->lclip );
+                                    read1->illumina_quality_string = read1->illumina_quality_string.substr( read1->lclip, read1->rclip - read1->lclip );
                  
                                     if(  read2->rclip < read2->initial_length  )
                                     {
@@ -1925,9 +1929,9 @@ void IlluminaDynamic()
                                     }
                                         
                                     read2->read = read2->read.substr(0 , read2->rclip );
-                                    read2->quality = read2->quality.substr(0,read2->rclip) ; 
+                                    read2->illumina_quality_string = read2->illumina_quality_string.substr(0,read2->rclip) ; 
                                     read2->read = read2->read.substr( read2->lclip, read2->read.length() - read2->lclip );
-                                    read2->quality = read2->quality.substr( read2->lclip, read2->quality.length() - read2->lclip );
+                                    read2->illumina_quality_string = read2->illumina_quality_string.substr( read2->lclip, read2->illumina_quality_string.length() - read2->lclip );
         	
                                     if (!shuffle_flag)
                                     {
@@ -1966,9 +1970,9 @@ void IlluminaDynamic()
                                 {
                                     
                                     read1->read = read1->read.substr(0 , read1->rclip );
-                                    read1->quality = read1->quality.substr(0,read1->rclip) ; 
+                                    read1->illumina_quality_string = read1->illumina_quality_string.substr(0,read1->rclip) ; 
                                     read1->read = read1->read.substr( read1->lclip, read1->rclip - read1->lclip );
-                                    read1->quality = read1->quality.substr( read1->lclip, read1->rclip - read1->lclip );
+                                    read1->illumina_quality_string = read1->illumina_quality_string.substr( read1->lclip, read1->rclip - read1->lclip );
                  
                                     WriteSEFile( se_file, read1 );
                                     se_pe1_accept_cnt+=1;
@@ -1979,9 +1983,9 @@ void IlluminaDynamic()
                                 {
                                       
                                     read2->read = read2->read.substr(0 , read2->rclip );
-                                    read2->quality = read2->quality.substr(0,read2->rclip) ; 
+                                    read2->illumina_quality_string = read2->illumina_quality_string.substr(0,read2->rclip) ; 
                                     read2->read = read2->read.substr( read2->lclip, read2->read.length() - read2->lclip );
-                                    read2->quality = read2->quality.substr( read2->lclip, read2->quality.length() - read2->lclip );
+                                    read2->illumina_quality_string = read2->illumina_quality_string.substr( read2->lclip, read2->illumina_quality_string.length() - read2->lclip );
         	 
                                     WriteSEFile( se_file, read2 );
                                     se_pe2_accept_cnt +=1;
@@ -2025,13 +2029,13 @@ void IlluminaDynamic()
                         if (read2->right_trimmed_by_vector == 1) right_trimmed_by_vector2++;
           
                         record_block1.clear();
-                        read1->readID.clear(); 
-                        read1->quality.clear();
+                        read1->illumina_readID.clear(); 
+                        read1->illumina_quality_string.clear();
                         read1->read.clear();
           
                         record_block2.clear();
-                        read2->readID.clear(); 
-                        read2->quality.clear();
+                        read2->illumina_readID.clear(); 
+                        read2->illumina_quality_string.clear();
                         read2->read.clear();
           
                         delete read1;
@@ -2166,7 +2170,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     
     if((int)read->read.length() > minimum_read_length)
     {
-        read->quality = read->quality.substr(0, read->read.length());
+        read->illumina_quality_string = read->illumina_quality_string.substr(0, read->read.length());
         read->clear_length = read->read.length();
     }
     else
@@ -2605,10 +2609,10 @@ void IlluminaDynamicSE()
                         ii=0;
            
                         Read *read = new Read();
-                        read->readID = record_block[0];
+                        read->illumina_readID = record_block[0];
                         read->initial_length = record_block[1].length();
                         read->read = record_block[1];
-                        read->quality = line;
+                        read->illumina_quality_string = line;
                         se_bases_anal += read->read.length();
           
                         //Serial realization - useful for debugging if something does not work as expected
@@ -2644,9 +2648,9 @@ void IlluminaDynamicSE()
                                     }
                                     
                                     read->read = read->read.substr(0 , read->rclip );
-                                    read->quality = read->quality.substr(0,read->rclip) ; 
+                                    read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
                                     read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
-                                    read->quality = read->quality.substr( read->lclip, read->rclip - read->lclip );
+                                    read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
                  
                                     WriteSEFile(se_output_file, read);
                                     se_accept_cnt+=1;
@@ -2682,8 +2686,8 @@ void IlluminaDynamicSE()
                         if (read->right_trimmed_by_vector == 1) right_trimmed_by_vector++;
           
                         record_block.clear();
-                        read->readID.clear(); 
-                        read->quality.clear();
+                        read->illumina_readID.clear(); 
+                        read->illumina_quality_string.clear();
                         read->read.clear();
           
                         delete read;
