@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.1 (2013-02-21)"; 
+string version = "1.3.2 (2013-02-20)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -311,11 +311,11 @@ int main(int argc, char *argv[])
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) 
            {
-                max_a_error = atof(argv[++i]);
-                if ((i+1)<argc && isdigit(argv[i+1][0])) 
-                {
-                    max_e_at_ends = atof(argv[++i]);
-                }
+               max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );//atof(argv[++i]);
+               if ((i+1)<argc && isdigit(argv[i+1][0])) 
+               {
+                  max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );//atof(argv[++i]);
+               }
            }
            
            continue;
@@ -843,10 +843,10 @@ int main(int argc, char *argv[])
                 {
                         cout << "Quality trimming: YES" << endl;
                         sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximim error: " << max_a_error << endl;
-                        sum_stat << "Maximim error: " << max_a_error << endl;
-                        cout << "Maximim error at ends: " << max_e_at_ends << endl;
-                        sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
+                        cout << "Maximim error: " << -10*log10(max_a_error) << endl;
+                        sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
+                        cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
                 }
                 else
                 {
@@ -946,10 +946,10 @@ int main(int argc, char *argv[])
                 {
                         cout << "Quality trimming: YES" << endl;
                         sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximim error: " << max_a_error << endl;
-                        sum_stat << "Maximim error: " << max_a_error << endl;
-                        cout << "Maximim error at ends: " << max_e_at_ends << endl;
-                        sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
+                        cout << "Maximim error: " << -10*log10(max_a_error) << endl;
+                        sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
+                        cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
                 }
                 else
                 {
@@ -1038,10 +1038,10 @@ int main(int argc, char *argv[])
         {
            cout << "Quality trimming: YES" << endl;
            sum_stat << "Quality trimming: YES" << endl;
-           cout << "Maximim error: " << max_a_error << endl;
-           sum_stat << "Maximim error: " << max_a_error << endl;
-           cout << "Maximim error at ends: " << max_e_at_ends << endl;
-           sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
+           cout << "Maximim error: " << -10*log10(max_a_error) << endl;
+           sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
+           cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+           sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
         }
         else
         {
@@ -1099,10 +1099,10 @@ int main(int argc, char *argv[])
         {
            cout << "Quality trimming: YES" << endl;
            sum_stat << "Quality trimming: YES" << endl;
-           cout << "Maximim error: " << max_a_error << endl;
-           sum_stat << "Maximim error: " << max_a_error << endl;
-           cout << "Maximim error at ends: " << max_e_at_ends << endl;
-           sum_stat << "Maximim error at ends: " << max_e_at_ends << endl;
+           cout << "Maximim error: " << -10*log10(max_a_error) << endl;
+           sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
+           cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+           sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
         }
         else
         {
