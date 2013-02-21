@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.2 (2013-02-20)"; 
+string version = "1.3.3 (2013-02-21)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -1055,7 +1055,7 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        roche_output_file_name = output_prefix + (output_fastqfile_flag ? "_.fastq" : "_.sff" );
+        roche_output_file_name = output_prefix + (output_fastqfile_flag ? ".fastq" : ".sff" );
         roche_rep_file_name = output_prefix + "_Report.tsv" ;
         
         cout << "Report file: " << roche_rep_file_name << "\n";
