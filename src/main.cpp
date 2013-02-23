@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.4 (2013-02-22)"; 
+string version = "1.3.5 (2013-02-23)"; 
 
 /*Data structures*/
 vector<Read*> reads;
