@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/SmallTest.sff -o ../test/test -qual 30 30</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/SmallTest.sff -o ../test/test -qual 20 20</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../../454Reads.RL1.sff -o ../../test_454Reads.RL1</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../../Small454Test.sff -o ../test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../../454Reads.RL1.sff -o ../../test_454Reads.RL1 -qual -w0 25 -w1 5</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../testIllumina</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../testIllumina -qual 20 20</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20 -w0 25 -w1 5</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20 -w0 15 -w1 2</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20 -w0 50 -w1 10</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina -c ../test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -12 ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -12 ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -12 ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5 -minimum_read_length 30</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -U ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5 -minimum_read_length 30</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina -c ../test_data/vectors.fasta</runcommand>
+        <runcommand>./seqyclean -U ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5 -minimum_read_length 30</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

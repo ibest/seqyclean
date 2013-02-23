@@ -333,7 +333,7 @@ void process_fastq_to_sff(char *sff_file) {
             
         }
         
-        readHeader.header_len = sizeof(readHeader.name_len)
+        readHeader.header_len = sizeof(readHeader.header_len) +sizeof(readHeader.name_len)
                                     + sizeof(readHeader.nbases)
                                     + sizeof(readHeader.clip_qual_left)
                                     + sizeof(readHeader.clip_qual_right)

@@ -302,6 +302,9 @@ vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
 string stat_str, tsv_stat_str;
 
+int window0 = 50;
+int window1 = 10;
+
 int main(int argc, char *argv[]) 
 {
     double start, finish, elapsed;
@@ -337,6 +340,43 @@ int main(int argc, char *argv[])
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
                   max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );//atof(argv[++i]);
+                  if((i+1)<argc && (string(argv[i+1]) == "-w0") )
+                  {
+                        ++i;
+                        if ((i+1)<argc && isdigit(argv[i+1][0])) 
+                        {
+                                window0 = atoi(argv[++i]);
+                                if((i+1)<argc && (string(argv[i+1]) == "-w1") )
+                                {
+                                        ++i;
+                                        window1 = atoi(argv[++i]);
+                                }
+                        }
+                  }
+               } else if((i+1)<argc && (string(argv[i+1]) == "-w0") )
+               {
+                        ++i;
+                        if ((i+1)<argc && isdigit(argv[i+1][0])) 
+                        {
+                                window0 = atoi(argv[++i]);
+                                if((i+1)<argc && (string(argv[i+1]) == "-w1") )
+                                {
+                                        ++i;
+                                        window1 = atoi(argv[++i]);
+                                }
+                        }
+               } 
+           } else if((i+1)<argc && (string(argv[i+1]) == "-w0") )
+           {
+               ++i;
+               if ((i+1)<argc && isdigit(argv[i+1][0])) 
+               {
+                   window0 = atoi(argv[++i]);
+                   if((i+1)<argc && (string(argv[i+1]) == "-w1") )
+                   {
+                       ++i;
+                       window1 = atoi(argv[++i]);
+                   }
                }
            }
            
@@ -592,7 +632,7 @@ int main(int argc, char *argv[])
            
            continue;
         } 
-        if( string(argv[i]) == "-12" ) //single-end file mode
+        if( string(argv[i]) == "-U" ) //single-end file mode
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
@@ -2356,20 +2396,21 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
            if( read->v_start >= (read->read.length() - read->v_end) ) //Vector is on the right side
            {
                read->lclip = max(read->lucy_lclip, 1);
-               if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip > 1)) 
+               if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
                {
                    read->left_trimmed_by_quality = 1;
                }
             
                read->rclip = min(read->tru_sec_pos, min(read->lucy_rclip, read->v_start) );
                     
-               if( read->rclip == read->lucy_rclip )
+               if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
                }
                else if(read->rclip == read->tru_sec_pos)
                {
-                 read->right_trimmed_by_adapter = 1;
+                 if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                        read->right_trimmed_by_adapter = 1;
                }
                else if(read->rclip == read->v_start)
                {
@@ -2380,7 +2421,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
            {
                read->lclip = max(read->lucy_lclip,max(1, read->v_end ) );
            
-               if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip > 1)) 
+               if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
                {
                  read->left_trimmed_by_quality = 1;
                }
@@ -2390,13 +2431,14 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                }
            
                read->rclip = min(read->tru_sec_pos, read->lucy_rclip );
-               if(read->rclip == read->lucy_rclip)
+               if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
                }
                else
                {
-                 read->right_trimmed_by_adapter = 1;
+                   if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                        read->right_trimmed_by_adapter = 1;
                }
            }
            
@@ -2404,33 +2446,35 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
         else
         {
             read->lclip = max(read->lucy_lclip, 1);
-            if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip > 1))  read->left_trimmed_by_quality = 1;
+            if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1))  read->left_trimmed_by_quality = 1;
             
             read->rclip = min(read->tru_sec_pos, read->lucy_rclip );
-            if(read->rclip == read->lucy_rclip)
+            if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
             {
               read->right_trimmed_by_quality = 1;
             }
             else
             {
-              read->right_trimmed_by_adapter = 1;
+              if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                        read->right_trimmed_by_adapter = 1;
             }
         }
     }
     else if( (qual_trim_flag ) && (!vector_flag) )
     {
         read->lclip = max(read->lucy_lclip,1);
-        if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip > 1)) 
+        if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
            read->left_trimmed_by_quality = 1;
                 
         read->rclip = min(read->tru_sec_pos,read->lucy_rclip );
-        if(read->rclip == read->lucy_rclip)
+        if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
         {
            read->right_trimmed_by_quality = 1;
         }
         else if(read->rclip == read->tru_sec_pos)
         {
-           read->right_trimmed_by_adapter = 1;
+           if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                        read->right_trimmed_by_adapter = 1;
         }
                 
         if(read->rclip >= read->clear_length)
@@ -2448,7 +2492,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                     
           if(read->rclip == read->tru_sec_pos)
           {
-             read->right_trimmed_by_adapter = 1;
+             if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                        read->right_trimmed_by_adapter = 1;
           }
           else if(read->rclip == read->v_start)
           {
@@ -2466,7 +2511,10 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
           }
            
           read->rclip = read->tru_sec_pos;
-          read->right_trimmed_by_adapter = 1;
+          if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+          {
+                        read->right_trimmed_by_adapter = 1;
+          }
        }
                 
        if(read->rclip >= read->clear_length)
@@ -2477,7 +2525,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     else if((!qual_trim_flag) && (!vector_flag))
     {
        read->rclip = read->tru_sec_pos;
-       if(read->rclip < read->clear_length)
+       if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
           read->right_trimmed_by_adapter = 1;
             
        read->lclip = 1;
@@ -2649,8 +2697,7 @@ void IlluminaDynamicSE()
                         //Read ID
                         rep_file << read->illumina_readID << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
                         
-                        if( !VectorOnlyFlag )  
-                        {
+                        
                                 if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
                                 if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
                                 if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
@@ -2692,7 +2739,7 @@ void IlluminaDynamicSE()
                  
                                 } 
                                 
-                        } 
+                         
                         
                         if (read->tru_sec_found == 1) ts_adapters++;
                         if (read->vector_found == 1) num_vectors++;

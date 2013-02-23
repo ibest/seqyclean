@@ -596,8 +596,8 @@ void default_windows(void)
 {
 	/* 3 fixed window sizes: 100, 30, 5 */
 	num_windows = 2;
-	windows[0] = 50;
-	windows[1] = 10;
+	windows[0] = window0;//50;//window0;
+	windows[1] = window1;//10;//window1;
 
 	/* error criteria for windows are looser than for full-length */
 	/* clean range */
