@@ -624,8 +624,8 @@ void MakeFinalStatistics( fstream &sum_stat )
        
        if( reads[i]->discarded == 0 )
        {
-           cnt_avg_len+=1;
-           avg_read_len = GetAvg( avg_read_len, cnt_avg_len, reads[i]->read.length() );
+           //cnt_avg_len+=1;
+           //avg_read_len = GetAvg( avg_read_len, cnt_avg_len, reads[i]->read.length() );
            
            //Average right and left trimmed lengths
            if( reads[i]->initial_length > reads[i]->rclip )
@@ -724,8 +724,8 @@ void MakeFinalStatistics( fstream &sum_stat )
         sum_stat << "By vector: " <<  left_trimmed_by_vector << "\n";
     }
     
-    cout << "Average left trimmed length: " << avg_left_trim_len << " bp\n";
-    sum_stat << "Average left trimmed length: " << avg_left_trim_len << " bp\n";
+    cout << "Average left trim length: " << avg_left_trim_len << " bp\n";
+    sum_stat << "Average left trim length: " << avg_left_trim_len << " bp\n";
     
     cout << "Reads right trimmed ->" << "\n";
     sum_stat << "Reads right trimmed ->" << "\n";
@@ -745,8 +745,8 @@ void MakeFinalStatistics( fstream &sum_stat )
         sum_stat << "By vector: " <<  right_trimmed_by_vector << "\n";
     }
     
-    cout << "Average right trimmed length: " << avg_right_trim_len << " bp\n";
-    sum_stat << "Average right trimmed length: " << avg_right_trim_len << " bp\n";
+    cout << "Average right trim length: " << avg_right_trim_len << " bp\n";
+    sum_stat << "Average right trim length: " << avg_right_trim_len << " bp\n";
     
     cout << "Reads discarded: " << discarded << " ->\n";
     sum_stat << "Reads discarded: " << discarded << " ->\n";
@@ -768,9 +768,6 @@ void MakeFinalStatistics( fstream &sum_stat )
     
     cout << "Average trimmed length: " << avg_trim_len << " bp\n";
     sum_stat << "Average trimmed length: " << avg_trim_len << " bp\n";
-    
-    cout << "Average read length: " << avg_read_len << " bp\n";
-    sum_stat << "Average read length: " << avg_read_len << "\n";
     
     cout << "==========================================================\n";
     sum_stat << "==========================================================\n";

@@ -159,6 +159,12 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         read->readID = (char *) malloc( rh.name_len * sizeof(char) );
         //read->readID = rh.name;
         memcpy(read->readID, rh.name, (size_t) rh.name_len);
+        
+        //if (rh.name == "GJESF0N01AWIJ4N01BWO5P") 
+        //{
+        //    printf("!!!");
+        //}
+        
         //printf("%s\n",read->readID);
         read->initial_length = nbases;
         read->read = string(bases);

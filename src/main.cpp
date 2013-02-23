@@ -1951,13 +1951,13 @@ void IlluminaDynamic()
                                     if( read1->initial_length > (int)read1->read.length() )
                                     {
                                         cnt1_avg+=1;
-                                        avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg, read1->initial_length - read1->read.length() );
+                                        avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg, /*read1->initial_length - read1->read.length()*/ read1->rclip - read1->lclip );
                                     }
                  
                                     if( read2->initial_length > (int)read2->read.length() )
                                     {
                                         cnt2_avg+=1;
-                                        avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->initial_length - read2->read.length() );
+                                        avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, /*read2->initial_length - read2->read.length()*/ read2->rclip - read2->lclip );
                                     }
                  
                                     cnt_avg_len1 +=1; cnt_avg_len2 +=1;
@@ -2659,7 +2659,7 @@ void IlluminaDynamicSE()
                                     if( read->initial_length > (int)read->read.length() )
                                     {
                                         cnt_avg+=1;
-                                        avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, read->initial_length - read->read.length() );
+                                        avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, /*read->initial_length - read->read.length()*/read->rclip - read->lclip );
                                     }
                  
                                     cnt_avg_len+=1; 
@@ -2819,12 +2819,12 @@ string PrintIlluminaStatistics(int cnt1, int cnt2,
                         ( (qual_trim_flag || vector_flag) ? "Reads left trimmed ->\n" : "" ) +
                         ( qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality1,new char[15],10) + "\n" : "" ) +
                         ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector1,new char[15],10) + "\n" : "" ) +
-                        "Average left trimmed length: " + double2str(avg_left_trim_len_pe1) + " bp\n" +
+                        "Average left trim length: " + double2str(avg_left_trim_len_pe1) + " bp\n" +
                         "Reads right trimmed ->\n" +
                         "By adapter: " +  i2str(right_trimmed_by_adapter1,new char[15],10) + "\n" +
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality1,new char[15],10) + "\n" : "") +
                         ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector1,new char[15],10) + "\n" : "" ) +
-                        "Average right trimmed length: " + double2str(avg_right_trim_len_pe1) + " bp\n" +
+                        "Average right trim length: " + double2str(avg_right_trim_len_pe1) + " bp\n" +
                         "PE1 reads discarded: " + i2str(discarded1,new char[15],10) + "\n" +
                         ( contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant1,new char[15],10) + "\n" : "" ) +
                         "By read length: " +  i2str(discarded_by_read_length1,new char[15],10) + "\n" +
@@ -2837,12 +2837,12 @@ string PrintIlluminaStatistics(int cnt1, int cnt2,
                         ( (qual_trim_flag || vector_flag ) ? "Reads left trimmed ->\n" : "" ) +
                         (qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality2,new char[15],10) + "\n" : "" ) +
                         ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector2,new char[15],10) + "\n" : "" ) +
-                        ("Average left trimmed length: " + double2str(avg_left_trim_len_pe2) + " bp\n" ) +
+                        ("Average left trim length: " + double2str(avg_left_trim_len_pe2) + " bp\n" ) +
                         "Reads right trimmed ->\n" +
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality2,new char[15],10) + "\n" : "") +
                         (vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector2,new char[15],10) + "\n" : "" ) +
                         "By adapter: " +  i2str(right_trimmed_by_adapter2,new char[15],10) + "\n" +
-                        ("Average right trimmed length: " + double2str(avg_right_trim_len_pe2) + " bp\n") +
+                        ("Average right trim length: " + double2str(avg_right_trim_len_pe2) + " bp\n") +
                         "PE2 reads discarded:" + i2str(discarded2,new char[15],10) + "\n" +
                         (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant2,new char[15],10) + "\n" : "" ) +
                         "By read length: " +  i2str(discarded_by_read_length2,new char[15],10) + "\n" + 
@@ -2852,9 +2852,9 @@ string PrintIlluminaStatistics(int cnt1, int cnt2,
                         ("Single Reads PE1 kept: " + i2str(se_pe1_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe1_bases_kept,new char[15],10) +"\n") +
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
-                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n") +
-                        ("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
-                        ("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
+                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n");// +
+                       // ("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
+                       // ("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
             
     
      return stat_str;
@@ -2950,9 +2950,9 @@ string PrintIlluminaStatisticsTSV(int cnt1, int cnt2,
                        (i2str(se_pe1_accept_cnt,new char[15],10) + "\t" + i2str(se_pe1_bases_kept,new char[15],10) +"\t") +
                        (i2str(se_pe2_accept_cnt,new char[15],10) + "\t" + i2str(se_pe2_bases_kept,new char[15],10) +"\t") +
                        (double2str(avg_trim_len_pe1) + "\t") +
-                       (double2str(avg_trim_len_pe2) + "\t") +
-                       (double2str(avg_len_pe1) + "\t") +
-                       (double2str(avg_len_pe2));
+                       (double2str(avg_trim_len_pe2) + "\t");// +
+                      // (double2str(avg_len_pe1) + "\t") +
+                      // (double2str(avg_len_pe2));
             
     
      return stat_str_tsv;
@@ -2992,12 +2992,12 @@ string PrintIlluminaStatisticsSE(int cnt, int se_bases_anal,
                         ( (qual_trim_flag || vector_flag) ? "Reads left trimmed ->\n" : "" ) +
                         ( qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality,new char[15],10) + "\n" : "" ) +
                         ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
-                        "Average left trimmed length: " + double2str(avg_left_trim_len_se) + " bp\n" +
+                        "Average left trim length: " + double2str(avg_left_trim_len_se) + " bp\n" +
                         "Reads right trimmed ->\n" +
                         "By adapter: " +  i2str(right_trimmed_by_adapter,new char[15],10) + "\n" +
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality,new char[15],10) + "\n" : "") +
                         ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
-                        "Average right trimmed length: " + double2str(avg_right_trim_len_se) + " bp\n" +
+                        "Average right trim length: " + double2str(avg_right_trim_len_se) + " bp\n" +
                         "PE1 reads discarded: " + i2str(discarded,new char[15],10) + "\n" +
                         ( contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant,new char[15],10) + "\n" : "" ) +
                         "By read length: " +  i2str(discarded_by_read_length,new char[15],10) + "\n" +
@@ -3006,8 +3006,8 @@ string PrintIlluminaStatisticsSE(int cnt, int se_bases_anal,
                         ("Pairs kept: " + i2str(se_accept_cnt,new char[15],10) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_kept,new char[15],10) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
                         ("Pairs discarded: " + i2str(se_discard_cnt,new char[15],10) + ", " + double2str( (double)se_discard_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_discarded,new char[15],10) + ", " + double2str( (double)se_bases_discarded/(double)(se_bases_anal)*100) +  "%\n") +
                         ("Reads kept: " + i2str(se_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_bases_kept,new char[15],10) +"\n") +
-                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n") +
-                        ("Average read length: " + double2str(avg_len_se) + " bp\n");
+                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n");// +
+                       // ("Average read length: " + double2str(avg_len_se) + " bp\n");
     
     return ans;
    
