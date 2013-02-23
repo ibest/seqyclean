@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.3 (2013-02-21)"; 
+string version = "1.3.4 (2013-02-22)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -231,6 +231,28 @@ string PrintIlluminaStatisticsTSV(int cnt1, int cnt2,
                                     int se_pe2_accept_cnt, int se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2
+                                    
+                                    );
+
+
+string PrintIlluminaStatisticsTSVSE(int cnt,
+                                    int se_bases_anal, 
+                                    int ts_adapters, 
+                                    int num_vectors,  
+                                    int num_contaminants, 
+                                    int left_trimmed_by_quality, 
+                                    int left_trimmed_by_vector, 
+                                    double avg_left_trim_len_se, 
+                                    int right_trimmed_by_adapter, 
+                                    int right_trimmed_by_quality,
+                                    int right_trimmed_by_vector,
+                                    double avg_right_trim_len_se,
+                                    int discarded, 
+                                    int discarded_by_contaminant, 
+                                    int discarded_by_read_length,
+                                    int se_accept_cnt, 
+                                    double avg_trim_len_se
+                                   
                                     
                                     );
 
@@ -574,6 +596,7 @@ int main(int argc, char *argv[])
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
+              illumina_se_flag = true;
               illumina_flag = true;
               illumina_file_name_se = argv[++i];
               se_names.push_back(illumina_file_name_se);
@@ -899,7 +922,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQ_max_avg_error\tQ_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tAvgLenPE1\tAvgLenPE2\n";
+            sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQ_max_avg_error\tQ_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_SEReadsWVector\tSEReadsWContam_found\tPerc_SEReadsWContam\tSELeftTrimmedQual\tSELeftTrimmedVector\tSEAvgLeftTrimLen\tSERightTrimmedAdap\tSERightTrimmedQual\tSERightTrimmedVector\tSEAvgRightTrimLen\tSEDiscardedTotal\tSEDiscByContam\tSEDiscByLength\tSEReadsKept\tPerc_Kept\tBases\tPerc_Bases\tAvgTrimmedLenSE\n";
     
                 cout << "Provided data file(s) : " << endl;
                 sum_stat << "Provided data file(s) : " << endl;
@@ -1186,6 +1209,7 @@ int main(int argc, char *argv[])
     
     VectorSeqs.clear();
     VectorDict.clear();
+    ContDict.clear();
     
     GET_TIME(finish);
     elapsed = finish - start;
@@ -1876,8 +1900,8 @@ void IlluminaDynamic()
           
                         //Report
                         //Read ID
-                        rep_file1 << read1->readID << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << read1->tru_sec_pos << "\t" << read1->b_adapter << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << "NA" << "\n";
-                        rep_file2 << read2->readID << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << read2->tru_sec_pos << "\t" << read2->b_adapter << "\t" << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << "NA" << "\n";
+                        rep_file1 << read1->illumina_readID << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << read1->tru_sec_pos << "\t" << read1->b_adapter << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << "NA" << "\n";
+                        rep_file2 << read2->illumina_readID << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << read2->tru_sec_pos << "\t" << read2->b_adapter << "\t" << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << "NA" << "\n";
           
                         
                             if( read1->discarded_by_contaminant == 0)
@@ -1951,13 +1975,13 @@ void IlluminaDynamic()
                                     if( read1->initial_length > (int)read1->read.length() )
                                     {
                                         cnt1_avg+=1;
-                                        avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg, /*read1->initial_length - read1->read.length()*/ read1->rclip - read1->lclip );
+                                        avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg,  read1->rclip - read1->lclip );//read1->initial_length - read1->read.length()
                                     }
                  
                                     if( read2->initial_length > (int)read2->read.length() )
                                     {
                                         cnt2_avg+=1;
-                                        avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, /*read2->initial_length - read2->read.length()*/ read2->rclip - read2->lclip );
+                                        avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->rclip - read2->lclip );//read2->initial_length - read2->read.length()*
                                     }
                  
                                     cnt_avg_len1 +=1; cnt_avg_len2 +=1;
@@ -1965,7 +1989,7 @@ void IlluminaDynamic()
                                     avg_len_pe1 = GetAvg( avg_len_pe1, cnt_avg_len1, read1->read.length() );
                                     avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
                 
-                 
+                                        
                                 } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
                                 {
                                     
@@ -2198,7 +2222,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
     if( qual_trim_flag  ) 
     {
-       QualTrim( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
+       QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
        if (read->discarded_by_quality == 1)
        {
           read->discarded = 1;
@@ -2480,31 +2504,31 @@ string New2OldNbl(string header)
 
 void WritePEFile(fstream &pe_output_file, Read *read)
 {
-    pe_output_file << read->readID << endl;
+    pe_output_file << read->illumina_readID << endl;
     pe_output_file << read->read << endl;
     pe_output_file << '+' << endl;
-    pe_output_file << read->quality << endl;
+    pe_output_file << read->illumina_quality_string << endl;
 }
 
 void WriteShuffleFile(fstream &shuffle_output_file, Read *read1, Read *read2)
 {
-    shuffle_output_file << read1->readID << endl;
+    shuffle_output_file << read1->illumina_readID << endl;
     shuffle_output_file << read1->read << endl;
     shuffle_output_file << '+' << endl;
-    shuffle_output_file << read1->quality << endl;
+    shuffle_output_file << read1->illumina_quality_string << endl;
     
-    shuffle_output_file << read2->readID << endl;
+    shuffle_output_file << read2->illumina_readID << endl;
     shuffle_output_file << read2->read << endl;
     shuffle_output_file << '+' << endl;
-    shuffle_output_file << read2->quality << endl;
+    shuffle_output_file << read2->illumina_quality_string << endl;
 }
 
 void WriteSEFile(fstream &se_output_file, Read *read)
 {
-    se_output_file << read->readID << endl;
+    se_output_file << read->illumina_readID << endl;
     se_output_file << read->read << endl;
     se_output_file << '+' << endl;
-    se_output_file << read->quality << endl;
+    se_output_file << read->illumina_quality_string << endl;
     
     //fields1.clear(); fields2.clear();
 }
@@ -2623,7 +2647,7 @@ void IlluminaDynamicSE()
           
                         //Report
                         //Read ID
-                        rep_file << read->readID << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
+                        rep_file << read->illumina_readID << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
                         
                         if( !VectorOnlyFlag )  
                         {
@@ -2720,7 +2744,7 @@ void IlluminaDynamicSE()
                             {
                                 vector<string> t;
                                 split_str(st_str, t, "\n");
-                                for(int kk=0; kk<(int)t.size(); ++kk)
+                                for(int kk=0; kk<(int)t.size()+1; ++kk)
                                 {
                                    cout << "\033[A\033[2K";
                                    sum_stat << "\033[A\033[2K";
@@ -2762,7 +2786,7 @@ void IlluminaDynamicSE()
     
     vector<string> t;
     split_str(st_str, t, "\n");
-    for(int kk=0; kk<(int)t.size(); ++kk)
+    for(int kk=0; kk<(int)t.size()+1; ++kk)
     {
         cout << "\033[A\033[2K";
         sum_stat << "\033[A\033[2K";
@@ -2770,6 +2794,26 @@ void IlluminaDynamicSE()
     t.clear();
     
     cout << st_str;
+    
+    sum_stat_tsv << PrintIlluminaStatisticsTSVSE(cnt,
+                                    se_bases_anal, 
+                                    ts_adapters, 
+                                    num_vectors,  
+                                    num_contaminants, 
+                                    left_trimmed_by_quality, 
+                                    left_trimmed_by_vector, 
+                                    avg_left_trim_len_se, 
+                                    right_trimmed_by_adapter, 
+                                    right_trimmed_by_quality,
+                                    right_trimmed_by_vector,
+                                    avg_right_trim_len_se,
+                                    discarded, 
+                                    discarded_by_contaminant, 
+                                    discarded_by_read_length,
+                                    se_accept_cnt, 
+                                   avg_trim_len_se
+                            ) << endl;
+                 
     
     cout << "====================Done cleaning====================\n";  
     sum_stat << "====================Done cleaning====================\n";  
@@ -2852,9 +2896,9 @@ string PrintIlluminaStatistics(int cnt1, int cnt2,
                         ("Single Reads PE1 kept: " + i2str(se_pe1_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe1_bases_kept,new char[15],10) +"\n") +
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
-                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n");// +
-                       // ("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
-                       // ("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
+                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n")  + "\n\n";
+                        //("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
+                        //("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
             
     
      return stat_str;
@@ -2998,17 +3042,93 @@ string PrintIlluminaStatisticsSE(int cnt, int se_bases_anal,
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality,new char[15],10) + "\n" : "") +
                         ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
                         "Average right trim length: " + double2str(avg_right_trim_len_se) + " bp\n" +
-                        "PE1 reads discarded: " + i2str(discarded,new char[15],10) + "\n" +
+                        "SE reads discarded: " + i2str(discarded,new char[15],10) + "\n" +
                         ( contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant,new char[15],10) + "\n" : "" ) +
                         "By read length: " +  i2str(discarded_by_read_length,new char[15],10) + "\n" +
-                        "-----------------------------------------------------------\n" +
                         "----------------------Summary for SE----------------------\n" +
-                        ("Pairs kept: " + i2str(se_accept_cnt,new char[15],10) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_kept,new char[15],10) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
-                        ("Pairs discarded: " + i2str(se_discard_cnt,new char[15],10) + ", " + double2str( (double)se_discard_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_discarded,new char[15],10) + ", " + double2str( (double)se_bases_discarded/(double)(se_bases_anal)*100) +  "%\n") +
-                        ("Reads kept: " + i2str(se_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_bases_kept,new char[15],10) +"\n") +
-                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n");// +
+                        ("Reads kept: " + i2str(se_accept_cnt,new char[15],10) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_kept,new char[15],10) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
+                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n") + "\n";// +
                        // ("Average read length: " + double2str(avg_len_se) + " bp\n");
     
     return ans;
    
+}
+
+
+string PrintIlluminaStatisticsTSVSE(int cnt,
+                                    int se_bases_anal, 
+                                    int ts_adapters, 
+                                    int num_vectors,  
+                                    int num_contaminants, 
+                                    int left_trimmed_by_quality, 
+                                    int left_trimmed_by_vector, 
+                                    double avg_left_trim_len_se, 
+                                    int right_trimmed_by_adapter, 
+                                    int right_trimmed_by_quality,
+                                    int right_trimmed_by_vector,
+                                    double avg_right_trim_len_se,
+                                    int discarded, 
+                                    int discarded_by_contaminant, 
+                                    int discarded_by_read_length,
+                                    int se_accept_cnt, 
+                                    double avg_trim_len_se
+                                   
+                                    
+                                    )
+{
+    
+        string filename_str;
+    
+        for(int i=0; i<(int)pe1_names.size(); ++i)
+        {
+            filename_str += string(se_names[i]);
+        }
+        
+        string stat_str_tsv =   version + "\t" + 
+                                filename_str + "\t" +
+                                (trim_adapters_flag  ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? int2str(KMER_SIZE) : "NA") + "\t" +
+                                ( vector_flag ? int2str(DISTANCE) : "NA") +"\t" +
+                                ( contaminants_flag ? "YES" : "NO") +"\t" +
+                                ( contaminants_flag ? int2str(KMER_SIZE_CONT) : "NA") +"\t" +
+                                (qual_trim_flag ? "YES" : "NO") +"\t" +
+                                (qual_trim_flag ? double2str(max_a_error) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(max_e_at_ends) : "NA")+ "\t" +
+                                output_prefix +"\t" +
+                                rep_file_name1+ "\t" +
+                                ( !shuffle_flag ?  se_output_filename : "NA" ) +"\t"+
+                                int2str(max_al_mism) +"\t" +
+                                int2str(minimum_read_length)+ "\t" +
+                                ( new2old_illumina ? "YES" : "NO") + "\t"; 
+                   
+    
+    
+        stat_str_tsv += int2str(cnt)   + "\t" + //reads analyzed
+                        int2str(se_bases_anal) + "\t"  + //bases
+                       i2str(ts_adapters,new char[15],10) + "\t" //adapters
+                        + double2str( (double)ts_adapters/(double)cnt*100.0) + "\t" + //perc adapters
+                       ( vector_flag ? i2str(num_vectors,new char[15],10) + "\t" + double2str( (double)num_vectors/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc vectors
+                       ( contaminants_flag ? i2str(num_contaminants,new char[15],10) + "\t" //cont
+                        + double2str( (double)num_contaminants/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc cont
+                       ( qual_trim_flag ? i2str(left_trimmed_by_quality,new char[15],10) + "\t" : "NA\t" ) +  //left trimmed qual
+                       ( vector_flag ? i2str(left_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) + //left trimmed vect
+                       double2str(avg_left_trim_len_se) + "\t" + //avg left trim len
+                       i2str(right_trimmed_by_adapter,new char[15],10) + "\t" + 
+                       ( qual_trim_flag ? i2str(right_trimmed_by_quality,new char[15],10) + "\t" : "NA\t") +
+                       ( vector_flag ? i2str(right_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) +
+                       double2str(avg_right_trim_len_se) + "\t" +
+                       i2str(discarded,new char[15],10) + "\t" + //discard
+                       ( contaminants_flag ? i2str(discarded_by_contaminant,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(discarded_by_read_length,new char[15],10) + "\t" +
+                       i2str(se_accept_cnt,new char[15],10) + "\t" + //se reads kept
+                        double2str( (double)se_accept_cnt/(double)cnt*100.0) + "\t" //perc kept
+                        + i2str(se_bases_kept,new char[15],10) + "\t" + //bases kept
+                        double2str( (double)se_bases_kept/(double)se_bases_anal*100.0) + "\t" + //%
+                       double2str(avg_trim_len_se);
+            
+    
+     return stat_str_tsv;
+    
+    
 }

@@ -309,6 +309,7 @@ void default_windows(void);
 void grim(int length, int *left, int *right);
 
 int QualTrim( Read* read, double max_avg_err, double end_lim );
+int QualTrimIllumina( Read* read, double max_avg_err, double end_lim );
 
 
 #endif	/* QUALTRIM_H */

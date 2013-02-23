@@ -699,5 +699,60 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
 
 	return 0;
 
+}
+
+
+int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
+{       
+   // cout << qual_str << endl;
+        //FILE * pFile;
+	int quality[10000];
+	int qual_count, i;//length, i;
+	int left, right;
+	//char line_buff[4096] /*seq_name[80]*/, *sptr;
+
+        max_avg_error = max_avg_err;
+        end_limit = end_lim;
+        
+        i=0;
+        for( i=0; i< read->read.length(); i++ ) 
+        {
+            quality[i] = GetNum(read->illumina_quality_string[i]) - 33;
+        }
+        
+        qual_count = i;
+        
+        /* trim for quality */
+	conf_val_raw = quality;
+	grim(qual_count, &left, &right);
+        
+        if (right > 0)
+	{
+           left++;
+	   right++;
+	}
+
+	/* display seq name and clean range */
+	if (right - left < /*99*/minimum_read_length)
+		left = right = 0;
+        
+        if(left == 0 && right == 0) 
+        {
+            read->discarded = 1;
+            read->discarded_by_read_length = 1;
+            read->lucy_lclip = 1;
+            read->lucy_rclip = 1;
+        } 
+        else 
+        {
+            left == 0 ? read->lucy_lclip = 0 : read->lucy_lclip = left;
+            right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right;
+        }
+	
+
+	return 0;
+
 }  /* main() */
+
+/* main() */
 //#endif

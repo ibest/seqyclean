@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/out.sff -d -o ../test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -d -o ../test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/SmallTest.sff -o ../test/test -d</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/SmallTest.sff -o ../test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/SmallTest.sff -o ../test/test -qual 30 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/SmallTest.sff -o ../test/test -qual 20 20</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../../454Reads.RL1.sff -o ../../test_454Reads.RL1</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../../Small454Test.sff -o ../test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../testIllumina</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../testIllumina -qual 20 20</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina -c ../test_data/vectors.fasta</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20</runcommand>
+        <runcommand>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina -c ../test_data/vectors.fasta</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

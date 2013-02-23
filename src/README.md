@@ -1,5 +1,5 @@
 Program SeqyClean
-Version: 1.3.3 (2013-02-21)
+Version: 1.3.4 (2013-02-22)
 Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
 Usage:  
 Roche 454:
