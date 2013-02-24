@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.5 (2013-02-23)"; 
+string version = "1.3.7 (2013-02-24)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -809,7 +809,7 @@ int main(int argc, char *argv[])
     t_prefix.clear();        
    
     string sum_stat_filename = output_prefix + "_SummaryStatistics.txt";
-    sum_stat.open(sum_stat_filename.c_str(),ios::out | ios::app);
+    sum_stat.open(sum_stat_filename.c_str(),ios::out);// | ios::app);
     sum_stat_filename = output_prefix + "_SummaryStatistics.tsv";
     sum_stat_tsv.open(sum_stat_filename.c_str(),ios::out);
     
@@ -2179,7 +2179,7 @@ void IlluminaDynamic()
     
     vector<string> t;
     split_str(st_str, t, "\n");
-    for(int kk=0; kk<(int)t.size(); ++kk)
+    for(int kk=0; kk<(int)t.size()+1; ++kk)
     {
        cout << "\033[A\033[2K";
        
@@ -2791,10 +2791,10 @@ void IlluminaDynamicSE()
                             {
                                 vector<string> t;
                                 split_str(st_str, t, "\n");
-                                for(int kk=0; kk<(int)t.size()+1; ++kk)
+                                for(int kk=0; kk<(int)t.size(); ++kk)
                                 {
                                    cout << "\033[A\033[2K";
-                                   sum_stat << "\033[A\033[2K";
+                                   //sum_stat << "\033[A\033[2K";
                                 }
                                 t.clear();
                             }
@@ -2833,14 +2833,15 @@ void IlluminaDynamicSE()
     
     vector<string> t;
     split_str(st_str, t, "\n");
-    for(int kk=0; kk<(int)t.size()+1; ++kk)
+    for(int kk=0; kk<(int)t.size(); ++kk)
     {
         cout << "\033[A\033[2K";
-        sum_stat << "\033[A\033[2K";
+        //sum_stat << "\033[A\033[2K";
     }
     t.clear();
     
     cout << st_str;
+    sum_stat << st_str;
     
     sum_stat_tsv << PrintIlluminaStatisticsTSVSE(cnt,
                                     se_bases_anal, 
@@ -2943,7 +2944,7 @@ string PrintIlluminaStatistics(int cnt1, int cnt2,
                         ("Single Reads PE1 kept: " + i2str(se_pe1_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe1_bases_kept,new char[15],10) +"\n") +
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
-                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n")  + "\n\n";
+                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n");
                         //("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
                         //("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
             
@@ -3094,7 +3095,7 @@ string PrintIlluminaStatisticsSE(int cnt, int se_bases_anal,
                         "By read length: " +  i2str(discarded_by_read_length,new char[15],10) + "\n" +
                         "----------------------Summary for SE----------------------\n" +
                         ("Reads kept: " + i2str(se_accept_cnt,new char[15],10) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_kept,new char[15],10) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
-                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n") + "\n";// +
+                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n");// +
                        // ("Average read length: " + double2str(avg_len_se) + " bp\n");
     
     return ans;
