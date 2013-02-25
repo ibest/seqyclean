@@ -281,7 +281,7 @@ void process_fastq_to_sff(char *sff_file) {
     sff_common_header ch;
     /* sff files are in big endian notation so adjust appropriately */
     ch.magic        = be32toh(h.magic);//be32toh(779314790);
-    printf("%d\n",h.index_offset );
+    //printf("%d\n",h.index_offset );
     ch.index_offset = be64toh(h.index_offset);//be64toh(15730032);
     ch.index_len    = be32toh(h.index_len);//be32toh(61870);
     ch.nreads       = be32toh(h.nreads);//be32toh(reads.size());
@@ -395,7 +395,7 @@ void process_fastq_to_sff(char *sff_file) {
         //free(&ch);
     }
     
-    printf("%d\n",ftell(sff_fp));
+    //printf("%d\n",ftell(sff_fp));
     write_manifest(sff_fp);
     
     fclose(sff_fp);
