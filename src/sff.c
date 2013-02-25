@@ -487,7 +487,7 @@ void read_manifest(FILE *fp)
         exit(1);
     }
 
-   fread(manifest, sizeof(char), ( sff_file_size - ftell( fp ) ), fp);
+   fread(manifest, sizeof(char), manifest_size, fp);
    
 }
 

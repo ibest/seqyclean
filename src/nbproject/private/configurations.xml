@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20 -w0 50 -w1 10</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -12 ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -12 ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -12 ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5 -minimum_read_length 30</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -U ../test_data/G-strain.100517_SNPSTER3_0617_61TK9AAXX.fastq -o ../testIllumina -qual 20 20 -w0 20 -w1 5 -minimum_read_length 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -U ../../seqyclean_test_data/ -o ../testIllumina -qual 20 20 -w0 20 -w1 5 -minimum_read_length 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../../../seqyclean_test_data/HVCR0MB01-MID.RL9.sff -o ../testsff/test</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -12 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../testIllumina -c ../test_data/vectors.fasta</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -U ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20 -w0 50 -w1 10</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/ -o ../test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/454Reads.RL1.sff -o ../test/454Reads.RL1_test</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/454Reads.RL1.sff -o ../test/454Reads.RL1_test -t 16</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe</runcommand>
+        <runcommand>./seqyclean -454 ../test_data/454Reads.RL1.sff -o ../test/454Reads.RL1_test -t 16</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

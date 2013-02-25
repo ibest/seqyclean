@@ -156,9 +156,7 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         Read *read = new Read();
         
          
-        read->readID = (char *) malloc( rh.name_len * sizeof(char) );
-        //read->readID = rh.name;
-        memcpy(read->readID, rh.name, (size_t) rh.name_len);
+       
         
         //if (rh.name == "GJESF0N01AWIJ4N01BWO5P") 
         //{
@@ -208,12 +206,18 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         }
         memset(name, '\0', (size_t) name_length);
         
+        read->readID = (char *) malloc( name_length * sizeof(char) );
+        //read->readID = rh.name;
+        memcpy( read->readID, rh.name, (size_t) name_length );
+        
         //strncpy(name, rh.name, (size_t) rh.name_len);
         strncpy(name, tstr.c_str(), (size_t)t_len);
         
+        //printf("%d\n",rh.header_len);
+        
         if ( keep_fastq_orig == true )
             construct_fastq_entry(fastq_fp, name, bases, quality, nbases);
-
+        //printf("%d\n",rh.name_len);
         free(name);
         free(bases);
         free(quality);
@@ -277,6 +281,7 @@ void process_fastq_to_sff(char *sff_file) {
     sff_common_header ch;
     /* sff files are in big endian notation so adjust appropriately */
     ch.magic        = be32toh(h.magic);//be32toh(779314790);
+    printf("%d\n",h.index_offset );
     ch.index_offset = be64toh(h.index_offset);//be64toh(15730032);
     ch.index_len    = be32toh(h.index_len);//be32toh(61870);
     ch.nreads       = be32toh(h.nreads);//be32toh(reads.size());
@@ -299,8 +304,11 @@ void process_fastq_to_sff(char *sff_file) {
         sff_read_header readHeader;
         readHeader.nbases = reads[i]->read.length();
         readHeader.name = (char*)malloc(sizeof(char)*strlen(reads[i]->readID));
-        readHeader.name = reads[i]->readID;
-        //printf("%s\n",reads[i]->readID);
+        memcpy( readHeader.name, reads[i]->readID, (size_t) strlen(reads[i]->readID) );
+        //readHeader.name = reads[i]->readID;
+        readHeader.name_len = strlen(reads[i]->readID);
+        //printf("%d\n",readHeader.name_len);
+        
         readHeader.name_len = strlen(readHeader.name);
     
         /*Working with clip points*/
@@ -333,7 +341,8 @@ void process_fastq_to_sff(char *sff_file) {
             
         }
         
-        readHeader.header_len = sizeof(readHeader.header_len) +sizeof(readHeader.name_len)
+        readHeader.header_len = sizeof(readHeader.header_len) 
+                                    + sizeof(readHeader.name_len)
                                     + sizeof(readHeader.nbases)
                                     + sizeof(readHeader.clip_qual_left)
                                     + sizeof(readHeader.clip_qual_right)
@@ -341,8 +350,8 @@ void process_fastq_to_sff(char *sff_file) {
                                     + sizeof(readHeader.clip_adapter_right)
                                     + (sizeof(char) * readHeader.name_len);
     
-    
-    
+    //printf("%d\n",readHeader.name_len);
+        
         if ( !( readHeader.header_len % 8 == 0) )
         {
                 int remainder = 8 - (readHeader.header_len % 8);
@@ -371,8 +380,6 @@ void process_fastq_to_sff(char *sff_file) {
         //readData.quality[j] = '\0';
         
         
-        
-        
         write_sff_read_header(sff_fp, &(readHeader));
         write_sff_read_data(sff_fp,  &(readData), htobe16(ch.flow_len), htobe32(readHeader.nbases));
         //free(rd.bases);
@@ -382,12 +389,13 @@ void process_fastq_to_sff(char *sff_file) {
         //free(reads[i]->flow_index);
         //free(reads[i]->flowgram);
         
-        
+        //printf("%d\n",sff_fp);
         //free(&rd);
         //free(&h);
         //free(&ch);
     }
     
+    printf("%d\n",ftell(sff_fp));
     write_manifest(sff_fp);
     
     fclose(sff_fp);
