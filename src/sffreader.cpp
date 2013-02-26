@@ -206,14 +206,12 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         }
         memset(name, '\0', (size_t) name_length);
         
-        read->readID = (char *) malloc( name_length * sizeof(char) );
+        read->readID = (char *) malloc( rh.name_len * sizeof(char) );
         //read->readID = rh.name;
-        memcpy( read->readID, rh.name, (size_t) name_length );
+        memcpy( read->readID, rh.name, (size_t) rh.name_len );
         
         //strncpy(name, rh.name, (size_t) rh.name_len);
         strncpy(name, tstr.c_str(), (size_t)t_len);
-        
-        //printf("%d\n",rh.header_len);
         
         if ( keep_fastq_orig == true )
             construct_fastq_entry(fastq_fp, name, bases, quality, nbases);
@@ -304,13 +302,14 @@ void process_fastq_to_sff(char *sff_file) {
         sff_read_header readHeader;
         readHeader.nbases = reads[i]->read.length();
         readHeader.name = (char*)malloc(sizeof(char)*strlen(reads[i]->readID));
-        memcpy( readHeader.name, reads[i]->readID, (size_t) strlen(reads[i]->readID) );
+        memcpy( readHeader.name, reads[i]->readID, (size_t) strlen(reads[i]->readID) );//This line causes a problem on slarti with sff_extract
         //readHeader.name = reads[i]->readID;
         readHeader.name_len = strlen(reads[i]->readID);
         //printf("%d\n",readHeader.name_len);
         
-        readHeader.name_len = strlen(readHeader.name);
+        //readHeader.name_len = strlen(readHeader.name);
     
+        //printf("%d\n",readHeader.name_len);
         /*Working with clip points*/
         if(reads[i]->discarded == 1) 
         {
@@ -375,7 +374,6 @@ void process_fastq_to_sff(char *sff_file) {
         {
             readData.quality[j] = reads[i]->quality[j] - 33;
             
-           // printf("%c",readData.quality[j]);
         }
         //readData.quality[j] = '\0';
         

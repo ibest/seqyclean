@@ -32,10 +32,10 @@
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 20 20 -w0 50 -w1 10</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/ -o ../test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/454Reads.RL1.sff -o ../test/454Reads.RL1_test</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/454Reads.RL1.sff -o ../test/454Reads.RL1_test -t 16</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -454 ../test_data/454Reads.RL1.sff -o ../test/454Reads.RL1_test -t 16</runcommand>
+        <runcommand>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
