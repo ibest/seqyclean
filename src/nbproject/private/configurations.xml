@@ -32,10 +32,10 @@
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 30 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 20 20</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 30 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/s_5_1_sequence.txt.gz -2 ../test_data/s_5_2_sequence.txt.gz -o ../test/testIllumina_pe_old -qual 30 30</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 30 30</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -1 ../test_data/s_5_1_sequence.txt.gz -2 ../test_data/s_5_2_sequence.txt.gz -o ../test/testIllumina_pe_old -qual 30 30</runcommand>
+        <runcommand>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 30 30</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

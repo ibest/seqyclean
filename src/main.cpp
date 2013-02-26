@@ -307,6 +307,7 @@ int window1 = 10;
 
 bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
+bool i64_flag = false;
 
 int main(int argc, char *argv[]) 
 {
@@ -488,6 +489,12 @@ int main(int argc, char *argv[])
               pcr_flag = true;
               pcr_file_name = argv[++i]; 
            }
+           continue;
+        }
+        if(string(argv[i]) == "-i64" )
+        {
+           i64_flag = true;
+           
            continue;
         }
         if(string(argv[i]) == "--serial" )
@@ -731,7 +738,7 @@ int main(int argc, char *argv[])
                 {
                     //Old headers == True
                     old_style_illumina_flag = true;
-                    phred_coeff_illumina = 64;
+                    
                 } else //if (fields.size() == 7)
                 {
                     //Old headers == False
@@ -772,7 +779,7 @@ int main(int argc, char *argv[])
                                 {
                                         //Old headers == True
                                         old_style_illumina_flag = true;
-                                        phred_coeff_illumina = 64;
+                                        
                                 } else if ( (fields1.size() == 10) && (fields2.size() == 10) )
                                 {
                                         //Old headers == False
@@ -792,7 +799,8 @@ int main(int argc, char *argv[])
         }
         
         
-        
+        if (i64_flag == true)
+           phred_coeff_illumina = 64;
         
     }
     if(roche_flag)
@@ -1009,6 +1017,12 @@ int main(int argc, char *argv[])
         
                 cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
                 sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+                
+                cout << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
+                sum_stat << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
+                
+                cout << "Q-value: " << phred_coeff_illumina << endl;
+                sum_stat << "Q-value: " << phred_coeff_illumina << endl;
         
         }
         else
@@ -1099,6 +1113,12 @@ int main(int argc, char *argv[])
         
                 cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
                 sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+                
+                cout << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
+                sum_stat << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
+                
+                cout << "Q-value: " << phred_coeff_illumina << endl;
+                sum_stat << "Q-value: " << phred_coeff_illumina << endl;
         }
         
     }
