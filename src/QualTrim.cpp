@@ -717,7 +717,7 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         i=0;
         for( i=0; i< read->read.length(); i++ ) 
         {
-            quality[i] = GetNum(read->illumina_quality_string[i]) - 33;
+            quality[i] = GetNum(read->illumina_quality_string[i]) - phred_coeff_illumina;//33 or 64 depending on new or old style;
         }
         
         qual_count = i;

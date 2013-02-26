@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.8 (2013-02-25)"; 
+string version = "1.3.9 (2013-02-26)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -304,6 +304,9 @@ string stat_str, tsv_stat_str;
 
 int window0 = 50;
 int window1 = 10;
+
+bool old_style_illumina_flag = false;
+int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
 
 int main(int argc, char *argv[]) 
 {
@@ -717,6 +720,24 @@ int main(int argc, char *argv[])
                   cout<< "Error: file " <<  se_names[i] << " does not exist\n";
                   return 0;
                 }
+                
+                //Test is the files provided are old-style illumina
+                std::string line;
+                igzstream in(se_names[i]); 
+                getline(in,line);
+                vector <string> fields;
+                split_str( line, fields, ":" );
+                if (fields.size() == 5)
+                {
+                    //Old headers == True
+                    old_style_illumina_flag = true;
+                    phred_coeff_illumina = 64;
+                } else //if (fields.size() == 7)
+                {
+                    //Old headers == False
+                    old_style_illumina_flag = false;
+                }
+                
             }
         } else 
         {
@@ -739,9 +760,39 @@ int main(int argc, char *argv[])
                                         cout<< "Error: file " <<  pe2_names[i] << " does not exist\n";
                                         return 0;
                                 }
+                                
+                                
+                                //Test is the files provided are old-style illumina
+                                std::string line1, line2;
+                                igzstream in1(pe1_names[i]); igzstream in2(pe2_names[i]); 
+                                getline(in1,line1); getline(in2,line2);
+                                vector <string> fields1, fields2;
+                                split_str( line1, fields1, ":" ); split_str( line2, fields2, ":" );
+                                if ( (fields1.size() == 5) && (fields2.size() == 5) )
+                                {
+                                        //Old headers == True
+                                        old_style_illumina_flag = true;
+                                        phred_coeff_illumina = 64;
+                                } else if ( (fields1.size() == 10) && (fields2.size() == 10) )
+                                {
+                                        //Old headers == False
+                                        old_style_illumina_flag = false;
+                                } else if ( fields1.size() != fields2.size() )
+                                {
+                                    cout << "Error: impossible to have both old & new illumina as paired-end reads" << endl;
+                                    return -1;
+                                } else 
+                                {
+                                    cout << "Warning: unknown header format in file: " << pe1_names[i] << ", " << pe2_names[i] << endl;
+                                     old_style_illumina_flag = false;
+                                }
                         }
+                        
                 }
         }
+        
+        
+        
         
     }
     if(roche_flag)
@@ -1040,7 +1091,7 @@ int main(int argc, char *argv[])
         
                 cout << "--------------------Other parameters--------------------\n";
                 sum_stat << "--------------------Other parameters--------------------\n";
-                cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+                cout <//Test is the files provided are old-style illumina< "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
                 sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
     
                 cout << "Minimum read length to accept: " << minimum_read_length << endl;
@@ -1849,8 +1900,8 @@ void IlluminaDynamic()
                         vector <string> fields1, fields2;
                         split_str( line1, fields1, " " );
                         split_str( line2, fields2, " " );
-                        
-                        if(fields1[0] != fields2[0])
+                        //cout << line1 << endl;
+                        if( (fields1[0] != fields2[0] ) && !old_style_illumina_flag)
                         {
                             cout << "Warning: read IDs do not match in input files: PE1-> " << pe1_names[jj] << ", PE2-> " << pe2_names[jj] << endl;
                             sum_stat << "Warning: read IDs do not match in input files: PE1-> " << pe1_names[jj] << ", PE2-> " << pe2_names[jj] << endl;
