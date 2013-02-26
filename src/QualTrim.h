@@ -315,6 +315,7 @@ extern int window0;
 extern int window1;
 
 extern int phred_coeff_illumina;
+extern bool old_style_illumina_flag;
 
 
 #endif	/* QUALTRIM_H */
