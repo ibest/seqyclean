@@ -377,7 +377,7 @@ void WriteToFASTQ(string file_name) {
     
     for(int i=0; i<(int)reads.size(); i++) 
     {
-        if( (reads[i]->discarded == 0) && (reads[i]->rclip > 1) && (reads[i]->lclip > 1) ) 
+        if( reads[i]->discarded == 0 ) 
         {
             if(reads[i]->lclip >= (int)reads[i]->read.length()  ) 
             {
@@ -391,9 +391,6 @@ void WriteToFASTQ(string file_name) {
             if(read_id_to_write[0] != '@')
                 read_id_to_write = "@" + read_id_to_write;
             
-            if( reads[i]->lclip >= reads[i]->rclip ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
-            if( reads[i]->lclip >= (int)reads[i]->read.length() ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
-            if( reads[i]->rclip > (int)reads[i]->read.length() ) {reads[i]->rclip = reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
             reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
             string quality = string((char*)reads[i]->quality); 
@@ -430,13 +427,6 @@ void WriteToSFF(string file_name) {
                 continue;
             }
             
-        /*    if(reads[i]->rclip > (int)reads[i]->read.length()  ) {
-                reads[i]->discarded = 1;
-                reads[i]->discarded_by_read_length = 1;
-                reads[i]->lclip = reads[i]->rclip = 1;
-                continue;
-            }
-        **/    
             if( reads[i]->lclip >= reads[i]->rclip  ) {
                 reads[i]->discarded = 1;
                 reads[i]->discarded_by_read_length = 1;
