@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.10 (2013-02-28)"; 
+string version = "1.3.11 (2013-03-02)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -1862,8 +1862,8 @@ void IlluminaDynamic()
     fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file;
     rep_file1.open(rep_file_name1.c_str(),ios::out);
     rep_file2.open(rep_file_name2.c_str(),ios::out);
-    rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tTruSeq_type\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVectorID\tVecStart\tVecEnd\tVecLen\n";
-    rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tTruSeq_type\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVectorID\tVecStart\tVecEnd\tVecLen\n";
+    rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
+    rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
     
     cout << "Running the Illumina cleaning process..." << endl;
     sum_stat << "Running the Illumina cleaning process..." << endl;
@@ -2007,9 +2007,7 @@ void IlluminaDynamic()
           
                         //Report
                         //Read ID
-                        rep_file1 << read1->illumina_readID << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << read1->tru_sec_pos << "\t" << read1->b_adapter << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << "NA" << "\n";
-                        rep_file2 << read2->illumina_readID << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << read2->tru_sec_pos << "\t" << read2->b_adapter << "\t" << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << "NA" << "\n";
-          
+                        
                         
                             if( read1->discarded_by_contaminant == 0)
                             {    
@@ -2131,7 +2129,9 @@ void IlluminaDynamic()
                                         pe_bases_discarded += read2->read.length();
                                 }
                         
-                        
+                        rep_file1 << read1->illumina_readID << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                        rep_file2 << read2->illumina_readID << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+          
           
                         if (read1->tru_sec_found == 1) ts_adapters1++;
                         if (read1->vector_found == 1) num_vectors1++;
@@ -2351,8 +2351,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
         found = read->read.find( ts_adapter );
         if( found != string::npos ) 
         {
-            cout << "i5 adapter in forward first found in the read #" << found << endl; 
-            sum_stat << "i5 adapter in forward first found in the read #" << found << endl; 
+            cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+            sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
             adapter_found = true;
             query_str = ts_adapter;
             read->tru_sec_pos = found;
@@ -2365,8 +2365,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
             found = read->read.find( ts_adapter );
             if( found != string::npos ) 
             {
-                cout << "i5 adapter in forward first found in the read #" << found << endl; 
-                sum_stat << "i5 adapter in forward first found in the read #" << found << endl; 
+                cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
                 adapter_found = true;
                 query_str = ts_adapter;
                 read->tru_sec_pos = found;
@@ -2379,8 +2379,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                 found = read->read.find( ts_adapter );
                 if( found != string::npos ) 
                 {
-                    cout << "i7 adapter in forward first found in the read #" << found << endl;
-                    sum_stat << "i7 adapter in forward first found in the read #" << found << endl;
+                    cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
                     adapter_found = true;
                     query_str = ts_adapter;
                     read->tru_sec_pos = found;
@@ -2393,8 +2393,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                     found = read->read.find( ts_adapter );
                     if( found != string::npos ) 
                     {
-                        cout << "i7 adapter in forward first found in the read #" << found << endl; 
-                        sum_stat << "i7 adapter in forward first found in the read #" << found << endl;
+                        cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                        sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
                         adapter_found = true;
                         query_str = ts_adapter;
                         read->tru_sec_pos = found;
@@ -2405,8 +2405,11 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                         if( vector_flag ) 
                            CheckVector(read); 
                         
-                        read->tru_sec_pos = read->clear_length;
+                        read->tru_sec_pos = -1;
                         read->tru_sec_found = 0;
+                        
+                        //In this case we have to establish right clip point:
+                        
          
                     }
                 }
@@ -2447,8 +2450,9 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
          
             if(!adp_found) 
             {
-                read->tru_sec_pos = read->clear_length;
+                read->tru_sec_pos = -1;
                 read->tru_sec_found = 0;
+                
             }
          
             delete izssaha;
@@ -2468,7 +2472,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                    read->left_trimmed_by_quality = 1;
                }
             
-               read->rclip = min(read->tru_sec_pos, min(read->lucy_rclip, read->v_start) );
+               read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, min(read->lucy_rclip, read->v_start) );
                     
                if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
                {
@@ -2476,7 +2480,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                }
                else if(read->rclip == read->tru_sec_pos)
                {
-                 if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                 if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
                }
                else if(read->rclip == read->v_start)
@@ -2497,14 +2501,14 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                  read->left_trimmed_by_vector = 1;
                }
            
-               read->rclip = min(read->tru_sec_pos, read->lucy_rclip );
+               read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, read->lucy_rclip );
                if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
                }
                else
                {
-                   if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                   if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
                }
            }
@@ -2515,14 +2519,14 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
             read->lclip = max(read->lucy_lclip, 1);
             if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1))  read->left_trimmed_by_quality = 1;
             
-            read->rclip = min(read->tru_sec_pos, read->lucy_rclip );
+            read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, read->lucy_rclip );
             if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
             {
               read->right_trimmed_by_quality = 1;
             }
             else
             {
-              if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+              if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
             }
         }
@@ -2533,14 +2537,14 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
         if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
            read->left_trimmed_by_quality = 1;
                 
-        read->rclip = min(read->tru_sec_pos,read->lucy_rclip );
+        read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos,read->lucy_rclip );
         if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
         {
            read->right_trimmed_by_quality = 1;
         }
         else if(read->rclip == read->tru_sec_pos)
         {
-           if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+           if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
         }
                 
@@ -2555,11 +2559,11 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
        {
           read->lclip = 1;
             
-          read->rclip = min(read->tru_sec_pos, read->v_start == -1 ? read->tru_sec_pos : read->v_start );
+          read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, read->v_start == -1 ? read->tru_sec_pos : read->v_start );
                     
           if(read->rclip == read->tru_sec_pos)
           {
-             if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+             if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
           }
           else if(read->rclip == read->v_start)
@@ -2577,8 +2581,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
              read->left_trimmed_by_vector = 1;
           }
            
-          read->rclip = read->tru_sec_pos;
-          if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+          read->rclip = read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos;
+          if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
           {
                         read->right_trimmed_by_adapter = 1;
           }
@@ -2591,8 +2595,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     }
     else if((!qual_trim_flag) && (!vector_flag))
     {
-       read->rclip = read->tru_sec_pos;
-       if( (read->rclip < read->initial_length) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+       read->rclip = read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos;
+       if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
           read->right_trimmed_by_adapter = 1;
             
        read->lclip = 1;
