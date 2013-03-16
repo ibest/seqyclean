@@ -168,8 +168,8 @@ uint8_t* get_read_quality_values(sff_read_data rd,
 
 
 /*Write functions*/
-void write_sff_common_header(FILE *fp, sff_common_header *h);
-void write_sff_read_header(FILE *fp, sff_read_header *h);
+void write_sff_common_header(FILE *fp, sff_common_header *ch);
+void write_sff_read_header(FILE *fp, sff_read_header *rh);
 
 void write_padding(FILE *fp, int header_size) ;
 void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t nbases);

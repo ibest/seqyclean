@@ -265,8 +265,6 @@ void process_fastq_to_sff(char *sff_file) {
         exit(1);
     }
     
-    h.nreads = htobe32(h.nreads);
-    
     sff_common_header ch;
     /* sff files are in big endian notation so adjust appropriately */
     ch.magic        = be32toh(h.magic);//be32toh(779314790);
@@ -305,16 +303,12 @@ void process_fastq_to_sff(char *sff_file) {
     {
         if (reads[i]->discarded == 1) { discarded_reads++; continue;}
         
-        ch.nreads += 1;
-        
         sff_read_header readHeader;
         readHeader.nbases = reads[i]->read.length();
         readHeader.name = (char*)malloc(sizeof(char)*strlen(reads[i]->readID));
         memcpy( readHeader.name, reads[i]->readID, (size_t) strlen(reads[i]->readID) );//This line causes a problem on slarti with sff_extract
         readHeader.name_len = strlen(reads[i]->readID);
-        //printf("%d\n",readHeader.name_len);
         
-        //printf("%d\n",readHeader.name_len);
         /*Working with clip points*/
         readHeader.clip_qual_left = reads[i]->lclip;
         readHeader.clip_qual_right = reads[i]->rclip;
@@ -343,7 +337,6 @@ void process_fastq_to_sff(char *sff_file) {
         
         sff_read_data readData;
         readData.bases = (char*)reads[i]->read.c_str();
-        //printf("%d %d\n", reads[i]->initial_length, reads[i]->read.length());
         readData.flow_index = reads[i]->flow_index;
         readData.flowgram = reads[i]->flowgram;
         
@@ -363,13 +356,8 @@ void process_fastq_to_sff(char *sff_file) {
         free(readData.flow_index);
         free(readData.flowgram);
         free(readData.quality);
-        //free(reads[i]->flow_index);
-        //free(reads[i]->flowgram);
         
-        //printf("%d\n",sff_fp);
-        //free(&rd);
-        //free(&h);
-        //free(&ch);
+        ch.nreads += 1;
     }
     
     ch.nreads       = be32toh(ch.nreads);//be32toh(reads.size());

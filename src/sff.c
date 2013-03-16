@@ -93,34 +93,32 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
   
 }
 
-void write_sff_common_header(FILE *fp, sff_common_header *h) {
-    
-    h->nreads = be32toh(h->nreads);
+void write_sff_common_header(FILE *fp, sff_common_header *ch) {
     
     /*size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );*/
-    fwrite(&(h->magic)          , sizeof(uint32_t), 1, fp);
-    fwrite(&(h->version)        , sizeof(char) , 4, fp);
-    fwrite(&(h->index_offset)   , sizeof(uint64_t), 1, fp);
-    fwrite(&(h->index_len)      , sizeof(uint32_t), 1, fp);
-    fwrite(&(h->nreads)         , sizeof(uint32_t), 1, fp);
-    fwrite(&(h->header_len)     , sizeof(uint16_t), 1, fp);
-    fwrite(&(h->key_len)        , sizeof(uint16_t), 1, fp);
-    fwrite(&(h->flow_len)       , sizeof(uint16_t), 1, fp);
-    fwrite(&(h->flowgram_format), sizeof(uint8_t) , 1, fp);
-    fwrite(h->flow             , sizeof(char), htobe16(h->flow_len)  , fp);
-    fwrite(h->key               , sizeof(char) , htobe16(h->key_len)  , fp);
+    fwrite(&(ch->magic)          , sizeof(uint32_t), 1, fp);
+    fwrite(&(ch->version)        , sizeof(char) , 4, fp);
+    fwrite(&(ch->index_offset)   , sizeof(uint64_t), 1, fp);
+    fwrite(&(ch->index_len)      , sizeof(uint32_t), 1, fp);
+    fwrite(&(ch->nreads)         , sizeof(uint32_t), 1, fp);
+    fwrite(&(ch->header_len)     , sizeof(uint16_t), 1, fp);
+    fwrite(&(ch->key_len)        , sizeof(uint16_t), 1, fp);
+    fwrite(&(ch->flow_len)       , sizeof(uint16_t), 1, fp);
+    fwrite(&(ch->flowgram_format), sizeof(uint8_t) , 1, fp);
+    fwrite(ch->flow             , sizeof(char), htobe16(ch->flow_len)  , fp);
+    fwrite(ch->key               , sizeof(char) , htobe16(ch->key_len)  , fp);
     
-    int header_size = sizeof(h->magic)
-                  + sizeof(*(h->version))*4
-                  + sizeof(h->index_offset) 
-                  + sizeof(h->index_len) 
-                  + sizeof(h->nreads) 
-                  + sizeof(h->header_len) 
-                  + sizeof(h->key_len)  
-                  + sizeof(h->flow_len) 
-                  + sizeof(h->flowgram_format)
-                  + (sizeof(char) * htobe16(h->flow_len) )
-                  + (sizeof(char) * htobe16(h->key_len) ) ;
+    int header_size = sizeof(ch->magic)
+                  + sizeof(*(ch->version))*4
+                  + sizeof(ch->index_offset) 
+                  + sizeof(ch->index_len) 
+                  + sizeof(ch->nreads) 
+                  + sizeof(ch->header_len) 
+                  + sizeof(ch->key_len)  
+                  + sizeof(ch->flow_len) 
+                  + sizeof(ch->flowgram_format)
+                  + (sizeof(char) * htobe16(ch->flow_len) )
+                  + (sizeof(char) * htobe16(ch->key_len) ) ;
     
     if ( !(header_size % PADDING_SIZE == 0) ) {
         write_padding(fp, header_size);

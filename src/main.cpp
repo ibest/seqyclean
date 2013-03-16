@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.11 (2013-03-02)"; 
+string version = "1.3.12 (2013-03-15)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -166,6 +166,7 @@ void *t_IlluminaDynRoutine( void *targs );
 string New2OldNbl(string header);
 void PolyATRoutine();
 void IlluminaDynamicSE();
+void MakeClipPointsIllumina(Read* read);
 
 string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2, 
                                     unsigned long long pe1_bases_anal, unsigned long long pe2_bases_anal, 
@@ -2003,32 +2004,53 @@ void IlluminaDynamic()
                         IlluminaDynRoutine(read1, adapter_found1, query_string1);
                         IlluminaDynRoutine(read2, adapter_found2, query_string2);
                         
+                        //Establishing the most conservative adapters
+                        if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1) )
+                        {
+                            //Take the most conservative position:
+                            if( read1->tru_sec_pos < read2->tru_sec_pos )
+                            {
+                                read2->tru_sec_pos = read1->tru_sec_pos;
+                            } 
+                            else
+                            {
+                                read1->tru_sec_pos = read2->tru_sec_pos;
+                            }
+                        }
+                        else if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 0) )
+                        {
+                            read2->tru_sec_pos = read1->tru_sec_pos;
+                        }
+                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 1) )
+                        {
+                            read1->tru_sec_pos = read2->tru_sec_pos;
+                        }
+                        
+                        MakeClipPointsIllumina(read1);
+                        MakeClipPointsIllumina(read2);
+                        
                         cnt1+=1; cnt2+=1;
           
-                        //Report
-                        //Read ID
-                        
-                        
-                            if( read1->discarded_by_contaminant == 0)
-                            {    
+                        if( read1->discarded_by_contaminant == 0)
+                        {    
                                 if( read1->lclip >= read1->rclip ) { read1->discarded = 1; read1->discarded_by_read_length = 1; } 
                                 if( read1->lclip >= (int)read1->read.length() ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
                                 if( read1->rclip > (int)read1->read.length() ) { read1->rclip = read1->read.length(); }
                                 if( (int)read1->read.length() < minimum_read_length ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
                                 if( (read1->rclip - read1->lclip) < minimum_read_length ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
-                            }
+                        }
                             
-                            if( read2->discarded_by_contaminant == 0)
-                            {
+                        if( read2->discarded_by_contaminant == 0)
+                        {
                                 if( read2->lclip >= read2->rclip ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
                                 if( read2->lclip >= (int)read2->read.length() ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
                                 if( read2->rclip > (int)read2->read.length() ) {read2->rclip = read2->read.length(); }
                                 if( (int)read2->read.length() < minimum_read_length ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
                                 if( (read2->rclip - read2->lclip) < minimum_read_length ) { read2->discarded = 1; read2->discarded_by_read_length = 1; }
-                            }
+                        }
 
-                                if( (read1->discarded == 0) && (read2->discarded == 0) )
-                                {
+                        if( (read1->discarded == 0) && (read2->discarded == 0) )
+                        {
                                         
                                     if(  read1->rclip < read1->initial_length  )
                                     {
@@ -2095,8 +2117,8 @@ void IlluminaDynamic()
                                     avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
                 
                                         
-                                } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
-                                {
+                        } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
+                        {
                                     
                                     read1->read = read1->read.substr(0 , read1->rclip );
                                     read1->illumina_quality_string = read1->illumina_quality_string.substr(0,read1->rclip) ; 
@@ -2108,8 +2130,8 @@ void IlluminaDynamic()
                                     se_pe1_bases_kept += read1->read.length();
                  
                                     
-                                } else if( (read1->discarded == 1) && (read2->discarded == 0) )
-                                {
+                        } else if( (read1->discarded == 1) && (read2->discarded == 0) )
+                        {
                                       
                                     read2->read = read2->read.substr(0 , read2->rclip );
                                     read2->illumina_quality_string = read2->illumina_quality_string.substr(0,read2->rclip) ; 
@@ -2121,7 +2143,7 @@ void IlluminaDynamic()
                                     se_pe2_bases_kept += read2->read.length();
                  
                                     
-                                }
+                        }
                                 else 
                                 {
                                         pe_discard_cnt+=1;
@@ -2459,6 +2481,12 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
         }
     }
             
+    
+    return 0;
+}
+
+void MakeClipPointsIllumina(Read* read) 
+{
     //Clip points
     if( (qual_trim_flag ) && (vector_flag ) )
     {
@@ -2602,7 +2630,6 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
        read->lclip = 1;
     }
     
-    return 0;
 }
 
 string New2OldNbl(string header)
