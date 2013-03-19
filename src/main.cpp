@@ -1751,13 +1751,12 @@ void PrintHelp() {
     cout << "Version: " << version << endl;
     cout << "**********************************************************************************************************************\n";        
     cout << "Program SeqyClean\n" 
-            "Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).\n" 
+            "Main purpose of this software is to clean NGS reads. It provide adapter/key/primers searching and quality trimming (LUCY).\n" 
             "Usage:\n"  
             "Roche 454:\n"
             "./seqyclean -454 input_file_name -o output_prefix\n"
 							"[-v vector_file]\n"
 							"[-c file_of_contaminants]\n"
-							"[-p pcr_file_name]\n"
 							"[-m file_of_RL_MIDS]\n" 
 							"[-k k_mer_size]\n"
 							"[-kc k_mer_size]\n"
