@@ -19,7 +19,6 @@
 #include "MainPipeLine.h"
 #include "TrimLucy.h"
 #include "sffreader.h"
-#include "Illumina.h"
 #include "rlmid.h"
 #include "gzstream.h"
 #include <sys/types.h>
@@ -33,7 +32,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.3.12 (2013-03-15)"; 
+string version = "1.3.13 (2013-03-21)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -95,9 +94,14 @@ bool trim_adapters_flag = true;
 /*Illumina*/
 bool illumina_flag = false;
 bool illumina_flag_se = false;
-char* illumina_file_name_R1;// = "";
-char* illumina_file_name_R2;// = "";
+char* illumina_file_name_R1;
+char* illumina_file_name_R2;
 char* illumina_file_name_se;
+string adapter_type_R1;
+string adapter_type_R2;
+string query_str1;
+string query_str2;
+
 
 /*Maximim number of mismatches allowed in alignment operation*/
 int max_al_mism = 5; /*5 mismatches by default*/
@@ -139,7 +143,7 @@ int vmr = 0;//15;
 int vml = 0;//15;
 int allowable_distance = 3;
 int minimum_read_length = 50;
-int KMER_SIZE_CONT = 15;
+short KMER_SIZE_CONT = 15;
 int pmax = 2;
 
 /*Other variables and parameters*/
@@ -167,6 +171,7 @@ string New2OldNbl(string header);
 void PolyATRoutine();
 void IlluminaDynamicSE();
 void MakeClipPointsIllumina(Read* read);
+void RocheRoutineDynamic();
 
 string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2, 
                                     unsigned long long pe1_bases_anal, unsigned long long pe2_bases_anal, 
@@ -911,7 +916,7 @@ int main(int argc, char *argv[])
         if(!illumina_se_flag)
         {
         
-            sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQ_max_avg_error\tQ_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tAvgLenPE1\tAvgLenPE2\n";
+            sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tAvgLenPE1\tAvgLenPE2\n";
     
                 cout << "Provided data files : " << endl;
                 sum_stat << "Provided data files : " << endl;
@@ -1022,7 +1027,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQ_max_avg_error\tQ_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_SEReadsWVector\tSEReadsWContam_found\tPerc_SEReadsWContam\tSELeftTrimmedQual\tSELeftTrimmedVector\tSEAvgLeftTrimLen\tSERightTrimmedAdap\tSERightTrimmedQual\tSERightTrimmedVector\tSEAvgRightTrimLen\tSEDiscardedTotal\tSEDiscByContam\tSEDiscByLength\tSEReadsKept\tPerc_Kept\tBases\tPerc_Bases\tAvgTrimmedLenSE\n";
+            sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_SEReadsWVector\tSEReadsWContam_found\tPerc_SEReadsWContam\tSELeftTrimmedQual\tSELeftTrimmedVector\tSEAvgLeftTrimLen\tSERightTrimmedAdap\tSERightTrimmedQual\tSERightTrimmedVector\tSEAvgRightTrimLen\tSEDiscardedTotal\tSEDiscByContam\tSEDiscByLength\tSEReadsKept\tPerc_Kept\tBases\tPerc_Bases\tAvgTrimmedLenSE\n";
     
                 cout << "Provided data file(s) : " << endl;
                 sum_stat << "Provided data file(s) : " << endl;
@@ -1119,11 +1124,13 @@ int main(int argc, char *argv[])
     }
     if(roche_flag)
     {
+        sum_stat_tsv << "Version\tFiles\tNUM_THREADS\tAdaptersTrimming\tVectorTrimming\tkmer_size\tDistance\tContamScr\tkmer_contam_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\tOutputFilename\tMax_align_mismatches\tMinReadLen\tReadsAnalyzed\tBases\tleft_mid_tags_found\tpercentage_left_mid_tags_found\tright_mid_tags_found\tpercentage_right_mid_tags_found\tReadsWithVector_found\tpercentage_ReadsWithVector_found\tReadsWithContam_found\tpercentage_ReadsWithContam_found\tLeftTrimmedByAdapter\tLeftTrimmedByQual\tLeftTrimmedByVector\tAvgLeftTrimLen\tRightTrimmedByAdapter\tRightTrimmedByQual\tRightTrimmedByVector\tAvgRightTrimLen\tDiscardedTotal\tDiscByContam\tDiscByLength\tReadsKept\tPercentageKept\tAvgTrimmedLen\n";
+    
         cout << "--------------------Basic parameters--------------------\n";
         sum_stat << "--------------------Basic parameters--------------------\n";
         
-        cout << "Provided data files : \n" ;
-        sum_stat << "Provided data files : \n" ;
+        cout << "Provided data file(s) : \n" ;
+        sum_stat << "Provided data file(s) : \n" ;
         
         for(int i=0; i<(int)roche_names.size(); ++i)
         {
@@ -1467,6 +1474,113 @@ void PolyATRoutine()
     sum_stat << "==========================================================\n";
 }
 
+void RocheRoutineDynamic()
+{
+    if( !trim_adapters_flag ) 
+    {
+    }
+    else
+    {
+       //Building dictionary for RL MIDS : 
+       if(custom_rlmids_flag ) 
+       {
+          Build_RLMIDS_Dictionary(rlmids_file);
+       } 
+       else 
+       {
+          Build_RLMIDS_Dictionary();
+       }
+       
+       //For each file in the given data set (right now for only one)
+       for(int i=0; i<(int)roche_names.size(); ++i)
+       {
+            cout << "Parsing file: " << roche_names[i] << "..." << endl;
+        
+            //If SFF format is given -> process it
+            if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) 
+            {
+               cout << "File is in SFF format, starting conversion...\n" ;
+               if(output_fastqfile_flag == false)
+               {
+                 output_sfffile_flag = true;
+               }
+               
+               sff_common_header h;
+               sff_read_header rh;
+               sff_read_data rd;
+               FILE *sff_fp;
+
+               if ( (sff_fp = fopen(roche_names[i], "r")) == NULL ) 
+               {
+                    fprintf(stderr,
+                                "[err] Could not open file '%s' for reading.\n", roche_names[i]);
+                    exit(1);
+               }
+               
+               read_sff_common_header(sff_fp, &h);
+               //verify_sff_common_header((char*)PRG_NAME, (char*)SFF_FILE_VERSION, &h);
+
+               int left_clip = 0, right_clip = 0, nbases = 0;
+               char *bases;
+               uint8_t *qualily;
+                
+               unsigned int numreads = (unsigned int) h.nreads;
+               cout << "Conversion finished. Total number of reads read from given file(s): " << numreads << endl;
+       
+               for (unsigned int i = 0; i < numreads; i++) 
+               { 
+                    read_sff_read_header(sff_fp, &rh);
+                    read_sff_read_data(sff_fp, &rd, h.flow_len, rh.nbases);
+
+                    get_clip_values(rh, 0, &left_clip, &right_clip);
+                    nbases = right_clip - left_clip;
+
+                    // create bases string 
+                    bases = get_read_bases(rd, left_clip, right_clip);
+
+                    // create quality array 
+                    qualily = get_read_quality_values(rd, left_clip, right_clip);
+
+                    for (int j = 0; j < nbases; j++) 
+                    {
+                        qualily[j] = (qualily[j] <= 93 ? qualily[j] : 93) + 33;
+                    }
+                    
+                    /*Routines*/
+                    /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
+                    /*if( qual_trim_flag  ) 
+                    {
+                        QualTrim( reads[i], max_a_error, max_e_at_ends );
+                    }
+                  
+                    if(contaminants_flag )
+                    {
+                         RemoveContaminants454(reads);
+                    }**/
+                    
+                    free(bases);
+                    free(qualily);
+                    free_sff_read_header(&rh);
+                    free_sff_read_data(&rd);
+
+
+                }
+
+                fclose(sff_fp);
+        
+            } 
+            else if(string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq") 
+            {
+               //FASTQ file given. Process it.
+               cout << "File is in FASTQ format, starting conversion...\n" ;
+               ParseFastqFile(roche_names[i], reads);
+               output_fastqfile_flag = true;
+               output_sfffile_flag = false;
+            }
+       }
+    }
+}
+
 void RocheRoutine()
 {
     if( !trim_adapters_flag ) 
@@ -1723,7 +1837,7 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads)
            read->initial_length = record_block[1].length();
            read->read = record_block[1];
            read->quality = (uint8_t*)malloc(sizeof(uint8_t)*record_block[3].length());
-           for(int jj=0; jj<record_block[3].length();++jj)
+           for(unsigned int jj=0; jj<record_block[3].length();++jj)
            {
                read->quality[jj] = record_block[3][jj];
            }
@@ -2010,19 +2124,23 @@ void IlluminaDynamic()
                             if( read1->tru_sec_pos < read2->tru_sec_pos )
                             {
                                 read2->tru_sec_pos = read1->tru_sec_pos;
+                                read2->tru_sec_found = 1;
                             } 
                             else
                             {
                                 read1->tru_sec_pos = read2->tru_sec_pos;
+                                read1->tru_sec_found = 1;
                             }
                         }
                         else if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 0) )
                         {
                             read2->tru_sec_pos = read1->tru_sec_pos;
+                            read2->tru_sec_found = 1;
                         }
                         else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 1) )
                         {
                             read1->tru_sec_pos = read2->tru_sec_pos;
+                            read1->tru_sec_found = 1;
                         }
                         
                         MakeClipPointsIllumina(read1);
@@ -2487,6 +2605,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
 void MakeClipPointsIllumina(Read* read) 
 {
     //Clip points
+   if(read->discarded == 0)
+   {
     if( (qual_trim_flag ) && (vector_flag ) )
     {
         if(read->vector_found == 1)
@@ -2494,7 +2614,7 @@ void MakeClipPointsIllumina(Read* read)
            if( read->v_start >= (read->read.length() - read->v_end) ) //Vector is on the right side
            {
                read->lclip = max(read->lucy_lclip, 1);
-               if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
+               if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
                {
                    read->left_trimmed_by_quality = 1;
                }
@@ -2519,7 +2639,7 @@ void MakeClipPointsIllumina(Read* read)
            {
                read->lclip = max(read->lucy_lclip,max(1, read->v_end ) );
            
-               if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
+               if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
                {
                  read->left_trimmed_by_quality = 1;
                }
@@ -2544,7 +2664,8 @@ void MakeClipPointsIllumina(Read* read)
         else
         {
             read->lclip = max(read->lucy_lclip, 1);
-            if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1))  read->left_trimmed_by_quality = 1;
+            if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1))  
+                read->left_trimmed_by_quality = 1;
             
             read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, read->lucy_rclip );
             if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
@@ -2561,7 +2682,7 @@ void MakeClipPointsIllumina(Read* read)
     else if( (qual_trim_flag ) && (!vector_flag) )
     {
         read->lclip = max(read->lucy_lclip,1);
-        if( (read->lclip == read->lucy_lclip) && (read->lucy_lclip >= 1)) 
+        if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip >= 1)) 
            read->left_trimmed_by_quality = 1;
                 
         read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos,read->lucy_rclip );
@@ -2628,6 +2749,8 @@ void MakeClipPointsIllumina(Read* read)
             
        read->lclip = 1;
     }
+   
+   }
     
 }
 
@@ -3104,8 +3227,8 @@ string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2,
                                 ( contaminants_flag ? "YES" : "NO") +"\t" +
                                 ( contaminants_flag ? int2str(KMER_SIZE_CONT) : "NA") +"\t" +
                                 (qual_trim_flag ? "YES" : "NO") +"\t" +
-                                (qual_trim_flag ? double2str(max_a_error) : "NA")+ "\t" +
-                                (qual_trim_flag ? double2str(max_e_at_ends) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_a_error)) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_e_at_ends)) : "NA")+ "\t" +
                                 output_prefix +"\t" +
                                 rep_file_name1+ "\t" +
                                 rep_file_name2 +"\t" +
@@ -3251,8 +3374,8 @@ string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
                                 ( contaminants_flag ? "YES" : "NO") +"\t" +
                                 ( contaminants_flag ? int2str(KMER_SIZE_CONT) : "NA") +"\t" +
                                 (qual_trim_flag ? "YES" : "NO") +"\t" +
-                                (qual_trim_flag ? double2str(max_a_error) : "NA")+ "\t" +
-                                (qual_trim_flag ? double2str(max_e_at_ends) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_a_error)) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_e_at_ends)) : "NA")+ "\t" +
                                 output_prefix +"\t" +
                                 rep_file_name1+ "\t" +
                                 ( !shuffle_flag ?  se_output_filename : "NA" ) +"\t"+

@@ -4,8 +4,6 @@
     <df name="SeqyClean" root=".">
       <in>Dictionary.cpp</in>
       <in>Dictionary.h</in>
-      <in>Illumina.cpp</in>
-      <in>Illumina.h</in>
       <in>KMerRoutine.cpp</in>
       <in>KMerRoutine.h</in>
       <in>MainPipeLine.cpp</in>
@@ -76,13 +74,6 @@
         </makeTool>
       </makefileType>
       <item path="Dictionary.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <incDir>
-            <pElem>..</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="Illumina.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
             <pElem>..</pElem>

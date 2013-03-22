@@ -45,12 +45,12 @@ public:
    string illumina_readID;
    
    /*----Left clip point----*/
-   int lclip;
+   unsigned short lclip;
    short lclip_errors;
    int L_lclip;
    /*----Right clip point---*/
    short rclip_errors;
-   int rclip;
+   unsigned short rclip;
    int R_rclip;
    /*----------------------*/
    short contaminants;

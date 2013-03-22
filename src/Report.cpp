@@ -564,6 +564,8 @@ void MakeLucyFastq(string custom_file_name) {
     fclose(output_file);
 }
 
+
+
 void MakeFinalStatistics( fstream &sum_stat )
 {
     long bases_anal = 0;
@@ -631,8 +633,6 @@ void MakeFinalStatistics( fstream &sum_stat )
                cnt_avg_left_trim_len+=1;
                avg_left_trim_len = GetAvg( avg_left_trim_len, cnt_avg_left_trim_len, reads[i]->lclip );
            }
-           
-           
        }
        
        
@@ -761,6 +761,103 @@ void MakeFinalStatistics( fstream &sum_stat )
     
     cout << "==========================================================\n";
     sum_stat << "==========================================================\n";
+    
+    sum_stat_tsv << PrintRocheStatisticsTSV(reads.size(),
+                                    bases_anal, 
+                                    left_mid_tag,
+                                    right_mid_tag,
+                                    num_vectors, 
+                                    num_contaminants, 
+                                    left_trimmed_by_adapter,
+                                    left_trimmed_by_quality,
+                                    left_trimmed_by_vector,
+                                    avg_left_trim_len, 
+                                    right_trimmed_by_adapter, 
+                                    right_trimmed_by_quality,
+                                    right_trimmed_by_vector,
+                                    avg_right_trim_len,
+                                    discarded, 
+                                    discarded_by_contaminant, 
+                                    discarded_by_read_length,
+                                    accepted, 
+                                    avg_trim_len);
+}
+
+string PrintRocheStatisticsTSV(unsigned long cnt,
+                                    unsigned long long bases_anal, 
+                                    unsigned long left_mid_tag,
+                                    unsigned long right_mid_tag,
+                                    unsigned long num_vectors, 
+                                    unsigned long num_contaminants, 
+                                    unsigned long left_trimmed_by_adapter,
+                                    unsigned long left_trimmed_by_quality,
+                                    unsigned long left_trimmed_by_vector,
+                                    double avg_left_trim_len, 
+                                    unsigned long right_trimmed_by_adapter, 
+                                    unsigned long right_trimmed_by_quality,
+                                    unsigned long right_trimmed_by_vector,
+                                    double avg_right_trim_len,
+                                    unsigned long discarded, 
+                                    unsigned long discarded_by_contaminant, 
+                                    unsigned long discarded_by_read_length,
+                                    unsigned long accepted, 
+                                    double avg_trim_len
+                               )
+{
+        string filename_str;
+    
+        for(int i=0; i<(int)roche_names.size(); ++i)
+        {
+            filename_str += string(roche_names[i]);
+        }
+        string stat_str_tsv =   version + "\t" + 
+                                filename_str + "\t" +
+                                int2str(NUM_THREADS) + "\t" +
+                                (trim_adapters_flag  ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? int2str(KMER_SIZE) : "NA") + "\t" +
+                                ( vector_flag ? int2str(DISTANCE) : "NA") +"\t" +
+                                ( contaminants_flag ? "YES" : "NO") +"\t" +
+                                ( contaminants_flag ? int2str(KMER_SIZE_CONT) : "NA") +"\t" +
+                                (qual_trim_flag ? "YES" : "NO") +"\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_a_error)) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_e_at_ends)) : "NA")+ "\t" +
+                                output_prefix +"\t" +
+                                roche_rep_file_name + "\t"+
+                                roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : "" ) + "\t" +
+                                int2str(max_al_mism) +"\t" +
+                                int2str(minimum_read_length)+ "\t"; 
+                   
+    
+    
+        stat_str_tsv += int2str(cnt)   + "\t" + //reads analyzed
+                        int2str(bases_anal) + "\t"  + //bases
+                        int2str(left_mid_tag) + "\t" 
+                        + double2str( (double)left_mid_tag/(double)cnt*100.0) + "\t" + //perc 
+                        int2str(right_mid_tag) + "\t" +
+                        double2str( (double)right_mid_tag/(double)cnt*100.0) + "\t" + //perc 
+                       ( vector_flag ? i2str(num_vectors,new char[15],10) + "\t" + double2str( (double)num_vectors/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc vectors
+                       ( contaminants_flag ? i2str(num_contaminants,new char[15],10) + "\t" //cont
+                        + double2str( (double)num_contaminants/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc cont
+                        int2str(left_trimmed_by_adapter) + "\t" +
+                       ( qual_trim_flag ? i2str(left_trimmed_by_quality,new char[15],10) + "\t" : "NA\t" ) +  //left trimmed qual
+                       ( vector_flag ? i2str(left_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) + //left trimmed vect
+                       double2str(avg_left_trim_len) + "\t" + //avg left trim len
+                       i2str(right_trimmed_by_adapter,new char[15],10) + "\t" + 
+                       ( qual_trim_flag ? i2str(right_trimmed_by_quality,new char[15],10) + "\t" : "NA\t") +
+                       ( vector_flag ? i2str(right_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) +
+                       double2str(avg_right_trim_len) + "\t" +
+                       i2str(discarded,new char[15],10) + "\t" + //discard
+                       ( contaminants_flag ? i2str(discarded_by_contaminant,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(discarded_by_read_length,new char[15],10) + "\t" +
+                       i2str(accepted,new char[15],10) + "\t" + //se reads kept
+                        double2str( (double)accepted/(double)cnt*100.0) + "\t" +//perc kept
+                       double2str(avg_trim_len);
+            
+    
+     return stat_str_tsv;
+    
+    
 }
 
 

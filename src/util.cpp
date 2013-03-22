@@ -309,7 +309,7 @@ void GetDirectories(std::vector<string> &out, char *directory)
     dpdf = opendir(directory);
     if (dpdf != NULL)
     {
-        while (epdf = readdir(dpdf))
+        while ( (epdf = readdir(dpdf) ))
         {
             out.push_back(string(epdf->d_name));    
             printf("Filename: %s\n",epdf->d_name);

@@ -55,7 +55,7 @@ extern map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
 extern map<string, vector<k_mer_struct> > ContDict;
 extern map<string, vector<k_mer_struct> >::iterator it_ContDict;
 extern short KMER_SIZE;
-extern int KMER_SIZE_CONT;
+extern short KMER_SIZE_CONT;
 extern short NUM_THREADS;
 extern short DISTANCE;
 extern int vmr;

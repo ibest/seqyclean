@@ -37,7 +37,7 @@ extern vector<RL_MID> rlmids;
 extern short KMER_SIZE;
 extern short NUM_THREADS;
 extern map<int, string > vector_names;
-extern int KMER_SIZE_CONT;
+extern short KMER_SIZE_CONT;
 extern fstream sum_stat;
 
 typedef struct {

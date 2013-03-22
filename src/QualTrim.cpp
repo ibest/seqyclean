@@ -654,7 +654,7 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
    // cout << qual_str << endl;
         //FILE * pFile;
 	int quality[10000];
-	int qual_count, i;//length, i;
+	unsigned int qual_count, i;//length, i;
 	int left, right;
 	//char line_buff[4096] /*seq_name[80]*/, *sptr;
 
@@ -707,8 +707,8 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
    // cout << qual_str << endl;
         //FILE * pFile;
 	int quality[10000];
-	int qual_count, i;//length, i;
-	int left, right;
+	unsigned int qual_count, i;//length, i;
+        int left, right;
 	//char line_buff[4096] /*seq_name[80]*/, *sptr;
 
         max_avg_error = max_avg_err;
@@ -731,12 +731,12 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         /* trim for quality */
 	conf_val_raw = quality;
 	grim(qual_count, &left, &right);
-        
+        /*
         if (right > 0)
 	{
-           left++;
+           left++; //Lucy always clips one base.
 	   right++;
-	}
+	}**/
 
 	/* display seq name and clean range */
 	if (right - left < /*99*/minimum_read_length)

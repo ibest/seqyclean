@@ -60,7 +60,6 @@ static void *t_TrimRightEnds(void *targs);
 static void *t_TrimLeftEnds(void *targs);
 void GetLClip2(Read* read, bool pflag);
 
-static void *t_FindClipAmplicon(void *targs);
 void SSAHA(string query_str, int read_len, string ref_str, bool reverse, bool complement, bool reverse_complement,  bool clip_found, long rec_id, int tid );
 pthread_spinlock_t spinlock1;
 pthread_spinlock_t spinlock2;

@@ -80,8 +80,8 @@
 #define TRUE 1
 #define FALSE 0
 
-#define max(a,b) (((a) > (b)) ? (a): (b))
-#define min(a,b) (((a) < (b)) ? (a): (b))
+//#define max(a,b) (((a) > (b)) ? (a): (b))
+//#define min(a,b) (((a) < (b)) ? (a): (b))
 
 /* global variables and arrays: */
 using namespace std;
