@@ -23,16 +23,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
-#include <endian.h>
+//#include <limits.h>
+//#include <endian.h>
+#include <zlib.h>
+#include <arpa/inet.h> // htons(), htonl()
 
-//using namespace std;
-/*
-   The Genome Center's (http://genome.wustl.edu) linux image has a corrupted
-   <endian.h> file.  Use the endian.h that comes with this distribution if
-   compiling at the Genome Center at Washington University.
-   It fills in the missing pieces found in a normal linux distribution.
-*/
 
 #if defined __GENOME__
   #include "endian.h"
@@ -182,8 +177,5 @@ void read_manifest(FILE *fp) ;
 void write_manifest(FILE *fp);
 long get_sff_file_size(FILE *fp);
 
-//#ifdef __cplusplus
-//}
-//#endif
 
 #endif /* _SFF_H */

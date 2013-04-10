@@ -267,12 +267,25 @@ void process_fastq_to_sff(char *sff_file) {
     
     sff_common_header ch;
     /* sff files are in big endian notation so adjust appropriately */
-    ch.magic        = be32toh(h.magic);//be32toh(779314790);
-    ch.index_len    = be32toh(h.index_len);//be32toh(61870);
-    ch.header_len   = be16toh(h.header_len);//be16toh(1640);
-    ch.key_len      = be16toh(h.key_len);//be16toh(4);
+    /* Linux version, not in use any more
+    ch.magic        = be32toh(h.magic);
+    ch.index_len    = be32toh(h.index_len);
+    ch.header_len   = be16toh(h.header_len);
+    ch.key_len      = be16toh(h.key_len);
     ch.flow =  h.flow;//ff;
-    ch.flow_len     = be16toh(h.flow_len);//be16toh(strlen(h.flow));
+    ch.flow_len     = be16toh(h.flow_len);
+    ch.flowgram_format = h.flowgram_format;//0x01;
+    ch.key = h.key;//"GACT";
+    char v[4] = {0x00,0x00,0x00,0x01};
+    //ch.version = ;
+    memcpy(ch.version,v,4);
+    */
+    ch.magic        = ntohl(h.magic);
+    ch.index_len    = ntohl(h.index_len);
+    ch.header_len   = ntohs(h.header_len);
+    ch.key_len      = ntohs(h.key_len);
+    ch.flow =  h.flow;//ff;
+    ch.flow_len     = ntohs(h.flow_len);
     ch.flowgram_format = h.flowgram_format;//0x01;
     ch.key = h.key;//"GACT";
     char v[4] = {0x00,0x00,0x00,0x01};
@@ -288,12 +301,13 @@ void process_fastq_to_sff(char *sff_file) {
                   + sizeof(ch.key_len)  
                   + sizeof(ch.flow_len) 
                   + sizeof(ch.flowgram_format)
-                  + (sizeof(char) * htobe16(ch.flow_len) )
-                  + (sizeof(char) * htobe16(ch.key_len) ) ;
+                  //+ (sizeof(char) * htobe16(ch.flow_len) )
+                  //+ (sizeof(char) * htobe16(ch.key_len) ) ;
+                  + (sizeof(char) * htons(ch.flow_len) )
+                  + (sizeof(char) * htons(ch.key_len) ) ;
     
     if ( !(header_size % PADDING_SIZE == 0) ) {
         header_size += PADDING_SIZE - (header_size % PADDING_SIZE);
-        
     }
     
     fseek(sff_fp,header_size,SEEK_SET);
@@ -351,7 +365,8 @@ void process_fastq_to_sff(char *sff_file) {
         
         
         write_sff_read_header(sff_fp, &(readHeader));
-        write_sff_read_data(sff_fp,  &(readData), htobe16(ch.flow_len), htobe32(readHeader.nbases));
+        //write_sff_read_data(sff_fp,  &(readData), htobe16(ch.flow_len), htobe32(readHeader.nbases));
+        write_sff_read_data(sff_fp,  &(readData), htons(ch.flow_len), htonl(readHeader.nbases));
         //free(rd.bases);
         free(readData.flow_index);
         free(readData.flowgram);
@@ -359,8 +374,12 @@ void process_fastq_to_sff(char *sff_file) {
         
         ch.nreads += 1;
     }
-    
+    /* Linux edition, not in use any more
     ch.nreads       = be32toh(ch.nreads);//be32toh(reads.size());
+    ch.index_offset = be64toh( ftell(sff_fp) );
+    */
+    
+    ch.nreads       = ntohs(ch.nreads);//be32toh(reads.size());
     ch.index_offset = be64toh( ftell(sff_fp) );
     
     write_manifest(sff_fp);

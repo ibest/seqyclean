@@ -61,7 +61,8 @@ libgzstream.a : $(OBJ)gzstream.o $(SRC)gzstream.h
 	${AR} $(OBJ)libgzstream.a $(OBJ)gzstream.o
 	
 gzstream.o : $(SRC)gzstream.C $(SRC)gzstream.h
-	$(CXX) -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+	#$(CXX) -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+	gcc -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
 
 mkobj :
 	rm -rf ${OBJ}

@@ -21,7 +21,24 @@
 /* I N C L U D E S ***********************************************************/
 #include "sff.h"
 
+
+
 /* F U N C T I O N S *********************************************************/
+/* convert 64 bit Big Endian integer to Native Endian(means current machine) */
+// As far as I know, there is no standard function for 64 bit conversion on OSX
+uint64_t BE64toNA(uint64_t bigEndian)
+{
+    uint64_t littleEndian = ((bigEndian & (0x00000000000000FF)) << 56) |
+                            ((bigEndian & (0x000000000000FF00)) << 40) |
+                            ((bigEndian & (0x0000000000FF0000)) << 24) |
+                            ((bigEndian & (0x00000000FF000000)) << 8) |
+                            ((bigEndian & (0x000000FF00000000)) >> 8) |
+                            ((bigEndian & (0x0000FF0000000000)) >> 24) |
+                            ((bigEndian & (0x00FF000000000000)) >> 40) |
+                            ((bigEndian & (0xFF00000000000000)) >> 56);
+    return littleEndian;
+}
+
 void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     char *flow;
     char *key;
@@ -38,6 +55,7 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     fread(&(h->flowgram_format), sizeof(uint8_t) , 1, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
+    /* Linux: not in use any more
     h->magic        = htobe32(h->magic);
     h->index_offset = htobe64(h->index_offset);
     h->index_len    = htobe32(h->index_len);
@@ -45,6 +63,15 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     h->header_len   = htobe16(h->header_len);
     h->key_len      = htobe16(h->key_len);
     h->flow_len     = htobe16(h->flow_len);
+     */
+    
+    h->magic        = htonl(h->magic);
+    h->index_offset = BE64toNA(h->index_offset);
+    h->index_len    = htonl(h->index_len);
+    h->nreads       = htonl(h->nreads);
+    h->header_len   = htons(h->header_len);
+    h->key_len      = htons(h->key_len);
+    h->flow_len     = htons(h->flow_len);
 
     /* finally appropriately allocate and read the flow and key strings */
     flow = (char *) malloc( h->flow_len * sizeof(char) );
@@ -262,6 +289,7 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     fread(&(rh->clip_adapter_right), sizeof(uint16_t), 1, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
+    /* Linux version, not in use any more
     rh->header_len         = htobe16(rh->header_len);
     rh->name_len           = htobe16(rh->name_len);
     rh->nbases             = htobe32(rh->nbases);
@@ -269,7 +297,16 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     rh->clip_qual_right    = htobe16(rh->clip_qual_right);
     rh->clip_adapter_left  = htobe16(rh->clip_adapter_left);
     rh->clip_adapter_right = htobe16(rh->clip_adapter_right);
-
+     */
+    
+    rh->header_len         = htons(rh->header_len);
+    rh->name_len           = htons(rh->name_len);
+    rh->nbases             = htonl(rh->nbases);
+    rh->clip_qual_left     = htons(rh->clip_qual_left);
+    rh->clip_qual_right    = htons(rh->clip_qual_right);
+    rh->clip_adapter_left  = htons(rh->clip_adapter_left);
+    rh->clip_adapter_right = htons(rh->clip_adapter_right);
+     
     /* finally appropriately allocate and read the read_name string */
     name = (char *) malloc( rh->name_len * sizeof(char) );
     if (!name) {
@@ -281,17 +318,6 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     fread(name, sizeof(char), rh->name_len, fp);
     rh->name = name;
 
-    
-  /*  printf("%d\n",rh->header_len);
-    printf("%d\n",rh->name_len);
-    printf("%d\n",rh->nbases);
-    printf("%d\n",rh->clip_qual_left);
-    printf("%d\n",rh->clip_qual_right);
-    printf("%d\n",rh->clip_adapter_left);
-    printf("%d\n",rh->clip_adapter_right);
-    printf("%s\n",rh->name);
-  **/  
-    
     /* the section should be a multiple of 8-bytes, if not,
        it is zero-byte padded to make it so */
 
@@ -359,8 +385,8 @@ void read_sff_read_data(FILE *fp,
 
     /* sff files are in big endian notation so adjust appropriately */
     for (i = 0; i < nflows; i++) {
-        flowgram[i] = htobe16(flowgram[i]);
-       /// printf("%d\n", flowgram[i]);
+        //flowgram[i] = htobe16(flowgram[i]);
+        flowgram[i] = htons(flowgram[i]);
     }
     rd->flowgram = flowgram;
 
