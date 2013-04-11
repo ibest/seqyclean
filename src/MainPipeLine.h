@@ -29,7 +29,6 @@
 #include <list>
 #include "iz_SSAHA.h"
 #include "Read.h"
-//#include "MainPipeLine.h"
 #include "Dictionary.h"
 #include "QualTrim.h"
 
@@ -61,8 +60,6 @@ static void *t_TrimLeftEnds(void *targs);
 void GetLClip2(Read* read, bool pflag);
 
 void SSAHA(string query_str, int read_len, string ref_str, bool reverse, bool complement, bool reverse_complement,  bool clip_found, long rec_id, int tid );
-pthread_spinlock_t spinlock1;
-pthread_spinlock_t spinlock2;
 
 extern bool qual_trim_flag;
 
