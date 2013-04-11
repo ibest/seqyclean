@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454 --fastq</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 30 30</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test -qual 30 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../test/testIllumina_pe</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454 -qual 30 30</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454 -qual 30 30 -v ../test_data/vectors.fasta</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454 -qual 30 30 -v ../test_data/vectors.fasta --fastq</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../test/testIllumina_pe -qual 30 30</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../test/testIllumina_pe -qual 30 30 --new2old_illumina</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454 -qual 30 30 -v ../test_data/vectors.fasta --fastq</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -454 ../test_data/Small454Test.sff -o ../test/test454 -qual 30 30 -polyat --fastq</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../test/testIllumina_pe -qual 30 30 --new2old_illumina -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -U ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 30 30 --new2old_illumina -polyat</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./seqyclean -1 ../test_data/SmallTestIllumina_R1.fastq.gz -2 ../test_data/SmallTestIllumina_R2.fastq.gz -o ../test/testIllumina_pe -qual 30 30</runcommand>
+        <runcommand>./seqyclean -U ../test_data/SmallTestIllumina_R1.fastq.gz -o ../test/testIllumina_pe -qual 30 30 --new2old_illumina -polyat</runcommand>
         <rundir>../bin/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

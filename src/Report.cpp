@@ -395,8 +395,8 @@ void WriteToFASTQ(string file_name) {
             reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
             string quality = string((char*)reads[i]->quality); 
             quality = quality.substr(0,reads[i]->rclip) ; 
-            reads[i]->read = reads[i]->read.substr( reads[i]->lclip-1, reads[i]->read.length() - reads[i]->lclip-1 );
-            quality = quality.substr( reads[i]->lclip-1, quality.length() - reads[i]->lclip-1 );
+            reads[i]->read = reads[i]->read.substr( reads[i]->lclip, reads[i]->read.length() - reads[i]->lclip );
+            quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
             
             if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             

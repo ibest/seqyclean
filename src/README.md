@@ -1,5 +1,5 @@
 Program SeqyClean
-Version: 1.3.13 (2013-03-21)
+Version: 1.4.01 (2013-04-11)
 Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
 Usage:  
 Roche 454:
@@ -24,7 +24,20 @@ For Illumina:
                                                                        [-qual max_avg_error max_error_at_ends]
                                                                        [--qual_only]
                                                                        [-minimum_read_length <value>]
+                                                                       [-polyat [cdna] [cerr] [crng] ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+
+For Illumina single-end:
+./seqyclean -U input_file_name -o output_prefix [-v vector_file]
+                                                                       [-c file_of_contaminants]
+                                                                       [-k k_mer_size]
+                                                                       [-kc k_mer_size]
+                                                                       [-qual max_avg_error max_error_at_ends]
+                                                                       [--qual_only]
+                                                                       [-minimum_read_length <value>]
+                                                                       [-polyat [cdna] [cerr] [crng] ]
+                                                                       [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+
 Example:
 Roche:
 ./seqyclean -454 ../artif_libs/artif454_1000_0_100_0.sff -o Test -v ../vectors.fasta -m ../RL_MIDS.csv -k 15 -f 10 -t 4
