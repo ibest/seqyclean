@@ -6,8 +6,6 @@
 #include <algorithm>
 #include "pairwise.h"
 #include <stdio.h>	
-#include <malloc.h>
-#include <new>
 
 extern long counter; 
 			 
