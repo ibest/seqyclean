@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include <endian.h>
 #include <stdint.h>
 #include "sff.h"
 

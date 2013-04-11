@@ -8,12 +8,6 @@
 #ifndef SFFREADER_H
 #define	SFFREADER_H
 
-//#include <R.h>
-//#include <Rdefines.h>
-//#include <Rinternals.h> // Rprintf, SEXP
-//#include <R_ext/Rdynload.h>
-//#include "IRanges_interface.h"
-//#include "Biostrings_interface.h"
 
 #define MATHLIB_STANDALONE
 // System includes
