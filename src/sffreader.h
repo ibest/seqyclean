@@ -1,3 +1,6 @@
+#ifndef SFFREADER_H
+#define	SFFREADER_H
+
 /* 
  * File:   sffreader.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 28 Август 2012 г., 9:59
  */
 
-#ifndef SFFREADER_H
-#define	SFFREADER_H
+
 
 
 #define MATHLIB_STANDALONE
@@ -28,8 +30,7 @@ using namespace std;
 
 extern vector<Read*> reads;
 
-sff_common_header h;
-int discarded_reads = 0;
+
 extern bool keep_fastq_orig;
 
 

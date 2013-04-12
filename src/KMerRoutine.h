@@ -1,3 +1,6 @@
+#ifndef KMERROUTINE_H
+#define	KMERROUTINE_H
+
 /* 
  * File:   KMerRoutine.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 7 Август 2012 г., 23:10
  */
 
-#ifndef KMERROUTINE_H
-#define	KMERROUTINE_H
+
 
 #include <stdio.h>
 #include <iostream>

@@ -21,7 +21,9 @@
 /* I N C L U D E S ***********************************************************/
 #include "sff.h"
 
-
+char *manifest = NULL;
+long sff_file_size = 0;
+long manifest_size = 0;
 
 /* F U N C T I O N S *********************************************************/
 /* convert 64 bit Big Endian integer to Native Endian(means current machine) */
@@ -525,7 +527,8 @@ void write_manifest(FILE *fp)
 long get_sff_file_size(FILE *fp)
 {
   fseek(fp, 0, SEEK_END); // seek to end of file
-  long sff_file_size = ftell(fp); // get current file pointer
+  //long sff_file_size = ftell(fp); // get current file pointer
+  sff_file_size = ftell(fp); // get current file pointer
   fseek(fp, 0, SEEK_SET); // seek back to beginning of file
 // proceed with allocating memory and reading the file
   

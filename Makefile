@@ -10,7 +10,7 @@ all:  mkobj mkbin gzstream.o libgzstream.a abi.o poly.o sff.o sffreader.o ascii.
 		
 #					
 seqyclean :   $(OBJ)main.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)sffreader.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)abi.o $(OBJ)gzstream.o
-	$(CXX) $(CFLAGS)  -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -zmuldefs -I$(LIBRARY) -lpthread -Xlinker -lz
+	$(CXX) $(CFLAGS)  -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -I$(LIBRARY) -lpthread -lz
 	
 main.o :  
 	$(CXX) -Wall -g  -c -o $(OBJ)main.o $(SRC)main.cpp 
@@ -44,19 +44,19 @@ util.o :
 	$(CXX) -Wall -g  -c -o $(OBJ)util.o $(SRC)util.cpp
 	
 ascii.o :
-	$(CXX) -Wall -g  -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
+	$(CXX) -Wall -g -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
 	
 sffreader.o: $(SRC)sffreader.cpp $(SRC)sff.h
 	g++ -g -I $(SRC) -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
 	
-sff.o: $(SRC)sff.h $(SRC)sff.c
-	g++ -g -I $(SRC) -c -o $(OBJ)sff.o $(SRC)sff.c
+sff.o: 
+	g++ -g -c -o $(OBJ)sff.o $(SRC)sff.c
 	
 poly.o: 
-	g++ -g -I $(SRC) -c -o $(OBJ)poly.o $(SRC)poly.c
+	g++ -g -c -o $(OBJ)poly.o $(SRC)poly.c
 	
-abi.o: $(SRC)abi.c $(SRC)abi.h
-	g++ -g -I $(SRC) -c -o $(OBJ)abi.o $(SRC)abi.c
+abi.o: 
+	g++ -g -c -o $(OBJ)abi.o $(SRC)abi.c
 	
 libgzstream.a : $(OBJ)gzstream.o $(SRC)gzstream.h
 	${AR} $(OBJ)libgzstream.a $(OBJ)gzstream.o

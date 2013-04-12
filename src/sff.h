@@ -1,3 +1,6 @@
+#ifndef _SFF_H_
+#define _SFF_H_
+
 /*
     Copyright (C) 2009, 2010 Indraniel Das <indraniel@gmail.com>
                              and Washington University in St. Louis
@@ -16,8 +19,7 @@
     along with this program; if not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef _SFF_H_
-#define _SFF_H_
+
 
 #include <stdint.h>
 #include <stdio.h>
@@ -168,10 +170,6 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh);
 
 void write_padding(FILE *fp, int header_size) ;
 void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t nbases);
-
-char *manifest = NULL;
-long sff_file_size = 0;
-long manifest_size = 0;
 
 void read_manifest(FILE *fp) ;
 void write_manifest(FILE *fp);

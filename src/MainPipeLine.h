@@ -1,3 +1,6 @@
+#ifndef MAINPIPELINE_H
+#define	MAINPIPELINE_H
+
 /* 
  * File:   MainPipeLine.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 10 Август 2012 г., 20:48
  */
 
-#ifndef MAINPIPELINE_H
-#define	MAINPIPELINE_H
+
 
 #include <stdio.h>
 #include <iostream>
@@ -29,8 +31,7 @@
 #include <list>
 #include "iz_SSAHA.h"
 #include "Read.h"
-#include "Dictionary.h"
-#include "QualTrim.h"
+#include "KMerRoutine.h"
 
 
 /*Extern variables*/
@@ -48,8 +49,11 @@ extern long accept_counter;
 extern long trim_counter;
 extern bool pcr_flag;
 extern char *pcr_file_name;
-
+extern int minimum_read_length;
 extern int max_al_mism;
+/*Map that holds a whole vector genomes :*/
+extern map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
+
 
 void MainPipeLine();
 void TrimRightEnds();

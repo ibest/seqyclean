@@ -43,6 +43,9 @@ void process_options(int argc, char *argv[]);
 char fastq_file[FASTQ_FILENAME_MAX_LENGTH] = { '\0' };
 char sff_file[SFF_FILENAME_MAX_LENGTH] = { '\0' };
 
+sff_common_header h;
+int discarded_reads = 0;
+
 // trimming is enabled by default -- like 454 tools
 int  opt_trim  = 1;
 
@@ -111,7 +114,8 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
     }
     
     //cout << stderr << endl;
-    sff_file_size = get_sff_file_size(sff_fp);
+    //sff_file_size = get_sff_file_size(sff_fp);
+    get_sff_file_size(sff_fp);
     
     read_sff_common_header(sff_fp, &h);
     verify_sff_common_header((char*)PRG_NAME, (char*)VERSION, &h);

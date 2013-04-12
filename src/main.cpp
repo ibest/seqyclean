@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -8,21 +10,20 @@
 #include <streambuf>
 #include <exception>
 #include <pthread.h>
-#include <bits/basic_string.h>
+//#include <bits/basic_string.h>
 #include "timer.h"
 #include "util.h"
 #include "poly.h"
 #include "Read.h"
 #include "Dictionary.h"
-#include "KMerRoutine.h"
+//#include "KMerRoutine.h"
 #include "Report.h"
 #include "MainPipeLine.h"
-#include "TrimLucy.h"
 #include "sffreader.h"
 #include "rlmid.h"
 #include "gzstream.h"
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "QualTrim.h"
+
 
 
 using namespace std;
@@ -32,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 short NUM_THREADS = 4;
 
-string version = "1.4.1 (2013-04-11)"; 
+string version = "1.4.2 (2013-04-11)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -49,6 +50,14 @@ map<string, vector<k_mer_struct> >::iterator it_ContDict;
 map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
 
 /*Illumina data structures*/
+
+/*i5 adapter*/
+ string tmpl_i5_1 = "AATGATACGGCGACCACCGAGATCTACAC";
+ string tmpl_i5_2 = "ACACTCTTTCCCTACACGACGCTCTTCCGATCT";
+ /*i7 adapter*/
+ string tmpl_i7_1 = "GATCGGAAGAGCACACGTCTGAACTCCAGTCAC";
+ string tmpl_i7_2 = "ATCTCGTATGCCGTCTTCTGCTTG";
+
 vector<Read*> reads_1;
 vector<Read*> reads_2;
 /*----------End of data structure definition------------------*/
@@ -151,8 +160,6 @@ std::ifstream read_file;
 
 void PrintHelp();
 void ParseFastqFile(char *fastq_file, vector<Read*> &reads);
-//void ParseFastqFileIllumina(char* fastq_file, map<string, Read> &reads );
-//void ParseFastqFileIllumina(char* fastq_file, dense_hash_map<string, Read> &reads );
 void ParseFastqFileIllumina(char* fastq_file, vector<Read*> &reads );
 void ClearNNs( vector<Read*>& reads );
 void QualityTrimming( vector<Read*>& reads );
@@ -4351,6 +4358,7 @@ string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
                                     unsigned long num_vectors,  
                                     unsigned long num_contaminants, 
                                     unsigned long left_trimmed_by_quality, 
+
                                     unsigned long left_trimmed_by_vector, 
                                     double avg_left_trim_len_se, 
                                     unsigned long right_trimmed_by_adapter, 

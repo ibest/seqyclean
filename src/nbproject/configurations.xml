@@ -68,7 +68,6 @@
           <cTool>
             <incDir>
               <pElem>..</pElem>
-              <pElem>.</pElem>
             </incDir>
           </cTool>
         </makeTool>

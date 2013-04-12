@@ -1,3 +1,6 @@
+#ifndef POLY_H
+#define	POLY_H
+
 /* 
  * File:   poly.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 5 Ноябрь 2012 г., 13:27
  */
 
-#ifndef POLY_H
-#define	POLY_H
+
 
 extern int cdna, c_err, crng, keep;
 
