@@ -3,9 +3,11 @@
 /*Builds a new Vector Dictionary. Here it assumes that frequency is 1*/
 int BuildVectorDictionary(string filename) {
     string str;
+    
     std::fstream infile;
     /*Open given file:*/
-    infile.open(filename.c_str());
+    
+    infile.open(filename.c_str(), std::fstream::in);
     
     cout << "Parsing screening file " << filename << endl;
     sum_stat << "Parsing screening file " << filename << endl;
@@ -156,7 +158,7 @@ int BuildContDictionary(string filename) {
     
     std::fstream infile;
     /*Open given file:*/
-    infile.open(filename.c_str());
+    infile.open(filename.c_str(),std::fstream::in);
     std::string str;
     cout << "Parsing screening file " << filename << endl;
     sum_stat << "Parsing screening file " << filename << endl;
@@ -304,7 +306,7 @@ void Build_RLMIDS_Dictionary(char* rlmids_file) {
         if(infile.is_open() == false) break;
     }
     
-    infile.open(rlmids_file);
+    infile.open(rlmids_file,std::fstream::in);
     while ( getline(infile, str) ) {
         
         split_str(str, line_holder, ",");
