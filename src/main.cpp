@@ -3983,6 +3983,7 @@ void IlluminaDynamicSE()
                                     {
                                         cnt_avg+=1;
                                         avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, /*read->initial_length - read->read.length()*/read->rclip - read->lclip );
+                                        cout << avg_trim_len_se << endl;
                                     }
                  
                                     cnt_avg_len+=1; 
