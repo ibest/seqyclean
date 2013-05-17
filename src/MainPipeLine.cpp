@@ -7,26 +7,26 @@ void MainPipeLine() {
     pthread_t threads[NUM_THREADS];
     
     /*Remove Keys/Adaptors/Primers/Barcodes*/
-    int i=0;
-    for( i=0; i<(int)reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
+    unsigned int i=0;
+    for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
         
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
         }
     
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_join(threads[t], NULL);
         }
         
     }
     
     /*Processing the rest of the set of reads: */
-    for(int t=0; t< (int)reads.size() - i; t++) {
+    for(unsigned int t=0; t< reads.size() - i; t++) {
        pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
        
     }
    
-    for(int t=0; t<(int)reads.size() - i; t++) {
+    for(unsigned int t=0; t<reads.size() - i; t++) {
        pthread_join(threads[t], NULL);
     } 
     
@@ -168,11 +168,11 @@ void TrimRightEnds() {
     
     /*First stage: preprocess the read by using SSAHA: */
     long lim = reads.size() - NUM_THREADS;
-    for(int i=0; i<(int)reads.size(); i+=NUM_THREADS) {
+    for(unsigned int i=0; i<reads.size(); i+=NUM_THREADS) {
         
         if(i > lim ) break;
         
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_create( &threads[t], NULL, &t_TrimRightEnds, (void *)(t+i) );//(void *)&t_args);
         }
     
@@ -187,16 +187,16 @@ void TrimRightEnds() {
 void TrimLeftEnds() {
     pthread_t threads[NUM_THREADS];
     
-    long lim = reads.size() - NUM_THREADS;
-    for(int i=0; i<(int)reads.size(); i+=NUM_THREADS) {
+    unsigned int lim = reads.size() - NUM_THREADS;
+    for(unsigned int i=0; i < reads.size(); i+=NUM_THREADS) {
         
         if(i > lim ) break;
         
-       for(int t=0; t<NUM_THREADS; t++) {
+       for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_create( &threads[t], NULL, &t_TrimLeftEnds, (void *)(t+i) );//(void *)&t_args);
        }
     
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_join(threads[t], NULL);
         
         }

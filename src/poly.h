@@ -10,7 +10,7 @@
 
 
 
-extern int cdna, c_err, crng, keep;
+extern unsigned short cdna, c_err, crng, keep;
 
 int poly_at_left(char *seq, int len);
 int poly_at_right(char *seq, int len);

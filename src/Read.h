@@ -21,15 +21,15 @@ typedef struct {
     string lmid_name;
     string lmid_value;
     short lmid_id;
-    int lmid_start;
-    int lmid_end;
+    unsigned int lmid_start;
+    unsigned int lmid_end;
     short lmid_err;
     /*Right MID*/
     string rmid_name;
     string rmid_value;
     short rmid_id;
-    int rmid_start;
-    int rmid_end;
+    unsigned int rmid_start;
+    unsigned int rmid_end;
     short rmid_err;
 } RL_MID;
 
@@ -59,8 +59,8 @@ public:
    bool clip_found;
    RL_MID rlmid;
    /*----Lucy clips---*/
-   int lucy_lclip;
-   int lucy_rclip;
+   unsigned int lucy_lclip;
+   unsigned int lucy_rclip;
    /*SFF parameters*/
    uint16_t *flowgram;  
    uint8_t  *flow_index; /* relative to last */
@@ -77,7 +77,7 @@ public:
    short revP_errors;
    /*Adapter B*/
    string b_adapter;
-   int b_adapter_pos;
+   unsigned int b_adapter_pos;
    short b_adapter_err;
    /*Vector*/
    int r_vec_start;

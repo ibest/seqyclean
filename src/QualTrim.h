@@ -87,7 +87,7 @@
 
 
 
-extern int minimum_read_length;
+extern unsigned short minimum_read_length;
 
 void window_trim(
 	double *prob_err,	/* array of phred error probabilities */

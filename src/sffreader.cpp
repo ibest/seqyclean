@@ -28,8 +28,6 @@
 #include "sff.h"
 
 /* D E F I N E S *************************************************************/
-#define VERSION "0.8.0"
-#define PRG_NAME "sff2fastq"
 #define FASTQ_FILENAME_MAX_LENGTH 1024
 #define SFF_FILENAME_MAX_LENGTH 1024
 
@@ -44,62 +42,8 @@ char fastq_file[FASTQ_FILENAME_MAX_LENGTH] = { '\0' };
 char sff_file[SFF_FILENAME_MAX_LENGTH] = { '\0' };
 
 sff_common_header h;
-int discarded_reads = 0;
-
-// trimming is enabled by default -- like 454 tools
-int  opt_trim  = 1;
-
-/* M A I N *******************************************************************/
-/*int main(int argc, char *argv[]) {
-
-    process_options(argc, argv);
-    process_sff_to_fastq(sff_file, fastq_file, opt_trim);
-
-    return 0;
-}**/
-
-vector<sff_read_header> rheaders;
-
 
 /* F U N C T I O N S *********************************************************/
-
-void process_options(int argc, char *argv[]) {
-    int c;
-    int index;
-    char *opt_o_value = NULL;
-
-    while( (c = getopt(argc, argv, "hvno:")) != -1 ) {
-        switch(c) {
-            case 'o':
-                opt_o_value = optarg;
-                break;
-            case 'n':
-                opt_trim = 0;    /* disable trimming -- like 454 tools */
-                break;
-            }
-    }
-
-    if ( opt_o_value != NULL ) {
-        strncpy(fastq_file, opt_o_value, FASTQ_FILENAME_MAX_LENGTH);
-    }
-
-    /* process the remaining command line arguments */
-    for (index = optind; index < argc; index++) {
-        strncpy(sff_file, argv[index], SFF_FILENAME_MAX_LENGTH);
-    }
-
-//    /* just take the first passed in non-getopt argument as the sff file */
-//    strncpy(sff_file, argv[optind], SFF_FILENAME_MAX_LENGTH);
-
-    /* ensure that a sff file was at least passed in! */
-    if ( !strlen(sff_file) ) {
-        fprintf(stderr, "%s %s '%s %s' %s\n",
-                "[err] Need to specify a sff file!",
-                "See", PRG_NAME, "-h", "for usage!");
-        exit(1);
-    }
-}
-
 void process_sff_to_fastq(char *sff_file, int trim_flag) {
     //reads.clear();
     //sff_common_header h;
@@ -118,7 +62,7 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
     get_sff_file_size(sff_fp);
     
     read_sff_common_header(sff_fp, &h);
-    verify_sff_common_header((char*)PRG_NAME, (char*)VERSION, &h);
+    verify_sff_common_header(&h);
 
 
     if ( keep_fastq_orig == true ) {
@@ -139,7 +83,7 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
     uint8_t *quality;
     //register int i;
     
-    int numreads = (int) h.nreads;
+    unsigned int numreads = h.nreads;
     
     for (int i = 0; i < numreads; i++) { //cout << i << " " << numreads << endl;
         read_sff_read_header(sff_fp, &rh);
@@ -159,15 +103,6 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         //Create new read
         Read *read = new Read();
         
-         
-       
-        
-        //if (rh.name == "GJESF0N01AWIJ4N01BWO5P") 
-        //{
-        //    printf("!!!");
-        //}
-        
-        //printf("%s\n",read->readID);
         read->initial_length = nbases;
         read->read = string(bases);
         uint8_t quality_char;
@@ -319,8 +254,6 @@ void process_fastq_to_sff(char *sff_file) {
     unsigned int numreads = reads.size();
     for (unsigned int i = 0; i < numreads; i++) 
     {
-        if (reads[i]->discarded == 1) { discarded_reads++; continue;}
-        
         sff_read_header readHeader;
         readHeader.nbases = reads[i]->read.length();
         readHeader.name = (char*)malloc(sizeof(char)*strlen(reads[i]->readID));
@@ -328,8 +261,8 @@ void process_fastq_to_sff(char *sff_file) {
         readHeader.name_len = strlen(reads[i]->readID);
         
         /*Working with clip points*/
-        readHeader.clip_qual_left = reads[i]->lclip;
-        readHeader.clip_qual_right = reads[i]->rclip;
+        readHeader.clip_qual_left = 0;//reads[i]->lclip;
+        readHeader.clip_qual_right = 0;//reads[i]->rclip;
             
         readHeader.clip_adapter_left = reads[i]->lclip;
         readHeader.clip_adapter_right = reads[i]->rclip;

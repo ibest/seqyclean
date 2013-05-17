@@ -236,18 +236,13 @@ free_sff_common_header(sff_common_header *h) {
     free(h->key);
 }
 
-void  verify_sff_common_header(char *prg_name, 
-                         char *prg_version, 
-                         sff_common_header *h) {
+void  verify_sff_common_header(sff_common_header *h) {
 
     /* ensure that the magic file type is valid */
     if (h->magic != SFF_MAGIC) {
         fprintf(stderr, "The SFF header has magic value '%d' \n", h->magic);
         fprintf(stderr,
-                "[err] %s (version %s) %s : '%d' \n", 
-                prg_name, 
-                prg_version, 
-                "only knows how to deal an SFF magic value of type",
+                "[err] : '%d' \n SeqyClean only knows how to deal an SFF magic value of type",
                 SFF_MAGIC);
         free_sff_common_header(h);
         exit(2);
@@ -263,9 +258,7 @@ void  verify_sff_common_header(char *prg_name,
         }
         printf("\n");
         fprintf(stderr,
-                "[err] %s (version %s) %s : ", 
-                prg_name, 
-                prg_version, 
+                "[err] : ", 
                 "only knows how to deal an SFF header version: ");
         //char valid_header_version[/*SFF_VERSION_LENGTH*/4] = "0001";//\0\0\0\1";/*SFF_VERSION*/;
         char* valid_header_version = (char*)SFF_VERSION;

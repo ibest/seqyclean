@@ -31,9 +31,9 @@ using namespace std;
 /*Computational parameters (default)*/
 short KMER_SIZE = 15;
 short DISTANCE = 1;
-short NUM_THREADS = 4;
+unsigned short NUM_THREADS = 4;
 
-string version = "1.4.4 (2013-05-06)"; 
+string version = "1.4.5 (2013-05-08)"; 
 
 /*Data structures*/
 vector<Read*> reads;
@@ -139,21 +139,22 @@ bool lucy_only_flag = false;
 float max_a_error = 0.01;
 float max_e_at_ends = 0.01;
 
+unsigned short minimum_read_length = 50;
+
 /*Poly A/T trimming default parameters*/
-int cdna = 10;
-int c_err = 3;
-int crng=50;
-int keep;
+unsigned short cdna = 10;
+unsigned short c_err = 3;
+unsigned short crng=50;
+unsigned short keep;
 
 /*Vector trimming*/
-int L_limit = 1;
-int R_limit = 1;
-int vmr = 0;//15;
-int vml = 0;//15;
-int allowable_distance = 3;
-int minimum_read_length = 50;
-short KMER_SIZE_CONT = 15;
-int pmax = 2;
+unsigned short L_limit = 1;
+unsigned short R_limit = 1;
+unsigned short vmr = 0;//15;
+unsigned short vml = 0;//15;
+unsigned short allowable_distance = 3;
+unsigned short KMER_SIZE_CONT = 15;
+unsigned short pmax = 2;
 
 /*Other variables and parameters*/
 std::ifstream read_file;
@@ -1574,7 +1575,7 @@ void PolyATRoutine()
          QualityTrimming(reads);
     }
     
-    for(unsigned long i=0; i<(int)reads.size(); i++)
+    for(unsigned long i=0; i<reads.size(); i++)
     {
         bases_anal += reads[i]->initial_length;
         
@@ -3627,7 +3628,7 @@ void MakeClipPointsIllumina(Read* read)
     {
         if(read->vector_found == 1)
         {
-           if( read->v_start >= (read->read.length() - read->v_end) ) //Vector is on the right side
+           if( read->v_start >= (int)(read->read.length() - read->v_end) ) //Vector is on the right side
            {
                read->lclip = max(read->lucy_lclip, 1);
                if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
@@ -3939,6 +3940,7 @@ void IlluminaDynamicSE()
                         //Serial realization - useful for debugging if something does not work as expected
           
                         IlluminaDynRoutine(read, adapter_found, query_string);
+                        MakeClipPointsIllumina(read);
                         
                         cnt+=1;
           
@@ -3948,6 +3950,7 @@ void IlluminaDynamicSE()
                         
                         
                                 if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
+                        //cout <<  read->lclip << " " << read->rclip << endl;
                                 if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
                                 if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
                                 if( (int)read->read.length() < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }

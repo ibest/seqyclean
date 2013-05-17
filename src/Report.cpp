@@ -595,7 +595,7 @@ void MakeFinalStatistics( fstream &sum_stat )
         bases_anal+=reads[i]->initial_length;
         
        if(reads[i]->rlmid.lmid_start != 0 ) left_mid_tag+=1;
-       if( (reads[i]->rlmid.rmid_start != 0) && (reads[i]->rlmid.rmid_start < (int)reads[i]->read.length()) ) right_mid_tag+=1;
+       if( (reads[i]->rlmid.rmid_start != 0) && (reads[i]->rlmid.rmid_start < reads[i]->read.length()) ) right_mid_tag+=1;
        
        if(reads[i]->vector_found == 1) num_vectors+=1;
        if(reads[i]->contaminants == 1) num_contaminants+=1;

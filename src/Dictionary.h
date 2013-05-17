@@ -37,9 +37,9 @@ extern map<string, vector<k_mer_struct> > ContDict;//[24];
 extern map<string, vector<k_mer_struct> >::iterator it_ContDict;
 extern vector<RL_MID> rlmids;
 extern short KMER_SIZE;
-extern short NUM_THREADS;
+extern unsigned short NUM_THREADS;
 extern map<int, string > vector_names;
-extern short KMER_SIZE_CONT;
+extern unsigned short KMER_SIZE_CONT;
 extern fstream sum_stat;
 
 

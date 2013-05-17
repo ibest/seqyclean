@@ -39,7 +39,7 @@ extern vector<Read*> reads;
 extern long line_counter;
 extern short KMER_SIZE;
 extern vector<RL_MID> rlmids;
-extern short NUM_THREADS;
+extern unsigned short NUM_THREADS;
 extern bool contaminants_flag;
 extern bool vector_flag;
 extern bool amplicon_flag;
@@ -49,7 +49,7 @@ extern long accept_counter;
 extern long trim_counter;
 extern bool pcr_flag;
 extern char *pcr_file_name;
-extern int minimum_read_length;
+extern unsigned short minimum_read_length;
 extern int max_al_mism;
 /*Map that holds a whole vector genomes :*/
 extern map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
