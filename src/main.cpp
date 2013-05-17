@@ -3979,7 +3979,7 @@ void IlluminaDynamicSE()
                                     se_accept_cnt+=1;
                                     se_bases_kept += read->read.length();
                                     
-                                    if( read->initial_length > (int)read->read.length() )
+                                    if( read->initial_length > (read->rclip - read->lclip) )
                                     {
                                         cnt_avg+=1;
                                         avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, /*read->initial_length - read->read.length()*/read->rclip - read->lclip );
