@@ -266,9 +266,10 @@ bool exists(char* filePath)
 	return true;//S_ISREG(fileAtt.st_mode);
 }
 
-double GetAvg( double past_avg, long n, int cur_diff )
+double GetAvg( double past_avg, long n, int cur_diff, int first_avg )
 {
-    double avg = (double)( past_avg*(n-1) + cur_diff )/(double)n ;
+    //double avg = (double)( past_avg*(n-1) + cur_diff )/(double)n ;
+    double avg = (double)( past_avg - first_avg/(double)n + cur_diff/(double)n ) ;
     
     return avg;
 }

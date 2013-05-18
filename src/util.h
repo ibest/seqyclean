@@ -41,7 +41,7 @@ int max4( int x, int y, int z, int k );
 int max3( int x, int y, int z );
 int min3( int x, int y, int z );
 bool exists(char* filePath);
-double GetAvg( double past_avg, long n, int cur_diff );
+double GetAvg( double past_avg, long n, int cur_diff, int first_avg );
 int MakeDirectory(string path_to_create);
 void GetDirectories(std::vector<string> &out, char *directory);
 vector< vector<string> > GetPEfilenames(string prefix1, string prefix2, char *directory);

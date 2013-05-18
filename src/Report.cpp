@@ -623,15 +623,15 @@ void MakeFinalStatistics( fstream &sum_stat )
            if( reads[i]->initial_length > reads[i]->rclip )
            {
                cnt_avg+=1;
-               avg_trim_len = GetAvg( avg_trim_len, cnt_avg, reads[i]->rclip - reads[i]->lclip );
+               //avg_trim_len = GetAvg( avg_trim_len, cnt_avg, reads[i]->rclip - reads[i]->lclip );
                
                cnt_avg_right_trim_len+=1;
-               avg_right_trim_len = GetAvg( avg_right_trim_len, cnt_avg_right_trim_len, reads[i]->initial_length - reads[i]->rclip );
+              // avg_right_trim_len = GetAvg( avg_right_trim_len, cnt_avg_right_trim_len, reads[i]->initial_length - reads[i]->rclip );
            }
            if( reads[i]->lclip > 0 )
            {
                cnt_avg_left_trim_len+=1;
-               avg_left_trim_len = GetAvg( avg_left_trim_len, cnt_avg_left_trim_len, reads[i]->lclip );
+               //avg_left_trim_len = GetAvg( avg_left_trim_len, cnt_avg_left_trim_len, reads[i]->lclip );
            }
        }
        

@@ -1949,12 +1949,12 @@ void PolyATIlluminaRoutine()
                                     if(  read1->rclip < read1->initial_length  )
                                     {
                                         cnt_right_trim_pe1 += 1;
-                                        avg_right_trim_len_pe1 = GetAvg( avg_right_trim_len_pe1, cnt_right_trim_pe1, read1->initial_length - read1->rclip );
+                                        ////avg_right_trim_len_pe1 = GetAvg( avg_right_trim_len_pe1, cnt_right_trim_pe1, read1->initial_length - read1->rclip );
                                     }
                                     if(read1->lclip > 0)
                                     {
                                         cnt_left_trim_pe1 += 1;
-                                        avg_left_trim_len_pe1 = GetAvg( avg_left_trim_len_pe1, cnt_left_trim_pe1, read1->lclip );
+                                        ////avg_left_trim_len_pe1 = GetAvg( avg_left_trim_len_pe1, cnt_left_trim_pe1, read1->lclip );
                                     }
                                     
                                     read1->read = read1->read.substr(0 , read1->rclip );
@@ -1965,12 +1965,12 @@ void PolyATIlluminaRoutine()
                                     if(  read2->rclip < read2->initial_length  )
                                     {
                                         cnt_right_trim_pe2 += 1;
-                                        avg_right_trim_len_pe2 = GetAvg( avg_right_trim_len_pe2, cnt_right_trim_pe2, read2->initial_length - read2->rclip );
+                                        ///////////////avg_right_trim_len_pe2 = GetAvg( avg_right_trim_len_pe2, cnt_right_trim_pe2, read2->initial_length - read2->rclip );
                                     }
                                     if(read2->lclip > 0)
                                     {
                                         cnt_left_trim_pe2 += 1;
-                                        avg_left_trim_len_pe2 = GetAvg( avg_left_trim_len_pe2, cnt_left_trim_pe2, read2->lclip );
+                                        ///////////////avg_left_trim_len_pe2 = GetAvg( avg_left_trim_len_pe2, cnt_left_trim_pe2, read2->lclip );
                                     }
                                         
                                     read2->read = read2->read.substr(0 , read2->rclip );
@@ -1996,19 +1996,19 @@ void PolyATIlluminaRoutine()
                                     if( read1->initial_length > (int)read1->read.length() )
                                     {
                                         cnt1_avg+=1;
-                                        avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg,  read1->rclip - read1->lclip );//read1->initial_length - read1->read.length()
+                                        //////////////avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg,  read1->rclip - read1->lclip );//read1->initial_length - read1->read.length()
                                     }
                  
                                     if( read2->initial_length > (int)read2->read.length() )
                                     {
                                         cnt2_avg+=1;
-                                        avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->rclip - read2->lclip );//read2->initial_length - read2->read.length()*
+                                        ////////////////avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->rclip - read2->lclip );//read2->initial_length - read2->read.length()*
                                     }
                  
                                     cnt_avg_len1 +=1; cnt_avg_len2 +=1;
                  
-                                    avg_len_pe1 = GetAvg( avg_len_pe1, cnt_avg_len1, read1->read.length() );
-                                    avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
+                                    ////////////avg_len_pe1 = GetAvg( avg_len_pe1, cnt_avg_len1, read1->read.length() );
+                                    //////////////avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
                 
                                         
                         } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
@@ -2352,12 +2352,12 @@ void PolyATIlluminaRoutineSE()
                             if(  read->rclip < read->initial_length  )
                             {
                                  cnt_right_trim_se += 1;
-                                 avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
+                                 //////////////avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
                             }
                             if(read->lclip > 0)
                             {
                                  cnt_left_trim_se += 1;
-                                 avg_left_trim_len_se = GetAvg( avg_left_trim_len_se, cnt_left_trim_se, read->lclip );
+                                 /////////////avg_left_trim_len_se = GetAvg( avg_left_trim_len_se, cnt_left_trim_se, read->lclip );
                             }
                                     
                             read->read = read->read.substr(0 , read->rclip );
@@ -2372,11 +2372,11 @@ void PolyATIlluminaRoutineSE()
                             if( read->initial_length > (int)read->read.length() )
                             {
                                cnt_avg+=1;
-                               avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, /*read->initial_length - read->read.length()*/read->rclip - read->lclip );
+                               //////////////avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, /*read->initial_length - read->read.length()*/read->rclip - read->lclip );
                             }
                  
                             cnt_avg_len+=1; 
-                            avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
+                            //////////////avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
                                     
                         } 
                                 
@@ -2955,6 +2955,13 @@ void IlluminaDynamic()
     unsigned long pe_discard_cnt;
     double avg_trim_len_pe1, avg_trim_len_pe2;
     
+    /*Raw implementation of average. Later I will come with a better algorithm*/
+    unsigned long long avg_bases_pe1 = 0;
+    unsigned long long avg_bases_pe2 = 0;
+    unsigned long long avg_left_clip_1 = 0;
+    unsigned long long avg_left_clip_2 = 0;
+    unsigned long long avg_right_clip_1 = 0;
+    unsigned long long avg_right_clip_2 = 0;
     
     pe_bases_kept = pe_bases_discarded = se_pe1_bases_kept = se_pe2_bases_kept = 0;
     pe_discard_cnt = 0;
@@ -3189,12 +3196,16 @@ void IlluminaDynamic()
                                     if(  read1->rclip < read1->initial_length  )
                                     {
                                         cnt_right_trim_pe1 += 1;
-                                        avg_right_trim_len_pe1 = GetAvg( avg_right_trim_len_pe1, cnt_right_trim_pe1, read1->initial_length - read1->rclip );
+                                        //////////avg_right_trim_len_pe1 = GetAvg( avg_right_trim_len_pe1, cnt_right_trim_pe1, read1->initial_length - read1->rclip );
+                                        avg_right_clip_1 += read1->initial_length - read1->rclip;
+                                        avg_right_trim_len_pe1 = avg_right_clip_1/cnt_right_trim_pe1;
                                     }
                                     if(read1->lclip > 0)
                                     {
                                         cnt_left_trim_pe1 += 1;
-                                        avg_left_trim_len_pe1 = GetAvg( avg_left_trim_len_pe1, cnt_left_trim_pe1, read1->lclip );
+                                        /////////////avg_left_trim_len_pe1 = GetAvg( avg_left_trim_len_pe1, cnt_left_trim_pe1, read1->lclip );
+                                        avg_left_clip_1 += read1->lclip;
+                                        avg_left_trim_len_pe1 = avg_left_clip_1/cnt_left_trim_pe1;
                                     }
                                     
                                     read1->read = read1->read.substr(0 , read1->rclip );
@@ -3205,12 +3216,16 @@ void IlluminaDynamic()
                                     if(  read2->rclip < read2->initial_length  )
                                     {
                                         cnt_right_trim_pe2 += 1;
-                                        avg_right_trim_len_pe2 = GetAvg( avg_right_trim_len_pe2, cnt_right_trim_pe2, read2->initial_length - read2->rclip );
+                                        //////////avg_right_trim_len_pe2 = GetAvg( avg_right_trim_len_pe2, cnt_right_trim_pe2, read2->initial_length - read2->rclip );
+                                        avg_right_clip_2 += read2->initial_length - read2->rclip;
+                                        avg_right_trim_len_pe2 = avg_right_clip_2/cnt_right_trim_pe2;
                                     }
                                     if(read2->lclip > 0)
                                     {
                                         cnt_left_trim_pe2 += 1;
-                                        avg_left_trim_len_pe2 = GetAvg( avg_left_trim_len_pe2, cnt_left_trim_pe2, read2->lclip );
+                                        /////////////avg_left_trim_len_pe2 = GetAvg( avg_left_trim_len_pe2, cnt_left_trim_pe2, read2->lclip );
+                                        avg_left_clip_2 += read2->lclip;
+                                        avg_left_trim_len_pe2 = avg_left_clip_2/cnt_left_trim_pe2;
                                     }
                                         
                                     read2->read = read2->read.substr(0 , read2->rclip );
@@ -3236,19 +3251,23 @@ void IlluminaDynamic()
                                     if( read1->initial_length > (int)read1->read.length() )
                                     {
                                         cnt1_avg+=1;
-                                        avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg,  read1->rclip - read1->lclip );//read1->initial_length - read1->read.length()
+                                        ///////////avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg,  read1->rclip - read1->lclip );//read1->initial_length - read1->read.length()
+                                        avg_bases_pe1 += read1->rclip - read1->lclip;
+                                        avg_trim_len_pe1 = avg_bases_pe1/cnt1_avg;
                                     }
                  
                                     if( read2->initial_length > (int)read2->read.length() )
                                     {
                                         cnt2_avg+=1;
-                                        avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->rclip - read2->lclip );//read2->initial_length - read2->read.length()*
+                                        /////////////avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->rclip - read2->lclip );//read2->initial_length - read2->read.length()*
+                                        avg_bases_pe2 += read2->rclip - read2->lclip;
+                                        avg_trim_len_pe2 = avg_bases_pe2/cnt2_avg;
                                     }
                  
                                     cnt_avg_len1 +=1; cnt_avg_len2 +=1;
                  
-                                    avg_len_pe1 = GetAvg( avg_len_pe1, cnt_avg_len1, read1->read.length() );
-                                    avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
+                                    ///////////avg_len_pe1 = GetAvg( avg_len_pe1, cnt_avg_len1, read1->read.length() );
+                                    /////////////avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
                 
                                         
                         } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
@@ -3827,6 +3846,10 @@ void IlluminaDynamicSE()
     se_discard_cnt = 0;
     se_bases_anal = 0;        
     avg_trim_len_se = 0;
+    /*Raw implementation of average. Later I will come with a better algorithm*/
+    unsigned long long avg_bases_se = 0;
+    unsigned long long avg_left_clip = 0;
+    unsigned long long avg_right_clip = 0;
     
     unsigned long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
     unsigned long cnt_avg_len; cnt_avg_len = 0;
@@ -3873,10 +3896,10 @@ void IlluminaDynamicSE()
     se_output_file.open( se_output_filename.c_str(), ios::out );
     
     string st_str;
-    
+    int first_avg = 0;
     for(int jj=0; jj<(int)se_names.size(); ++jj)
     {
-    
+        
         bool adapter_found = false;
         
         string query_string = "NA";
@@ -3962,12 +3985,16 @@ void IlluminaDynamicSE()
                                     if(  read->rclip < read->initial_length  )
                                     {
                                         cnt_right_trim_se += 1;
-                                        avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
+                                        avg_right_clip += read->lclip; 
+                                        avg_right_trim_len_se = avg_right_clip/cnt_right_trim_se;
+                                        //avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
                                     }
                                     if(read->lclip > 0)
                                     {
                                         cnt_left_trim_se += 1;
-                                        avg_left_trim_len_se = GetAvg( avg_left_trim_len_se, cnt_left_trim_se, read->lclip );
+                                        //avg_left_trim_len_se = GetAvg( avg_left_trim_len_se, cnt_left_trim_se, read->lclip );
+                                        avg_left_clip += read->lclip; 
+                                        avg_left_trim_len_se = avg_left_clip/cnt_left_trim_se;
                                     }
                                     
                                     read->read = read->read.substr(0 , read->rclip );
@@ -3979,15 +4006,24 @@ void IlluminaDynamicSE()
                                     se_accept_cnt+=1;
                                     se_bases_kept += read->read.length();
                                     
-                                    if( read->initial_length > (read->rclip - read->lclip) )
+                                    //if( read->initial_length > (read->rclip - read->lclip) )
+                                    if( read->discarded == 0 )
                                     {
                                         cnt_avg+=1;
-                                        avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, /*read->initial_length - read->read.length()*/read->rclip - read->lclip );
-                                        cout << avg_trim_len_se << endl;
+                                        /*if (cnt_avg == 1) {
+                                            first_avg = read->rclip - read->lclip;
+                                            avg_trim_len_se = first_avg;
+                                        } else {
+                                            avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, read->rclip - read->lclip, first_avg );
+                                            cout << avg_trim_len_se << endl;
+                                        }*/
+                                        avg_bases_se += read->rclip - read->lclip;
+                                        avg_trim_len_se = avg_bases_se/cnt_avg;
+                                        
                                     }
                  
                                     cnt_avg_len+=1; 
-                                    avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
+                                    //avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
                                     
                  
                                 } 

@@ -68,8 +68,9 @@
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U test_data/SmallTestIllumina_R1.fastq.gz -qual 20 20 -o test/test_SE</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SmallTestIllumina_R1.fastq.gz -2 test_data/SmallTestIllumina_R2.fastq.gz -qual 20 20 -o test/test_SE</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -U test_data/SmallTestIllumina_R1.fastq.gz -qual 20 20 -o test/test_SE</runcommand>
+        <runcommand>bin/./seqyclean -1 test_data/SmallTestIllumina_R1.fastq.gz -2 test_data/SmallTestIllumina_R2.fastq.gz -qual 20 20 -o test/test_SE</runcommand>
         <rundir>..</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
