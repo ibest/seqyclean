@@ -10,13 +10,11 @@
 #include <streambuf>
 #include <exception>
 #include <pthread.h>
-//#include <bits/basic_string.h>
 #include "timer.h"
 #include "util.h"
 #include "poly.h"
 #include "Read.h"
 #include "Dictionary.h"
-//#include "KMerRoutine.h"
 #include "Report.h"
 #include "MainPipeLine.h"
 #include "sffreader.h"
@@ -33,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.4.6 (2013-05-17)"; 
+string version = "1.4.7 (2013-05-31)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -423,6 +421,10 @@ int main(int argc, char *argv[])
                                         ++i;
                                         window1 = atoi(argv[++i]);
                                 }
+                        } else {
+                            cout << "Error: parameter w0 has empty value.\n";
+                            PrintHelp();
+                            return 0;
                         }
                   }
                } else if((i+1)<argc && (string(argv[i+1]) == "-w0") )
@@ -448,7 +450,15 @@ int main(int argc, char *argv[])
                    {
                        ++i;
                        window1 = atoi(argv[++i]);
+                   } else {
+                       cout << "Error: parameter w1 has empty value.\n";
+                       PrintHelp();
+                       return 0;
                    }
+               } else {
+                   cout << "Error: parameter w0 has empty value.\n";
+                   PrintHelp();
+                   return 0;
                }
            }
            
@@ -531,6 +541,10 @@ int main(int argc, char *argv[])
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
               KMER_SIZE = atoi(argv[++i]);
+           } else {
+               cout << "Error: parameter k has empty value.\n";
+               PrintHelp();
+               return 0;
            }
            continue;
         }
@@ -547,6 +561,10 @@ int main(int argc, char *argv[])
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
               NUM_THREADS = atoi(argv[++i]);
+           } else {
+               cout << "Error: parameter \'t\' has empty value.\n";
+               PrintHelp();
+               return 0;
            }
            continue;
         }
@@ -610,8 +628,13 @@ int main(int argc, char *argv[])
         }
         if(string(argv[i]) == "-allowable_distance" )
         {
-           if ( isdigit(argv[i+1][0]) ) 
+           if ( isdigit(argv[i+1][0]) ) {
                 allowable_distance = atoi(argv[++i]);
+           } else {
+               cout << "Error: parameter \'allowable_distance\' has empty value.\n";
+               PrintHelp();
+               return 0;
+           }
            
            if(allowable_distance > 50) allowable_distance = 15;
            
@@ -619,17 +642,30 @@ int main(int argc, char *argv[])
         }
         if(string(argv[i]) == "-minimum_read_length" )
         {
-           if ( isdigit(argv[i+1][0]) ) 
+           if ( isdigit(argv[i+1][0]) ) {
                 minimum_read_length = atoi(argv[++i]);
+           } else {
+               cout << "Error: parameter \'minimum_read_length\' has empty value.\n";
+               PrintHelp();
+               return 0;
+           }
            
-           if(minimum_read_length > 100000) minimum_read_length = 50;
+           if(minimum_read_length > 10000) {
+               minimum_read_length = 50;
+               cout << "warning: parameter minimum_read_length exceeded the maximum value of 10,000 bases and was set to 50 bases.\n";
+           }
            
            continue;
         }
 	if(string(argv[i]) == "-kc" )
         {
-           if ( isdigit(argv[i+1][0]) ) 
+           if ( isdigit(argv[i+1][0]) ) {
                 KMER_SIZE_CONT = atoi(argv[++i]);
+           } else {
+               cout << "Error: parameter \'kc\' has empty value.\n";
+               PrintHelp();
+               return 0;
+           }
            
            continue;
         }
@@ -2916,9 +2952,9 @@ void PrintHelp() {
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n";
 cout <<"Example:\n"
 "Roche:\n"
-"./seqyclean -454 ../artif_libs/artif454_1000_0_100_0.sff -o Test -v ../vectors.fasta -m ../RL_MIDS.csv -k 15 -f 10 -t 4\n"
+"./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta\n"
 "Illumina:\n"
-"./seqyclean -1 P01_index16_CCGTCC_L007_R1_001.fastq.gz -2 P01_index16_CCGTCC_L007_R2_001.fastq.gz -o Test1/Test1\n";
+"./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina\n";
     
     
     cout << "Please ask Ilya by email: zhba3458@vandals.uidaho.edu in case of any questions.\n" ;

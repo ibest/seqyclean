@@ -1,5 +1,5 @@
 Program SeqyClean
-Version: 1.4.6 (2013-05-17)
+Version: 1.4.7 (2013-05-31)
 Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
 Usage:  
 Roche 454:
@@ -40,10 +40,10 @@ For Illumina single-end:
 
 Example:
 Roche:
-./seqyclean -454 ../artif_libs/artif454_1000_0_100_0.sff -o Test -v ../vectors.fasta -m ../RL_MIDS.csv -k 15 -f 10 -t 4
+./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta
 
 Illumina:
-./seqyclean -1 P01_index16_CCGTCC_L007_R1_001.fastq.gz -2 P01_index16_CCGTCC_L007_R2_001.fastq.gz -o Test1/Test1
+./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina
     
 
 Supported RL MIDS:

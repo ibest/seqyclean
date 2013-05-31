@@ -25,9 +25,6 @@
 #include "pairwise.h"
 #include <pthread.h>
 #include <dirent.h>
-//#include <sparsehash/sparse_hash_map>
-//#include <sparsehash/sparse_hash_set>
-//#include <sparsehash/dense_hash_set>
 #include <list>
 #include "iz_SSAHA.h"
 #include "Read.h"
