@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.4.7 (2013-05-31)";
+string version = "1.4.8 (2013-05-31)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -2282,7 +2282,7 @@ void PolyATIlluminaRoutineSE()
                         vector <string> fields1, fields2;     
                         split_str( line, fields1, " " );
                         split_str( fields1[0], fields2, ":" );
-                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0/" + fields1[1].substr(0,1)  ) ; //+ " (" + line + ")");
+                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] ) ; //+ " (" + line + ")");
                             
                         fields1.clear();
                         fields2.clear();
@@ -3960,8 +3960,8 @@ void IlluminaDynamicSE()
                         vector <string> fields1, fields2;     
                         split_str( line, fields1, " " );
                         split_str( fields1[0], fields2, ":" );
-                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0/" + fields1[1].substr(0,1)  ) ; //+ " (" + line + ")");
-                            
+                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] ) ;
+			
                         fields1.clear();
                         fields2.clear();
                     }
