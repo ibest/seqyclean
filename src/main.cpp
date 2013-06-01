@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.4.8 (2013-05-31)";
+string version = "1.4.9 (2013-05-31)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -1363,8 +1363,8 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        polyat_output_file_name = output_prefix + (output_fastqfile_flag ? ".fastq" : ".sff" );
-        
+        polyat_output_file_name = output_prefix;// + (output_fastqfile_flag ? ".fastq" : ".sff" );
+    
         cout << "Poly A/T output file: " << polyat_output_file_name << "\n";
         sum_stat << "Poly A/T output file: " << polyat_output_file_name << "\n";
         
@@ -1671,11 +1671,13 @@ void PolyATRoutine()
     
     
     
-    WriteToSFF( polyat_output_file_name );
-    
-    if( output_fastqfile_flag || (string(roche_names[0]).substr( strlen(roche_names[0])-5, 5 ) == "fastq") || (string(roche_names[0]).substr( strlen(roche_names[0])-2, 2 ) == "gz") ) 
+    if( (string(roche_names[0]).substr( strlen(roche_names[0])-5, 5 ) == "fastq") || (string(roche_names[0]).substr( strlen(roche_names[0])-2, 2 ) == "gz")  )
     {
-        WriteToFASTQ( polyat_output_file_name );
+        WriteToFASTQ( polyat_output_file_name + ".fastq");
+    } else {
+        WriteToSFF( polyat_output_file_name + ".sff" );
+        if( output_fastqfile_flag)
+            WriteToFASTQ( polyat_output_file_name + ".fastq" );
     }
     
     
@@ -2282,7 +2284,7 @@ void PolyATIlluminaRoutineSE()
                         vector <string> fields1, fields2;     
                         split_str( line, fields1, " " );
                         split_str( fields1[0], fields2, ":" );
-                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] ) ; //+ " (" + line + ")");
+                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0" ) ; //+ " (" + line + ")");
                             
                         fields1.clear();
                         fields2.clear();
@@ -3960,7 +3962,7 @@ void IlluminaDynamicSE()
                         vector <string> fields1, fields2;     
                         split_str( line, fields1, " " );
                         split_str( fields1[0], fields2, ":" );
-                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] ) ;
+                        line = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0" ) ;
 			
                         fields1.clear();
                         fields2.clear();

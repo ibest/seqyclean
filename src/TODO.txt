@@ -1,3 +1,1 @@
-1. Support Illumina single-end reads
-2. "Dynamic" output statistics
-3. Machine-readable statistics (for SummaryStatistics.txt)
+1. "Dynamic" output statistics for 454 mode
