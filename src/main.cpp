@@ -1363,7 +1363,7 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        polyat_output_file_name = output_prefix + ( (output_fastqfile_flag || (string(polyat_file_name).substr( strlen(polyat_file_name)-5, 5 ) == "fastq") || (string(polyat_file_name).substr( strlen(polyat_file_name)-2, 2 ) == "gz") ) ? ".fastq" : ".sff" );
+        polyat_output_file_name = output_prefix + (output_fastqfile_flag ? ".fastq" : ".sff" );
         
         cout << "Poly A/T output file: " << polyat_output_file_name << "\n";
         sum_stat << "Poly A/T output file: " << polyat_output_file_name << "\n";

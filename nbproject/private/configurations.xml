@@ -2,7 +2,11 @@
 <configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="SeqyClean">
+      <df name="bin">
+      </df>
       <df name="man">
+      </df>
+      <df name="obj">
       </df>
       <df name="src">
         <in>Dictionary.cpp</in>
@@ -44,6 +48,8 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
+      <df name="test">
+      </df>
       <df name="test_data">
       </df>
     </df>
@@ -77,8 +83,9 @@
           <runcommandpicklistitem>bin/./seqyclean -454 test/in.sff -qual -minimum_read_length 20 -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual -minimum_read_length 20 -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual -minimum_read_length  -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/Bubo.454Reads.RL3.sff -qual 20 20 -minimum_read_length 300 -o test/test -polyat</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -454 test_data/in.sff -qual -minimum_read_length  -o test/test</runcommand>
+        <runcommand>bin/./seqyclean -454 test_data/Bubo.454Reads.RL3.sff -qual 20 20 -minimum_read_length 300 -o test/test -polyat</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
