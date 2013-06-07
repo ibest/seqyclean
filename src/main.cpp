@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.4.9 (2013-05-31)";
+string version = "1.4.10 (2013-06-06)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -2056,6 +2056,14 @@ void PolyATIlluminaRoutine()
                                     read1->read = read1->read.substr( read1->lclip, read1->rclip - read1->lclip );
                                     read1->illumina_quality_string = read1->illumina_quality_string.substr( read1->lclip, read1->rclip - read1->lclip );
                  
+                                    vector <string> fields1, fields2;     
+                                    split_str( read1->illumina_readID, fields1, " " );
+                                    split_str( fields1[0], fields2, ":" );
+                                    read1->illumina_readID = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0" ) ; //+ " (" + line + ")");
+                            
+                                    fields1.clear();
+                                    fields2.clear();                                 
+                                    
                                     WriteSEFile( se_file, read1 );
                                     se_pe1_accept_cnt+=1;
                                     se_pe1_bases_kept += read1->read.length();
@@ -2069,6 +2077,14 @@ void PolyATIlluminaRoutine()
                                     read2->read = read2->read.substr( read2->lclip, read2->read.length() - read2->lclip );
                                     read2->illumina_quality_string = read2->illumina_quality_string.substr( read2->lclip, read2->illumina_quality_string.length() - read2->lclip );
         	 
+                                    vector <string> fields1, fields2;     
+                                    split_str( read2->illumina_readID, fields1, " " );
+                                    split_str( fields1[0], fields2, ":" );
+                                    read2->illumina_readID = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0" ) ; //+ " (" + line + ")");
+                            
+                                    fields1.clear();
+                                    fields2.clear();
+                                    
                                     WriteSEFile( se_file, read2 );
                                     se_pe2_accept_cnt +=1;
                                     se_pe2_bases_kept += read2->read.length();
@@ -3316,6 +3332,10 @@ void IlluminaDynamic()
                                     read1->read = read1->read.substr( read1->lclip, read1->rclip - read1->lclip );
                                     read1->illumina_quality_string = read1->illumina_quality_string.substr( read1->lclip, read1->rclip - read1->lclip );
                  
+                                    
+                                    if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
+                                                read1->illumina_readID = read1->illumina_readID.substr(0,read1->illumina_readID.length()-2);                                  
+                                    
                                     WriteSEFile( se_file, read1 );
                                     se_pe1_accept_cnt+=1;
                                     se_pe1_bases_kept += read1->read.length();
@@ -3329,18 +3349,18 @@ void IlluminaDynamic()
                                     read2->read = read2->read.substr( read2->lclip, read2->read.length() - read2->lclip );
                                     read2->illumina_quality_string = read2->illumina_quality_string.substr( read2->lclip, read2->illumina_quality_string.length() - read2->lclip );
         	 
+                                    if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
+                                                read2->illumina_readID = read2->illumina_readID.substr(0,read2->illumina_readID.length()-3);                                  
+                                    
                                     WriteSEFile( se_file, read2 );
                                     se_pe2_accept_cnt +=1;
                                     se_pe2_bases_kept += read2->read.length();
-                 
-                                    
-                        }
-                                else 
-                                {
+                        } else 
+                        {
                                         pe_discard_cnt+=1;
                                         pe_bases_discarded += read1->read.length();
                                         pe_bases_discarded += read2->read.length();
-                                }
+                        }
                         
                         rep_file1 << read1->illumina_readID << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
                         rep_file2 << read2->illumina_readID << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
@@ -4023,7 +4043,7 @@ void IlluminaDynamicSE()
                                     if(  read->rclip < read->initial_length  )
                                     {
                                         cnt_right_trim_se += 1;
-                                        avg_right_clip += read->lclip; 
+                                        avg_right_clip += read->initial_length - read->rclip;
                                         avg_right_trim_len_se = avg_right_clip/cnt_right_trim_se;
                                         //avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
                                     }
