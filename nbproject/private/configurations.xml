@@ -84,12 +84,12 @@
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/in1.fastq -2 test_data/in2.fastq -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test -new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 --new2old_illumina</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --new2old_illumina</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 --new2old_illumina</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test</runcommand>
+        <runcommand>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

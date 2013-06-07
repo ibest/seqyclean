@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.4.10 (2013-06-06)";
+string version = "1.4.11 (2013-06-07)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -2393,7 +2393,7 @@ void PolyATIlluminaRoutineSE()
                         
                         cnt+=1;
                         
-                        rep_file << read->illumina_readID << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
+                        rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
                       
                         if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
                         if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
@@ -3362,8 +3362,8 @@ void IlluminaDynamic()
                                         pe_bases_discarded += read2->read.length();
                         }
                         
-                        rep_file1 << read1->illumina_readID << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
-                        rep_file2 << read2->illumina_readID << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+                        rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                        rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
           
           
                         if (read1->tru_sec_found == 1) ts_adapters1++;
@@ -3707,12 +3707,15 @@ void MakeClipPointsIllumina(Read* read)
         {
            if( read->v_start >= (int)(read->read.length() - read->v_end) ) //Vector is on the right side
            {
-               read->lclip = max(read->lucy_lclip, 1);
-               if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
+               read->lclip = read->lucy_lclip;//max(read->lucy_lclip, 1);
+               if(read->lclip > 0)
+                  read->left_trimmed_by_quality = 1;
+               
+               /*if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
                {
                    read->left_trimmed_by_quality = 1;
-               }
-            
+               }*/
+                              
                read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, min(read->lucy_rclip, read->v_start) );
                     
                if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
@@ -3731,9 +3734,9 @@ void MakeClipPointsIllumina(Read* read)
            }
            else //Vector is on the left side or the whole read is vector
            {
-               read->lclip = max(read->lucy_lclip,max(1, read->v_end ) );
+               read->lclip = max(read->lucy_lclip,read->v_end);//max(read->lucy_lclip,max(1, read->v_end ) );
            
-               if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
+               if( (read->lclip == read->lucy_lclip) && (read->lclip > 0) )//&& (read->lucy_lclip > 1)) 
                {
                  read->left_trimmed_by_quality = 1;
                }
@@ -3757,9 +3760,14 @@ void MakeClipPointsIllumina(Read* read)
         } 
         else
         {
-            read->lclip = max(read->lucy_lclip, 1);
-            if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1))  
+            read->lclip = read->lucy_lclip;//max(read->lucy_lclip, 1);
+            if(read->lclip > 0)
                 read->left_trimmed_by_quality = 1;
+            
+            /*if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1))  
+                read->left_trimmed_by_quality = 1;
+            */
+            
             
             read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, read->lucy_rclip );
             if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
@@ -3775,10 +3783,15 @@ void MakeClipPointsIllumina(Read* read)
     }
     else if( (qual_trim_flag ) && (!vector_flag) )
     {
-        read->lclip = max(read->lucy_lclip,1);
-        if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip >= 1)) 
+        read->lclip = read->lucy_lclip;//max(read->lucy_lclip,1);
+        if(read->lclip > 0)
            read->left_trimmed_by_quality = 1;
-                
+        
+        /*if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip >= 1)) 
+           read->left_trimmed_by_quality = 1;
+        */
+        
+        
         read->rclip = min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos,read->lucy_rclip );
         if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
         {
@@ -3797,11 +3810,11 @@ void MakeClipPointsIllumina(Read* read)
     }
     else if( (!qual_trim_flag) && (vector_flag ) )
     {
-       if( read->v_start >= (read->read.length() - read->v_end) ) //Vector is on the right side
+       if( read->v_start >= ((int)read->read.length() - read->v_end) ) //Vector is on the right side
        {
-          read->lclip = 1;
+          read->lclip = 0;
             
-          read->rclip = (unsigned short)min(read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos, read->v_start == -1 ? read->tru_sec_pos : read->v_start );
+          read->rclip = min(read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos, read->v_start == -1 ? read->tru_sec_pos : read->v_start );
                     
           if(read->rclip == (unsigned short)read->tru_sec_pos)
           {
@@ -3816,7 +3829,7 @@ void MakeClipPointsIllumina(Read* read)
        }
        else //Vector is on the left side
        {
-          read->lclip = max(1, read->v_end == -1 ? 1 : read->v_end);
+          read->lclip = max(0, read->v_end == -1 ? 0 : read->v_end);
            
           if(read->lclip == read->v_end)
           {
@@ -3841,7 +3854,7 @@ void MakeClipPointsIllumina(Read* read)
        if( (read->rclip < read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
           read->right_trimmed_by_adapter = 1;
             
-       read->lclip = 1;
+       read->lclip = 0;
     }
    
    }
@@ -3954,7 +3967,7 @@ void IlluminaDynamicSE()
     se_output_file.open( se_output_filename.c_str(), ios::out );
     
     string st_str;
-    int first_avg = 0;
+    //int first_avg = 0;
     for(int jj=0; jj<(int)se_names.size(); ++jj)
     {
         
@@ -4027,7 +4040,7 @@ void IlluminaDynamicSE()
           
                         //Report
                         //Read ID
-                        rep_file << read->illumina_readID << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
+                        rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
                         
                         
                                 if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
