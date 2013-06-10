@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.4.11 (2013-06-07)";
+string version = "1.4.12 (2013-06-10)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -3193,7 +3193,18 @@ void IlluminaDynamic()
                         //Serial realization - useful for debugging if something does not work as expected
           
                         IlluminaDynRoutine(read1, adapter_found1, query_string1);
-                        IlluminaDynRoutine(read2, adapter_found2, query_string2);
+                        
+                        if(read1->discarded_by_contaminant == 0) {
+                            IlluminaDynRoutine(read2, adapter_found2, query_string2);
+                        } else {
+                            read2->discarded_by_contaminant = 1;
+                            read2->discarded = 1;
+                        }
+                        
+                        if(read2->discarded_by_contaminant == 1) {
+                            read1->discarded_by_contaminant = 1;
+                            read1->discarded = 1;
+                        }
                         
                         //Establishing the most conservative adapters
                         if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1) )
