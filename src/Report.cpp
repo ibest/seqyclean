@@ -586,6 +586,8 @@ void MakeFinalStatistics( fstream &sum_stat )
     
     long left_mid_tag, right_mid_tag;
     left_mid_tag = right_mid_tag = 0;
+    unsigned long long avg_bases, avg_right_clip_1, avg_left_clip_1;
+    avg_bases = avg_right_clip_1 = avg_left_clip_1 = 0;
     
     double avg_trim_len, avg_read_len, cnt_avg, cnt_avg_len, avg_left_trim_len, avg_right_trim_len, cnt_avg_left_trim_len, cnt_avg_right_trim_len ;
     avg_trim_len = avg_read_len = cnt_avg = cnt_avg_len = avg_left_trim_len = avg_right_trim_len = cnt_avg_left_trim_len = cnt_avg_right_trim_len = 0;
@@ -616,22 +618,23 @@ void MakeFinalStatistics( fstream &sum_stat )
        
        if( reads[i]->discarded == 0 )
        {
-           //cnt_avg_len+=1;
-           //avg_read_len = GetAvg( avg_read_len, cnt_avg_len, reads[i]->read.length() );
+           cnt_avg_len+=1;
+           avg_bases += reads[i]->rclip - reads[i]->lclip;
+           avg_trim_len = avg_bases/cnt_avg_len;
            
            //Average right and left trimmed lengths
            if( reads[i]->initial_length > reads[i]->rclip )
            {
-               cnt_avg+=1;
-               //avg_trim_len = GetAvg( avg_trim_len, cnt_avg, reads[i]->rclip - reads[i]->lclip );
-               
+               //cnt_avg+=1;
+               avg_right_clip_1 += reads[i]->initial_length - reads[i]->rclip;
                cnt_avg_right_trim_len+=1;
-              // avg_right_trim_len = GetAvg( avg_right_trim_len, cnt_avg_right_trim_len, reads[i]->initial_length - reads[i]->rclip );
+               avg_right_trim_len = avg_right_clip_1/cnt_avg_right_trim_len;
            }
            if( reads[i]->lclip > 0 )
            {
                cnt_avg_left_trim_len+=1;
-               //avg_left_trim_len = GetAvg( avg_left_trim_len, cnt_avg_left_trim_len, reads[i]->lclip );
+               avg_left_clip_1 += reads[i]->lclip;
+               avg_left_trim_len = avg_left_clip_1/cnt_avg_left_trim_len;
            }
        }
        
