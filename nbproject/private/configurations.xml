@@ -50,8 +50,6 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
-      <df name="test">
-      </df>
       <df name="test_data">
       </df>
     </df>
@@ -83,8 +81,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE1.fastq -2 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE2.fastq -o test/test</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommand>
+        <runcommand>./bin/seqyclean -1 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE1.fastq -2 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE2.fastq -o test/test</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

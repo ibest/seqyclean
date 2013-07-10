@@ -3247,11 +3247,20 @@ void IlluminaDynamic()
                         }
                         else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && (read1->discarded == 0) && (read2->discarded == 0) )
                         {
+                            
+                            
+                            
                             int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), 30);
                             if(a != 0) {
                                 read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-                                read1->tru_sec_pos = read1->initial_length + a; read2->tru_sec_pos = read2->initial_length + a;
+                                read1->tru_sec_pos = read1->initial_length + a + 1; read2->tru_sec_pos = read2->initial_length + a + 1;
                                 
+                            }
+                            
+                            if(read2->illumina_readID == "@HS1:178:D0TJ8ACXX:4:1102:19426:26853 2:Y:0:CTCGATG") 
+                            {
+                                cout << "!!!!!" << endl << a << endl;
+                                return;
                             }
                         }
                         
