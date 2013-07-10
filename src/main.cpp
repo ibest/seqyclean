@@ -375,6 +375,10 @@ bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
 bool i64_flag = false;
 
+/*For overlap Illumina*/
+int adapterlength = 30;
+double overlap_t = 0.9;
+
 int main(int argc, char *argv[]) 
 {
     double start, finish, elapsed;
@@ -470,6 +474,16 @@ int main(int argc, char *argv[])
            trim_adapters_flag = false;
            continue;
         }
+        if( (string(argv[i]) == "-adapter_length") && isdigit(argv[i+1][0])) 
+        {
+           adapterlength = atoi(argv[++i]);
+           continue;
+        }
+        if( (string(argv[i]) == "-ot") && isdigit(argv[i+1][0])) 
+        {
+           overlap_t = atof(argv[++i]);
+           continue;
+        }
         if( string(argv[i]) == "--shuffle" ) 
         {
            shuffle_flag = true;
@@ -477,7 +491,7 @@ int main(int argc, char *argv[])
         }
         if( string(argv[i]) == "-max_al_mism" ) 
         {
-           max_al_mism = atoi(argv[i]);
+           max_al_mism = atoi(argv[++i]);
            continue;
         }
         if( string(argv[i]) == "--keep_fastq_orig" ) 
@@ -2954,6 +2968,8 @@ void PrintHelp() {
 							"[--qual_only]\n"
 							"[-minimum_read_length <value>]\n"
                                                         "[--shuffle]\n"
+                                                        "[-adapter_length <value>]\n"
+                                                        "[-ot <value>]\n"
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n"
             "For Illumina single-end reads:\n"
