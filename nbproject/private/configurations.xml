@@ -50,6 +50,8 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
+      <df name="test">
+      </df>
       <df name="test_data">
       </df>
     </df>
@@ -79,8 +81,10 @@
       <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <runcommand>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

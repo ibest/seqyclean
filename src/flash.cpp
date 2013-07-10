@@ -5,7 +5,7 @@ int strdist(string s1, string s2) {
     int sum = 0;
     if((s1.length() == s2.length()) && (s1.length() > 0)) {
         for(unsigned int i=0; i < s1.length(); ++i) {
-            if(s1[i] != s2[i] && (s1[i] != 'N' || s1[i] != 'n' || s2[i] != 'N' || s2[i] != 'n')) sum++;
+            if(s1[i] != s2[i] /*&& (s1[i] != 'N' || s1[i] != 'n' || s2[i] != 'N' || s2[i] != 'n')*/) sum++;
         }
     } else {
         cout << "ERROR lengths of barcodes and index read do not match!" << endl;
@@ -31,7 +31,7 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength) {
         //cout << (double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen << endl;
         if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= overlap_t ) {
             //found dovetail overlap
-            //cout << (double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen << endl;
+            cout << (double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen << endl;
             return -i;
         }
     }

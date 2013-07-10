@@ -3207,8 +3207,6 @@ void IlluminaDynamic()
                         }
           
                         //Serial realization - useful for debugging if something does not work as expected
-                        
-                        
                         IlluminaDynRoutine(read1, adapter_found1, query_string1);
                         
                         if(read1->discarded_by_contaminant == 0) {
@@ -3223,9 +3221,6 @@ void IlluminaDynamic()
                             read1->discarded = 1;
                         }
                         
-                        
-                        
-                        //Establishing the most conservative adapters
                         if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1) )
                         {
                             //Take the most conservative position:
@@ -3259,6 +3254,8 @@ void IlluminaDynamic()
                                 
                             }
                         }
+                        
+                        
                         
                         MakeClipPointsIllumina(read1);
                         MakeClipPointsIllumina(read2);
