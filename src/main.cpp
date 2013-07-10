@@ -3234,10 +3234,8 @@ void IlluminaDynamic()
                             read1->tru_sec_pos = read2->tru_sec_pos;
                             read1->tru_sec_found = 1;
                         }
-                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) )
+                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && (read1->discarded == 0) && (read2->discarded == 0) )
                         {
-                            
-                            //string tmp_read = MakeRevComplement(read2->read);
                             int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), 30);
                             if(a != 0) {
                                 read1->tru_sec_found = 1; read2->tru_sec_found = 1;

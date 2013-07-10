@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="88">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="SeqyClean">
+      <df name="src">
+        <in>Dictionary.cpp</in>
+        <in>Dictionary.h</in>
+        <in>KMerRoutine.cpp</in>
+        <in>KMerRoutine.h</in>
+        <in>MainPipeLine.cpp</in>
+        <in>MainPipeLine.h</in>
+        <in>QualTrim.cpp</in>
+        <in>QualTrim.h</in>
+        <in>Read.cpp</in>
+        <in>Read.h</in>
+        <in>Report.cpp</in>
+        <in>Report.h</in>
+        <in>abi.c</in>
+        <in>abi.h</in>
+        <in>ascii.cpp</in>
+        <in>ascii.h</in>
+        <in>flash.cpp</in>
+        <in>flash.h</in>
+        <in>gzstream.C</in>
+        <in>gzstream.h</in>
+        <in>iz_SSAHA.cpp</in>
+        <in>iz_SSAHA.h</in>
+        <in>main.cpp</in>
+        <in>pairwise.cpp</in>
+        <in>pairwise.h</in>
+        <in>poly.c</in>
+        <in>poly.h</in>
+        <in>rlmid.h</in>
+        <in>sff.c</in>
+        <in>sff.h</in>
+        <in>sffreader.cpp</in>
+        <in>sffreader.h</in>
+        <in>timer.h</in>
+        <in>util.cpp</in>
+        <in>util.h</in>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="src/Dictionary.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/Dictionary.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/KMerRoutine.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/KMerRoutine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/MainPipeLine.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/MainPipeLine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/QualTrim.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/QualTrim.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Read.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/Read.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Report.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/Report.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/abi.c" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/abi.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/ascii.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/ascii.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/flash.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/flash.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/gzstream.C" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/gzstream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/iz_SSAHA.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/iz_SSAHA.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/pairwise.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/pairwise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/poly.c" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/poly.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/rlmid.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/sff.c" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/sff.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/sffreader.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/sffreader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/util.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/util.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
