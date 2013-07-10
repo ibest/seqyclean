@@ -1,3 +1,6 @@
+#ifndef KMERROUTINE_H
+#define	KMERROUTINE_H
+
 /* 
  * File:   KMerRoutine.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 7 Август 2012 г., 23:10
  */
 
-#ifndef KMERROUTINE_H
-#define	KMERROUTINE_H
+
 
 #include <stdio.h>
 #include <iostream>
@@ -55,15 +57,15 @@ extern map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
 extern map<string, vector<k_mer_struct> > ContDict;
 extern map<string, vector<k_mer_struct> >::iterator it_ContDict;
 extern short KMER_SIZE;
-extern int KMER_SIZE_CONT;
-extern short NUM_THREADS;
+extern unsigned short KMER_SIZE_CONT;
+extern unsigned short NUM_THREADS;
 extern short DISTANCE;
-extern int vmr;
-extern int vml;
-extern int L_limit;
-extern int R_limit;
-extern int allowable_distance;
-extern int pmax;
+extern unsigned short vmr;
+extern unsigned short vml;
+extern unsigned short L_limit;
+extern unsigned short R_limit;
+extern unsigned short allowable_distance;
+extern unsigned short pmax;
 
 int CheckVectorRight(Read &read);
 int CheckVectorLeft(Read &read);

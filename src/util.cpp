@@ -1,5 +1,7 @@
 #include "util.h"
 
+
+
 int max4( int x, int y, int z, int k ) {
     int max = x;
     
@@ -266,9 +268,10 @@ bool exists(char* filePath)
 	return true;//S_ISREG(fileAtt.st_mode);
 }
 
-double GetAvg( double past_avg, long n, int cur_diff )
+double GetAvg( double past_avg, long n, int cur_diff, int first_avg )
 {
-    double avg = (double)( past_avg*(n-1) + cur_diff )/(double)n ;
+    //double avg = (double)( past_avg*(n-1) + cur_diff )/(double)n ;
+    double avg = (double)( past_avg - first_avg/(double)n + cur_diff/(double)n ) ;
     
     return avg;
 }
@@ -309,7 +312,7 @@ void GetDirectories(std::vector<string> &out, char *directory)
     dpdf = opendir(directory);
     if (dpdf != NULL)
     {
-        while (epdf = readdir(dpdf))
+        while ( (epdf = readdir(dpdf) ))
         {
             out.push_back(string(epdf->d_name));    
             printf("Filename: %s\n",epdf->d_name);

@@ -1,3 +1,6 @@
+#ifndef _SFF_H_
+#define _SFF_H_
+
 /*
     Copyright (C) 2009, 2010 Indraniel Das <indraniel@gmail.com>
                              and Washington University in St. Louis
@@ -16,23 +19,17 @@
     along with this program; if not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef _SFF_H_
-#define _SFF_H_
+
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
-#include <endian.h>
+//#include <limits.h>
+//#include <endian.h>
+#include <zlib.h>
+#include <arpa/inet.h> // htons(), htonl()
 
-//using namespace std;
-/*
-   The Genome Center's (http://genome.wustl.edu) linux image has a corrupted
-   <endian.h> file.  Use the endian.h that comes with this distribution if
-   compiling at the Genome Center at Washington University.
-   It fills in the missing pieces found in a normal linux distribution.
-*/
 
 #if defined __GENOME__
   #include "endian.h"
@@ -141,9 +138,7 @@ typedef struct {
 /* function to read the sff file */
 void read_sff_common_header(FILE *fp, sff_common_header *h);
 void free_sff_common_header(sff_common_header *h);
-void verify_sff_common_header(char *prg_name, 
-                              char *prg_version, 
-                              sff_common_header *h);
+void verify_sff_common_header(sff_common_header *h);
 void read_padding(FILE *fp, int header_size);
 void read_sff_read_header(FILE *fp, sff_read_header *rh);
 void read_sff_read_data(FILE *fp, 
@@ -168,22 +163,15 @@ uint8_t* get_read_quality_values(sff_read_data rd,
 
 
 /*Write functions*/
-void write_sff_common_header(FILE *fp, sff_common_header *h);
-void write_sff_read_header(FILE *fp, sff_read_header *h);
+void write_sff_common_header(FILE *fp, sff_common_header *ch);
+void write_sff_read_header(FILE *fp, sff_read_header *rh);
 
 void write_padding(FILE *fp, int header_size) ;
 void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t nbases);
-
-char *manifest = NULL;
-long sff_file_size = 0;
-long manifest_size = 0;
 
 void read_manifest(FILE *fp) ;
 void write_manifest(FILE *fp);
 long get_sff_file_size(FILE *fp);
 
-//#ifdef __cplusplus
-//}
-//#endif
 
 #endif /* _SFF_H */

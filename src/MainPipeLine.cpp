@@ -7,26 +7,26 @@ void MainPipeLine() {
     pthread_t threads[NUM_THREADS];
     
     /*Remove Keys/Adaptors/Primers/Barcodes*/
-    int i=0;
-    for( i=0; i<(int)reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
+    unsigned int i=0;
+    for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
         
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
         }
     
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_join(threads[t], NULL);
         }
         
     }
     
     /*Processing the rest of the set of reads: */
-    for(int t=0; t< (int)reads.size() - i; t++) {
+    for(unsigned int t=0; t< reads.size() - i; t++) {
        pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
        
     }
    
-    for(int t=0; t<(int)reads.size() - i; t++) {
+    for(unsigned int t=0; t<reads.size() - i; t++) {
        pthread_join(threads[t], NULL);
     } 
     
@@ -38,36 +38,6 @@ void MainPipeLine() {
         cout << "Left ends..." << endl;
         TrimLeftEnds();
     }
-    
-    /*If PCR/Amplicon flags are set -> perform trimming the primers*/
-    if(pcr_flag == true) {
-        cout << "Trimming primers..." << endl;
-      
-        //Building a new dictionary for RL MIDS : 
-        Build_RLMIDS_Dictionary(pcr_file_name);
-        i=0;
-        for( i=0; i<(int)reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
-        
-                for(int t=0; t<NUM_THREADS; t++) {
-                        pthread_create( &threads[t], NULL, &t_FindClipAmplicon, (void *)(t+i) );
-                }
-    
-                for(int t=0; t<NUM_THREADS; t++) {
-                        pthread_join(threads[t], NULL);
-                }
-        }
-    
-        //Processing the rest of the set of reads:
-        for(int t=0; t< (int)reads.size() - i; t++) {
-                pthread_create( &threads[t], NULL, &t_FindClipAmplicon, (void *)(t+i) );
-       
-        }
-   
-        for(int t=0; t<(int)reads.size() - i; t++) {
-                pthread_join(threads[t], NULL);
-        }
-    }
-   
 }
 
 bool GetRochBAdapter(Read* read) {
@@ -198,11 +168,11 @@ void TrimRightEnds() {
     
     /*First stage: preprocess the read by using SSAHA: */
     long lim = reads.size() - NUM_THREADS;
-    for(int i=0; i<(int)reads.size(); i+=NUM_THREADS) {
+    for(unsigned int i=0; i<reads.size(); i+=NUM_THREADS) {
         
         if(i > lim ) break;
         
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_create( &threads[t], NULL, &t_TrimRightEnds, (void *)(t+i) );//(void *)&t_args);
         }
     
@@ -217,16 +187,16 @@ void TrimRightEnds() {
 void TrimLeftEnds() {
     pthread_t threads[NUM_THREADS];
     
-    long lim = reads.size() - NUM_THREADS;
-    for(int i=0; i<(int)reads.size(); i+=NUM_THREADS) {
+    unsigned int lim = reads.size() - NUM_THREADS;
+    for(unsigned int i=0; i < reads.size(); i+=NUM_THREADS) {
         
         if(i > lim ) break;
         
-       for(int t=0; t<NUM_THREADS; t++) {
+       for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_create( &threads[t], NULL, &t_TrimLeftEnds, (void *)(t+i) );//(void *)&t_args);
        }
     
-        for(int t=0; t<NUM_THREADS; t++) {
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
            pthread_join(threads[t], NULL);
         
         }
@@ -764,208 +734,4 @@ void GetLClip2(Read* read,bool pflag) {
             if(lclip_found == true) break;
         }
     }
-}
-
-/*Threaded method for Contaminants Dictionary*/
-static void *t_FindClipAmplicon(void *targs) {
-  /*Getting thread ID tid:*/
-  long i = 0;
-  i = (long)targs;
-  
-  
-  reads[i]->clip_found = false;
-  reads[i]->fwd_bc = "";
-  reads[i]->rev_bc = "";
-  if(reads[i]->read.length() > 50) {
-        
-        GetLClip2(reads[i],true);
-  /*if(reads[i].readID=="@HRCRL2004IH0W8") 
-           cout << reads[i].read.length() << endl << reads[i].quality.length() << endl;**/
-  
-        pthread_t rlthreads[rlmids.size()];
-        //Look for RCLIP
-        //Serial realization  
-        iz_SSAHA *izssaha = new iz_SSAHA();
-        string rlstr = rlmids[reads[i]->rlmid.lmid_id].rmid_value;
-  
-        int read_len = reads[i]->read.length();
-        int from; 
-        if(read_len <= 100) {
-                from = 0;
-        } else if( (read_len <=300) && (read_len > 100) ) {
-                from = read_len - read_len/2; //divide by 2
-        } else if( (read_len <= 600) && (read_len > 300) ) {
-                from = read_len - read_len/4; //divide by 4
-        } else  {
-                from = read_len - read_len/8; //divide by 8
-        } 
-  
-        string ref_str = reads[i]->read.substr( from, read_len - from );
-  
-        //Normal
-        AlignResult al_res = izssaha->Find( ref_str , rlstr );
-        AlignScores scores;
-        if( al_res.found_flag == true ) {
-                
-  
-                //scores = CalcScores(al_res.seq_1_al, al_res.seq_1_al.length(), 0);
-                scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-  
-                if(scores.mismatches <= max_al_mism  ) {
-                        reads[i]->rclip = al_res.pos + from;
-                        if(reads[i]->rclip <= 16) {
-                                reads[i]->rclip = reads[i]->read.length();
-                        }
-                        reads[i]->rev_bc = rlmids[reads[i]->rlmid.lmid_id].rmid_name;//string(itoa(reads[i].rlmid.lmid_id+1, new char[5], 10));
-                        reads[i]->clip_found = true;
-                        
-                        reads[i]->R_rclip = reads[i]->rclip + rlmids[0].rmid_value.length();
-                        
-                        reads[i]->revP_start = al_res.pos + from; //cout << al_res.pos << " " << from << endl;
-                        reads[i]->revP_end = reads[i]->revP_start + rlmids[0].rmid_value.length();
-          
-                } 
-                
-                reads[i]->revP_errors = scores.mismatches;
-                
-            }
-        
-        delete izssaha;
-        
-        
-  
-         
-        
-          //Try Reverse Complement
-  if( reads[i]->clip_found == false ) {
-        //Reverse again (it is already a complement)
-        reverse( rlstr.begin(), rlstr.end() );
-        iz_SSAHA *izssaha = new iz_SSAHA();
-        al_res = izssaha->Find( ref_str , rlstr );
-        if( al_res.found_flag == true ) {
-                scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-        
-                if(scores.mismatches <= max_al_mism  ) {
-            
-                        reads[i]->rclip = al_res.pos + from;
-                
-                        if(reads[i]->rclip <= 16) {
-                                reads[i]->rclip = reads[i]->read.length();
-                        }
-    
-                        reads[i]->rev_bc = rlmids[reads[i]->rlmid.lmid_id].rmid_name;
-      
-                        reads[i]->clip_found = true;
-                        
-                
-                        reads[i]->R_rclip = reads[i]->rclip + rlmids[0].rmid_value.length();
-                
-                        reads[i]->revP_start = al_res.pos + from; //cout << al_res.pos << " " << from << endl;
-                        reads[i]->revP_end = reads[i]->revP_start + rlmids[0].rmid_value.length();
-          
-                }
-                
-                reads[i]->revP_errors = scores.mismatches;
-                
-        }
-        delete izssaha;
-        
-   
-  }
-  
-  
-  
-  
-        al_res.seq_1_al.clear();
-        al_res.seq_2_al.clear();
-        rlstr.clear();
-     
-  
-      
-  
-        
-        if(reads[i]->discarded == 0) accept_counter++;
-  
-  } else {
-      reads[i]->discarded = 1;
-      discard_counter++;
-  }
-  
-  
-  line_counter++;
-  if(line_counter%50000 == 0)
-     cout << "Line No: " << line_counter << endl;
-         
-  pthread_exit(NULL);
-    
-}
-
-static void *tt_SSAHA_PCR(void *targs) {
-    t_args foo = *((t_args*)targs);
-  
-    iz_SSAHA *izssaha = new iz_SSAHA();
-    string query_str = rlmids[foo.tid].rmid_value;// + "GGTCGGCGTCT";
-    int read_len = reads[foo.rec_id]->read.length();
-    int from; 
-    if(read_len <= 100) {
-        from = 0;
-    } else if( (read_len <=300) && (read_len > 100) ) {
-        from = read_len - read_len/2; //divide by 2
-    } else if( (read_len <= 600) && (read_len > 300) ) {
-        from = read_len - read_len/4; //divide by 4
-    } else  {
-        from = read_len - read_len/8; //divide by 8
-    } 
-    
-    string ref_str = reads[foo.rec_id]->read.substr( from, read_len - from );
-    
-    if( foo.reverse == true ) {
-        reverse( query_str.begin(), query_str.end() );
-    }
-    if( foo.complement == true ) {
-        query_str =  MakeSeqComplement(query_str);
-    }
-    if( foo.reverse_complement == true ) {
-        query_str =  MakeSeqComplement(query_str);
-        reverse( query_str.begin(), query_str.end() );
-    }
-    
-    //cout << from << " " << read_len << endl << reads[foo.rec_id]->readID << endl << ref_str << endl;
-    if (reads[foo.rec_id]->clip_found == false) {
-        AlignResult al_res = izssaha->Find( ref_str , query_str );
-        if (al_res.found_flag == true) {
-                AlignScores scores;
-                scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-                if( scores.mismatches <= max_al_mism  ) {
-            
-                        if (reads[foo.rec_id]->clip_found == false) {
-                        //pthread_spin_lock(&spinlock1);
-                
-                                reads[foo.rec_id]->rclip = al_res.pos + from;
-                                if(reads[foo.rec_id]->rclip <= 16) {
-                                        reads[foo.rec_id]->rclip = reads[foo.rec_id]->read.length();;
-                                }
-                                reads[foo.rec_id]->rev_bc = rlmids[foo.tid].rmid_name;//string(itoa(foo.tid+1, new char[5], 10));
-                                //cout << rlmids[foo.tid].name << endl;
-                                //cout << al_res.seq_1 << endl << al_res.seq_2 << endl;
-                                reads[foo.rec_id]->clip_found = true;
-                                reads[foo.rec_id]->revP_errors = scores.mismatches;
-                                reads[foo.rec_id]->R_rclip = reads[foo.rec_id]->rclip + rlmids[0].rmid_value.length();
-                        //pthread_spin_unlock(&spinlock1);
-                                reads[foo.rec_id]->revP_start = al_res.pos + from; //cout << al_res.pos << " " << from << endl;
-                                reads[foo.rec_id]->revP_end = reads[foo.rec_id]->revP_start + rlmids[0].rmid_value.length();
-                        }
-                } 
-                if(reads[foo.rec_id]->clip_found == false) reads[foo.rec_id]->rclip_errors = scores.mismatches;
-        
-        }
-        
-        al_res.seq_1_al.clear();
-        al_res.seq_2_al.clear();
-        query_str.clear();
-        ref_str.clear();
-        delete izssaha;
-    }
-      
-    pthread_exit(NULL);
 }

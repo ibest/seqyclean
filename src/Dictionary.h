@@ -1,3 +1,6 @@
+#ifndef DICTIONARY_H
+#define	DICTIONARY_H
+
 /* 
  * File:   Dictionary.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 7 Август 2012 г., 0:48
  */
 
-#ifndef DICTIONARY_H
-#define	DICTIONARY_H
+
 
 #include <stdio.h>
 #include <iostream>
@@ -24,7 +26,7 @@
 //#include <sparsehash/dense_hash_set>
 #include "Read.h"
 #include "KMerRoutine.h"
-#include "rlmid.h"
+//#include "rlmid.h"
 
 using namespace std;
 
@@ -35,10 +37,11 @@ extern map<string, vector<k_mer_struct> > ContDict;//[24];
 extern map<string, vector<k_mer_struct> >::iterator it_ContDict;
 extern vector<RL_MID> rlmids;
 extern short KMER_SIZE;
-extern short NUM_THREADS;
+extern unsigned short NUM_THREADS;
 extern map<int, string > vector_names;
-extern int KMER_SIZE_CONT;
+extern unsigned short KMER_SIZE_CONT;
 extern fstream sum_stat;
+
 
 typedef struct {
    string line;
@@ -55,11 +58,11 @@ typedef struct {
 } t_args;
 
  /*i5 adapter*/
- string tmpl_i5_1 = "AATGATACGGCGACCACCGAGATCTACAC";
- string tmpl_i5_2 = "ACACTCTTTCCCTACACGACGCTCTTCCGATCT";
+ extern string tmpl_i5_1;
+ extern string tmpl_i5_2;
  /*i7 adapter*/
- string tmpl_i7_1 = "GATCGGAAGAGCACACGTCTGAACTCCAGTCAC";
- string tmpl_i7_2 = "ATCTCGTATGCCGTCTTCTGCTTG";
+ extern string tmpl_i7_1;
+ extern string tmpl_i7_2; 
 
 /*Builds a new Vector Dictionary. Here it assumes that frequency is 1*/
 int BuildVectorDictionary(string filename);

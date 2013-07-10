@@ -11,9 +11,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include <endian.h>
 #include <stdint.h>
-#include "sff.h"
+
 
 using namespace std;
 
@@ -22,15 +21,15 @@ typedef struct {
     string lmid_name;
     string lmid_value;
     short lmid_id;
-    int lmid_start;
-    int lmid_end;
+    unsigned int lmid_start;
+    unsigned int lmid_end;
     short lmid_err;
     /*Right MID*/
     string rmid_name;
     string rmid_value;
     short rmid_id;
-    int rmid_start;
-    int rmid_end;
+    unsigned int rmid_start;
+    unsigned int rmid_end;
     short rmid_err;
 } RL_MID;
 
@@ -45,12 +44,12 @@ public:
    string illumina_readID;
    
    /*----Left clip point----*/
-   int lclip;
+   unsigned short lclip;
    short lclip_errors;
    int L_lclip;
    /*----Right clip point---*/
    short rclip_errors;
-   int rclip;
+   unsigned short rclip;
    int R_rclip;
    /*----------------------*/
    short contaminants;
@@ -60,8 +59,8 @@ public:
    bool clip_found;
    RL_MID rlmid;
    /*----Lucy clips---*/
-   int lucy_lclip;
-   int lucy_rclip;
+   unsigned int lucy_lclip;
+   unsigned int lucy_rclip;
    /*SFF parameters*/
    uint16_t *flowgram;  
    uint8_t  *flow_index; /* relative to last */
@@ -78,7 +77,7 @@ public:
    short revP_errors;
    /*Adapter B*/
    string b_adapter;
-   int b_adapter_pos;
+   unsigned int b_adapter_pos;
    short b_adapter_err;
    /*Vector*/
    int r_vec_start;
@@ -99,7 +98,7 @@ public:
    
    
    /*Illumina parameters*/
-   int tru_sec_pos; /*Coordinates of TruSec adapter*/
+   short tru_sec_pos; /*Coordinates of TruSec adapter*/
    short index_i5; /*index of TrueSec adapter i5*/
    short index_i7; /*index of TrueSex adapter i7*/
    bool fwd_adapter; /*does the read contain a forward or reverse complement of the adapter*/

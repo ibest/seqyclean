@@ -1,3 +1,6 @@
+#ifndef MAINPIPELINE_H
+#define	MAINPIPELINE_H
+
 /* 
  * File:   MainPipeLine.h
  * Author: ilya
@@ -5,8 +8,7 @@
  * Created on 10 Август 2012 г., 20:48
  */
 
-#ifndef MAINPIPELINE_H
-#define	MAINPIPELINE_H
+
 
 #include <stdio.h>
 #include <iostream>
@@ -23,15 +25,10 @@
 #include "pairwise.h"
 #include <pthread.h>
 #include <dirent.h>
-//#include <sparsehash/sparse_hash_map>
-//#include <sparsehash/sparse_hash_set>
-//#include <sparsehash/dense_hash_set>
 #include <list>
 #include "iz_SSAHA.h"
 #include "Read.h"
-//#include "MainPipeLine.h"
-#include "Dictionary.h"
-#include "QualTrim.h"
+#include "KMerRoutine.h"
 
 
 /*Extern variables*/
@@ -39,7 +36,7 @@ extern vector<Read*> reads;
 extern long line_counter;
 extern short KMER_SIZE;
 extern vector<RL_MID> rlmids;
-extern short NUM_THREADS;
+extern unsigned short NUM_THREADS;
 extern bool contaminants_flag;
 extern bool vector_flag;
 extern bool amplicon_flag;
@@ -49,8 +46,11 @@ extern long accept_counter;
 extern long trim_counter;
 extern bool pcr_flag;
 extern char *pcr_file_name;
-
+extern unsigned short minimum_read_length;
 extern int max_al_mism;
+/*Map that holds a whole vector genomes :*/
+extern map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
+
 
 void MainPipeLine();
 void TrimRightEnds();
@@ -60,10 +60,7 @@ static void *t_TrimRightEnds(void *targs);
 static void *t_TrimLeftEnds(void *targs);
 void GetLClip2(Read* read, bool pflag);
 
-static void *t_FindClipAmplicon(void *targs);
 void SSAHA(string query_str, int read_len, string ref_str, bool reverse, bool complement, bool reverse_complement,  bool clip_found, long rec_id, int tid );
-pthread_spinlock_t spinlock1;
-pthread_spinlock_t spinlock2;
 
 extern bool qual_trim_flag;
 

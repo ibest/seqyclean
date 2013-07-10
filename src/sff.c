@@ -21,7 +21,26 @@
 /* I N C L U D E S ***********************************************************/
 #include "sff.h"
 
+char *manifest = NULL;
+long sff_file_size = 0;
+long manifest_size = 0;
+
 /* F U N C T I O N S *********************************************************/
+/* convert 64 bit Big Endian integer to Native Endian(means current machine) */
+// As far as I know, there is no standard function for 64 bit conversion on OSX
+uint64_t BE64toNA(uint64_t bigEndian)
+{
+    uint64_t littleEndian = ((bigEndian & (0x00000000000000FF)) << 56) |
+                            ((bigEndian & (0x000000000000FF00)) << 40) |
+                            ((bigEndian & (0x0000000000FF0000)) << 24) |
+                            ((bigEndian & (0x00000000FF000000)) << 8) |
+                            ((bigEndian & (0x000000FF00000000)) >> 8) |
+                            ((bigEndian & (0x0000FF0000000000)) >> 24) |
+                            ((bigEndian & (0x00FF000000000000)) >> 40) |
+                            ((bigEndian & (0xFF00000000000000)) >> 56);
+    return littleEndian;
+}
+
 void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     char *flow;
     char *key;
@@ -38,6 +57,7 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     fread(&(h->flowgram_format), sizeof(uint8_t) , 1, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
+    /* Linux: not in use any more
     h->magic        = htobe32(h->magic);
     h->index_offset = htobe64(h->index_offset);
     h->index_len    = htobe32(h->index_len);
@@ -45,6 +65,15 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     h->header_len   = htobe16(h->header_len);
     h->key_len      = htobe16(h->key_len);
     h->flow_len     = htobe16(h->flow_len);
+     */
+    
+    h->magic        = htonl(h->magic);
+    h->index_offset = BE64toNA(h->index_offset);
+    h->index_len    = htonl(h->index_len);
+    h->nreads       = htonl(h->nreads);
+    h->header_len   = htons(h->header_len);
+    h->key_len      = htons(h->key_len);
+    h->flow_len     = htons(h->flow_len);
 
     /* finally appropriately allocate and read the flow and key strings */
     flow = (char *) malloc( h->flow_len * sizeof(char) );
@@ -93,34 +122,32 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
   
 }
 
-void write_sff_common_header(FILE *fp, sff_common_header *h) {
-    
-    h->nreads = be32toh(h->nreads);
+void write_sff_common_header(FILE *fp, sff_common_header *ch) {
     
     /*size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );*/
-    fwrite(&(h->magic)          , sizeof(uint32_t), 1, fp);
-    fwrite(&(h->version)        , sizeof(char) , 4, fp);
-    fwrite(&(h->index_offset)   , sizeof(uint64_t), 1, fp);
-    fwrite(&(h->index_len)      , sizeof(uint32_t), 1, fp);
-    fwrite(&(h->nreads)         , sizeof(uint32_t), 1, fp);
-    fwrite(&(h->header_len)     , sizeof(uint16_t), 1, fp);
-    fwrite(&(h->key_len)        , sizeof(uint16_t), 1, fp);
-    fwrite(&(h->flow_len)       , sizeof(uint16_t), 1, fp);
-    fwrite(&(h->flowgram_format), sizeof(uint8_t) , 1, fp);
-    fwrite(h->flow             , sizeof(char), htobe16(h->flow_len)  , fp);
-    fwrite(h->key               , sizeof(char) , htobe16(h->key_len)  , fp);
+    fwrite(&(ch->magic)          , sizeof(uint32_t), 1, fp);
+    fwrite(&(ch->version)        , sizeof(char) , 4, fp);
+    fwrite(&(ch->index_offset)   , sizeof(uint64_t), 1, fp);
+    fwrite(&(ch->index_len)      , sizeof(uint32_t), 1, fp);
+    fwrite(&(ch->nreads)         , sizeof(uint32_t), 1, fp);
+    fwrite(&(ch->header_len)     , sizeof(uint16_t), 1, fp);
+    fwrite(&(ch->key_len)        , sizeof(uint16_t), 1, fp);
+    fwrite(&(ch->flow_len)       , sizeof(uint16_t), 1, fp);
+    fwrite(&(ch->flowgram_format), sizeof(uint8_t) , 1, fp);
+    fwrite(ch->flow             , sizeof(char), htons(ch->flow_len)  , fp);
+    fwrite(ch->key               , sizeof(char) , htons(ch->key_len)  , fp);
     
-    int header_size = sizeof(h->magic)
-                  + sizeof(*(h->version))*4
-                  + sizeof(h->index_offset) 
-                  + sizeof(h->index_len) 
-                  + sizeof(h->nreads) 
-                  + sizeof(h->header_len) 
-                  + sizeof(h->key_len)  
-                  + sizeof(h->flow_len) 
-                  + sizeof(h->flowgram_format)
-                  + (sizeof(char) * htobe16(h->flow_len) )
-                  + (sizeof(char) * htobe16(h->key_len) ) ;
+    int header_size = sizeof(ch->magic)
+                  + sizeof(*(ch->version))*4
+                  + sizeof(ch->index_offset) 
+                  + sizeof(ch->index_len) 
+                  + sizeof(ch->nreads) 
+                  + sizeof(ch->header_len) 
+                  + sizeof(ch->key_len)  
+                  + sizeof(ch->flow_len) 
+                  + sizeof(ch->flowgram_format)
+                  + (sizeof(char) * htons(ch->flow_len) )
+                  + (sizeof(char) * htons(ch->key_len) ) ;
     
     if ( !(header_size % PADDING_SIZE == 0) ) {
         write_padding(fp, header_size);
@@ -130,13 +157,13 @@ void write_sff_common_header(FILE *fp, sff_common_header *h) {
 
 void write_sff_read_header(FILE *fp, sff_read_header *rh) {
    
-   rh->header_len=be16toh(rh->header_len); 
-   rh->name_len=be16toh(rh->name_len);
-   rh->nbases=be32toh(rh->nbases);
-   rh->clip_qual_left=be16toh(rh->clip_qual_left); 
-   rh->clip_qual_right=be16toh(rh->clip_qual_right); 
-   rh->clip_adapter_left=be16toh(rh->clip_adapter_left);
-   rh->clip_adapter_right=be16toh(rh->clip_adapter_right);
+   rh->header_len=ntohs(rh->header_len); 
+   rh->name_len=ntohs(rh->name_len);
+   rh->nbases=ntohl(rh->nbases);
+   rh->clip_qual_left=ntohs(rh->clip_qual_left); 
+   rh->clip_qual_right=ntohs(rh->clip_qual_right); 
+   rh->clip_adapter_left=ntohs(rh->clip_adapter_left);
+   rh->clip_adapter_right=ntohs(rh->clip_adapter_right);
    
    fwrite( &(rh->header_len)      , sizeof(uint16_t), 1, fp);
    fwrite(&(rh->name_len)        , sizeof(uint16_t), 1, fp);
@@ -145,7 +172,7 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh) {
    fwrite(&(rh->clip_qual_right)    , sizeof(uint16_t), 1, fp);
    fwrite(&(rh->clip_adapter_left)  , sizeof(uint16_t), 1, fp);
    fwrite(&(rh->clip_adapter_right) , sizeof(uint16_t), 1, fp);
-   fwrite(rh->name               , sizeof(char), htobe16(rh->name_len), fp);
+   fwrite(rh->name               , sizeof(char), htons(rh->name_len), fp);
    
    int header_size = sizeof(rh->header_len) 
                   + sizeof(rh->name_len)
@@ -154,7 +181,7 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh) {
                   + sizeof(rh->clip_qual_right) 
                   + sizeof(rh->clip_adapter_left) 
                   + sizeof(rh->clip_adapter_right) 
-                  + (sizeof(char) * htobe16(rh->name_len));
+                  + (sizeof(char) * htons(rh->name_len));
    
    
    if ( !(header_size % PADDING_SIZE == 0) ) {
@@ -209,18 +236,13 @@ free_sff_common_header(sff_common_header *h) {
     free(h->key);
 }
 
-void  verify_sff_common_header(char *prg_name, 
-                         char *prg_version, 
-                         sff_common_header *h) {
+void  verify_sff_common_header(sff_common_header *h) {
 
     /* ensure that the magic file type is valid */
     if (h->magic != SFF_MAGIC) {
         fprintf(stderr, "The SFF header has magic value '%d' \n", h->magic);
         fprintf(stderr,
-                "[err] %s (version %s) %s : '%d' \n", 
-                prg_name, 
-                prg_version, 
-                "only knows how to deal an SFF magic value of type",
+                "[err] : '%d' \n SeqyClean only knows how to deal an SFF magic value of type",
                 SFF_MAGIC);
         free_sff_common_header(h);
         exit(2);
@@ -236,9 +258,7 @@ void  verify_sff_common_header(char *prg_name,
         }
         printf("\n");
         fprintf(stderr,
-                "[err] %s (version %s) %s : ", 
-                prg_name, 
-                prg_version, 
+                "[err] : ", 
                 "only knows how to deal an SFF header version: ");
         //char valid_header_version[/*SFF_VERSION_LENGTH*/4] = "0001";//\0\0\0\1";/*SFF_VERSION*/;
         char* valid_header_version = (char*)SFF_VERSION;
@@ -264,6 +284,7 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     fread(&(rh->clip_adapter_right), sizeof(uint16_t), 1, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
+    /* Linux version, not in use any more
     rh->header_len         = htobe16(rh->header_len);
     rh->name_len           = htobe16(rh->name_len);
     rh->nbases             = htobe32(rh->nbases);
@@ -271,7 +292,16 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     rh->clip_qual_right    = htobe16(rh->clip_qual_right);
     rh->clip_adapter_left  = htobe16(rh->clip_adapter_left);
     rh->clip_adapter_right = htobe16(rh->clip_adapter_right);
-
+     */
+    
+    rh->header_len         = htons(rh->header_len);
+    rh->name_len           = htons(rh->name_len);
+    rh->nbases             = htonl(rh->nbases);
+    rh->clip_qual_left     = htons(rh->clip_qual_left);
+    rh->clip_qual_right    = htons(rh->clip_qual_right);
+    rh->clip_adapter_left  = htons(rh->clip_adapter_left);
+    rh->clip_adapter_right = htons(rh->clip_adapter_right);
+     
     /* finally appropriately allocate and read the read_name string */
     name = (char *) malloc( rh->name_len * sizeof(char) );
     if (!name) {
@@ -283,17 +313,6 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     fread(name, sizeof(char), rh->name_len, fp);
     rh->name = name;
 
-    
-  /*  printf("%d\n",rh->header_len);
-    printf("%d\n",rh->name_len);
-    printf("%d\n",rh->nbases);
-    printf("%d\n",rh->clip_qual_left);
-    printf("%d\n",rh->clip_qual_right);
-    printf("%d\n",rh->clip_adapter_left);
-    printf("%d\n",rh->clip_adapter_right);
-    printf("%s\n",rh->name);
-  **/  
-    
     /* the section should be a multiple of 8-bytes, if not,
        it is zero-byte padded to make it so */
 
@@ -361,8 +380,8 @@ void read_sff_read_data(FILE *fp,
 
     /* sff files are in big endian notation so adjust appropriately */
     for (i = 0; i < nflows; i++) {
-        flowgram[i] = htobe16(flowgram[i]);
-       /// printf("%d\n", flowgram[i]);
+        //flowgram[i] = htobe16(flowgram[i]);
+        flowgram[i] = htons(flowgram[i]);
     }
     rd->flowgram = flowgram;
 
@@ -501,7 +520,8 @@ void write_manifest(FILE *fp)
 long get_sff_file_size(FILE *fp)
 {
   fseek(fp, 0, SEEK_END); // seek to end of file
-  long sff_file_size = ftell(fp); // get current file pointer
+  //long sff_file_size = ftell(fp); // get current file pointer
+  sff_file_size = ftell(fp); // get current file pointer
   fseek(fp, 0, SEEK_SET); // seek back to beginning of file
 // proceed with allocating memory and reading the file
   

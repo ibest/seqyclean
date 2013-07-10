@@ -1,3 +1,6 @@
+#ifndef SFFREADER_H
+#define	SFFREADER_H
+
 /* 
  * File:   sffreader.h
  * Author: ilya
@@ -5,15 +8,8 @@
  * Created on 28 Август 2012 г., 9:59
  */
 
-#ifndef SFFREADER_H
-#define	SFFREADER_H
 
-//#include <R.h>
-//#include <Rdefines.h>
-//#include <Rinternals.h> // Rprintf, SEXP
-//#include <R_ext/Rdynload.h>
-//#include "IRanges_interface.h"
-//#include "Biostrings_interface.h"
+
 
 #define MATHLIB_STANDALONE
 // System includes
@@ -34,8 +30,7 @@ using namespace std;
 
 extern vector<Read*> reads;
 
-sff_common_header h;
-int discarded_reads = 0;
+
 extern bool keep_fastq_orig;
 
 

@@ -1,3 +1,6 @@
+#ifndef QUALTRIM_H
+#define	QUALTRIM_H
+
 /****************************************************************************
 *
 * Copyright (c) 2003, The Institute for Genomic Research (TIGR), Rockville,
@@ -47,8 +50,7 @@
 *
 */
 
-#ifndef QUALTRIM_H
-#define	QUALTRIM_H
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,142 +82,12 @@
 #define TRUE 1
 #define FALSE 0
 
-#define max(a,b) (((a) > (b)) ? (a): (b))
-#define min(a,b) (((a) < (b)) ? (a): (b))
+//#define max(a,b) (((a) > (b)) ? (a): (b))
+//#define min(a,b) (((a) < (b)) ? (a): (b))
 
-/* global variables and arrays: */
-using namespace std;
-/* probability of base call error for phred quality values */
-/* from 0 to 99 (indexed by quality) */
-double perr[] =
-{
-	1.000000e+00,
-	7.943282e-01,
-	6.309573e-01,
-	5.011872e-01,
-	3.981072e-01,
-	3.162278e-01,
-	2.511886e-01,
-	1.995262e-01,
-	1.584893e-01,
-	1.258925e-01,
-	1.000000e-01,
-	7.943282e-02,
-	6.309573e-02,
-	5.011872e-02,
-	3.981072e-02,
-	3.162278e-02,
-	2.511886e-02,
-	1.995262e-02,
-	1.584893e-02,
-	1.258925e-02,
-	1.000000e-02,
-	7.943282e-03,
-	6.309573e-03,
-	5.011872e-03,
-	3.981072e-03,
-	3.162278e-03,
-	2.511886e-03,
-	1.995262e-03,
-	1.584893e-03,
-	1.258925e-03,
-	1.000000e-03,
-	7.943282e-04,
-	6.309573e-04,
-	5.011872e-04,
-	3.981072e-04,
-	3.162278e-04,
-	2.511886e-04,
-	1.995262e-04,
-	1.584893e-04,
-	1.258925e-04,
-	1.000000e-04,
-	7.943282e-05,
-	6.309573e-05,
-	5.011872e-05,
-	3.981072e-05,
-	3.162278e-05,
-	2.511886e-05,
-	1.995262e-05,
-	1.584893e-05,
-	1.258925e-05,
-	1.000000e-05,
-	7.943282e-06,
-	6.309573e-06,
-	5.011872e-06,
-	3.981072e-06,
-	3.162278e-06,
-	2.511886e-06,
-	1.995262e-06,
-	1.584893e-06,
-	1.258925e-06,
-	1.000000e-06,
-	7.943282e-07,
-	6.309573e-07,
-	5.011872e-07,
-	3.981072e-07,
-	3.162278e-07,
-	2.511886e-07,
-	1.995262e-07,
-	1.584893e-07,
-	1.258925e-07,
-	1.000000e-07,
-	7.943282e-08,
-	6.309573e-08,
-	5.011872e-08,
-	3.981072e-08,
-	3.162278e-08,
-	2.511886e-08,
-	1.995262e-08,
-	1.584893e-08,
-	1.258925e-08,
-	1.000000e-08,
-	7.943282e-09,
-	6.309573e-09,
-	5.011872e-09,
-	3.981072e-09,
-	3.162278e-09,
-	2.511886e-09,
-	1.995262e-09,
-	1.584893e-09,
-	1.258925e-09,
-	1.000000e-09,
-	7.943282e-10,
-	6.309573e-10,
-	5.011872e-10,
-	3.981072e-10,
-	3.162278e-10,
-	2.511886e-10,
-	1.995262e-10,
-	1.584893e-10,
-	1.258925e-10
-};
 
-/* number of windows for window trimming */
-int num_windows = 3;
 
-/* the window sizes, and max allowed average probability of error in window */
-/* Note: the max number of windows is 20 */
-int windows[MAX_NUMBER_OF_WINDOWS];
-double err_limits[MAX_NUMBER_OF_WINDOWS];
-
-/* the maximum allowed average probability of error over the entire clean range */
-double max_avg_error = DEFAULT_ERROR_THRESHOLD;
-
-/* the maximum allowed probability of error for the 2 bases at the left and right */
-/* ends of the clean range */
-double end_limit = DEFAULT_END_LIMIT;
-
-/* the terminal window size and allowable error used to do an initial */
-/* trim of low-quality base calls from each end of sequence */
-double bracket_error = DEFAULT_BRACKET_ERROR;
-int bracket_window = DEFAULT_BRACKET_WINDOW;
-
-/* these globals are necessary so that my "grim" function can */
-/* simulate the old "grim" function */
-int *conf_val_raw; 
-
-extern int minimum_read_length;
+extern unsigned short minimum_read_length;
 
 void window_trim(
 	double *prob_err,	/* array of phred error probabilities */

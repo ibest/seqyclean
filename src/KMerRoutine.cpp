@@ -835,7 +835,7 @@ int CheckVector(Read* read) {
             read->v_start -= vml;
         
         read->v_end = matches[matches.size()-1] + KMER_SIZE; //Vector end
-        if( (read->v_end + vmr) < read->read.length() )
+        if( (read->v_end + vmr) < (int)read->read.length() )
             read->v_end += vmr;
             
         read->vector_found = 1;
