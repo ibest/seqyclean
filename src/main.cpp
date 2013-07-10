@@ -21,7 +21,7 @@
 #include "rlmid.h"
 #include "gzstream.h"
 #include "QualTrim.h"
-
+#include "flash.h"
 
 
 using namespace std;
@@ -3191,7 +3191,8 @@ void IlluminaDynamic()
                         }
           
                         //Serial realization - useful for debugging if something does not work as expected
-          
+                        
+                        
                         IlluminaDynRoutine(read1, adapter_found1, query_string1);
                         
                         if(read1->discarded_by_contaminant == 0) {
@@ -3205,6 +3206,8 @@ void IlluminaDynamic()
                             read1->discarded_by_contaminant = 1;
                             read1->discarded = 1;
                         }
+                        
+                        
                         
                         //Establishing the most conservative adapters
                         if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1) )
@@ -3230,6 +3233,17 @@ void IlluminaDynamic()
                         {
                             read1->tru_sec_pos = read2->tru_sec_pos;
                             read1->tru_sec_found = 1;
+                        }
+                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) )
+                        {
+                            
+                            //string tmp_read = MakeRevComplement(read2->read);
+                            int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), 30);
+                            if(a != 0) {
+                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
+                                read1->tru_sec_pos = read1->initial_length + a; read2->tru_sec_pos = read2->initial_length + a;
+                                
+                            }
                         }
                         
                         MakeClipPointsIllumina(read1);
@@ -3587,7 +3601,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
        }
     }
     //Run the main routine: Adapter + Vector/Contaminants trimming or only Adaptors
-    //First 20 bases of i5 adapter forward
+    //First 15 bases of i5 adapter forward
     size_t found;
     if (!adapter_found)
     {

@@ -30,6 +30,8 @@
         <in>ascii.cpp</in>
         <in>ascii.h</in>
         <in>endian.h</in>
+        <in>flash.cpp</in>
+        <in>flash.h</in>
         <in>gzstream.C</in>
         <in>gzstream.h</in>
         <in>iz_SSAHA.cpp</in>
@@ -78,18 +80,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/Bubo.454Reads.RL3.sff -qual 20 20 -minimum_read_length 300 -o test/test -polyat</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/in1.fastq -2 test_data/in2.fastq -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test -new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 ../Bubo.454Reads.RL3.sff -qual 20 20 -minimum_read_length 300 -o test/test -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 --new2old_illumina</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -polyat -o test/poly</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual 20 20 -minimum_read_length 300 -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual 20 20 -minimum_read_length 300 -o test/poly454 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual 30 30 -o test/test</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -454 test_data/in.sff -qual 20 20 -minimum_read_length 300 -o test/test</runcommand>
+        <runcommand>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual 30 30 -o test/test</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

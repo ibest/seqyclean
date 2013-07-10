@@ -19,7 +19,8 @@
         <in>abi.h</in>
         <in>ascii.cpp</in>
         <in>ascii.h</in>
-        <in>endian.h</in>
+        <in>flash.cpp</in>
+        <in>flash.h</in>
         <in>gzstream.C</in>
         <in>gzstream.h</in>
         <in>iz_SSAHA.cpp</in>
@@ -141,7 +142,14 @@
       </item>
       <item path="src/ascii.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/endian.h" ex="false" tool="3" flavor2="0">
+      <item path="src/flash.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/flash.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/gzstream.C" ex="false" tool="1" flavor2="0">
         <ccTool>
@@ -162,7 +170,7 @@
       </item>
       <item path="src/iz_SSAHA.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="4">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
