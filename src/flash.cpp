@@ -28,10 +28,8 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength) {
     if(s1.length() != s2.length()) return 0;
     //print "checking dovetail"
     for(int i = adapterlength; i>=0; i--) {
-        //cout << (double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen << endl;
-        if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= 0.9 ) {
+        if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= overlap_t ) {
             //found dovetail overlap
-            //cout << (double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen << endl;
             return -i;
         }
     }

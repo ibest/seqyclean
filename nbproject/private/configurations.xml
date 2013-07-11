@@ -2,7 +2,11 @@
 <configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="SeqyClean">
+      <df name="bin">
+      </df>
       <df name="man">
+      </df>
+      <df name="obj">
       </df>
       <df name="src">
         <in>Dictionary.cpp</in>
@@ -46,6 +50,8 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
+      <df name="test">
+      </df>
       <df name="test_data">
       </df>
     </df>
@@ -74,18 +80,12 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -454 ../Bubo.454Reads.RL3.sff -qual 20 20 -minimum_read_length 300 -o test/test -polyat</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -polyat</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1.fastq.gz -qual 30 30 -polyat -o test/poly</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual 20 20 -minimum_read_length 300 -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual 20 20 -minimum_read_length 300 -o test/poly454 -polyat</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R1.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual 30 30 -o test/test --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual 30 30 -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE1.fastq -2 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE2.fastq -o test/test</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual 30 30 -o test/test</runcommand>
+        <runcommand>./bin/seqyclean -1 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE1.fastq -2 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE2.fastq -o test/test</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.5.1 (2013-07-10)";
+string version = "1.5.2 (2013-07-11)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -375,6 +375,9 @@ bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
 bool i64_flag = false;
 
+int adapterlength = 40;
+double overlap_t = 0.9;
+
 int main(int argc, char *argv[]) 
 {
     double start, finish, elapsed;
@@ -533,6 +536,22 @@ int main(int argc, char *argv[])
            {
              custom_rlmids_flag = true;
              rlmids_file = argv[++i]; /*Custom file with RL MIDS given*/
+           }
+           continue;
+        }
+        if(string(argv[i]) == "-adapter_length" )
+        {
+           if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
+           {
+             adapterlength = atoi(argv[++i]); /*Custom file with RL MIDS given*/
+           }
+           continue;
+        }
+        if(string(argv[i]) == "-ot" )
+        {
+           if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
+           {
+             overlap_t = atof(argv[++i]); /*Custom file with RL MIDS given*/
            }
            continue;
         }
@@ -3238,10 +3257,10 @@ void IlluminaDynamic()
                         {
                             
                             //string tmp_read = MakeRevComplement(read2->read);
-                            int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), 30);
+                            int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength);
                             if(a != 0) {
                                 read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-                                read1->tru_sec_pos = read1->initial_length + a; read2->tru_sec_pos = read2->initial_length + a;
+                                read1->tru_sec_pos = read1->initial_length + a + 1; read2->tru_sec_pos = read2->initial_length + a +1;
                                 
                             }
                         }

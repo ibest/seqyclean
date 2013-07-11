@@ -14,6 +14,9 @@
 
 using namespace std;
 
+extern int adapterlength;
+extern double overlap_t;
+
 int find_overlap_pos(string seq1, string seq2, int adapterlength);
 int strdist(string s1, string s2);
 #endif	/* FLASH_H */

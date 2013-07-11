@@ -67,7 +67,7 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>bin/seqyclean</executablePath>
+          <executablePath></executablePath>
         </makeTool>
       </makefileType>
       <item path="src/Dictionary.cpp" ex="false" tool="1" flavor2="0">
@@ -170,7 +170,7 @@
       </item>
       <item path="src/iz_SSAHA.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/main.cpp" ex="false" tool="1" flavor2="4">
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
