@@ -3260,7 +3260,7 @@ void IlluminaDynamic()
                             int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength);
                             if(a != 0) {
                                 read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-                                read1->tru_sec_pos = read1->initial_length + a + 1; read2->tru_sec_pos = read2->initial_length + a +1;
+                                read1->tru_sec_pos = read1->initial_length + a - 1; read2->tru_sec_pos = read2->initial_length + a - 1;
                                 
                             }
                         }
