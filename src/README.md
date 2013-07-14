@@ -24,6 +24,9 @@ For Illumina:
                                                                        [-qual max_avg_error max_error_at_ends]
                                                                        [--qual_only]
                                                                        [-minimum_read_length <value>]
+                                                                       [-i64]
+                                                                       [-adapter_length <value>]
+                                                                       [-ot <value>]
                                                                        [-polyat [cdna] [cerr] [crng] ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 

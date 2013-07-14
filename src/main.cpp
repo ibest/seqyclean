@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.5.2 (2013-07-11)";
+string version = "1.5.3 (2013-07-14)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -987,7 +987,35 @@ int main(int argc, char *argv[])
              cout << "Could not created following path: " << t_prefix << "\n";
              return 0;
          }
+    } else {
+        if(illumina_flag || illumina_se_flag)
+        {
+                if(exists( (char*)(output_prefix + "_PE1.fastq").c_str() ))
+                {
+                    cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                    return 0;
+                }
+                if(exists( (char*)(output_prefix + "_PE2.fastq").c_str() ))
+                {
+                    cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                    return 0;
+                }
+        }
+        if(roche_flag) 
+        {
+            if(exists( (char*)(output_prefix + ".sff").c_str() ))
+            {
+                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                return 0;
+            }
+            if(exists( (char*)(t_prefix + ".fastq").c_str() ) && output_fastqfile_flag)
+            {
+                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                return 0;
+            }
+        }
     }
+    
     t.clear();
     t_prefix.clear();        
    
@@ -2973,6 +3001,9 @@ void PrintHelp() {
 							"[--qual_only]\n"
 							"[-minimum_read_length <value>]\n"
                                                         "[--shuffle]\n"
+                                                        "[-i64]\n"
+                                                        "[-adapter_length <value>]\n"
+                                                        "[-ot <value>]\n"
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n"
             "For Illumina single-end reads:\n"
@@ -3210,7 +3241,6 @@ void IlluminaDynamic()
                         }
           
                         //Serial realization - useful for debugging if something does not work as expected
-                        
                         
                         IlluminaDynRoutine(read1, adapter_found1, query_string1);
                         
