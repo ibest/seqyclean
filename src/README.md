@@ -1,5 +1,5 @@
 Program SeqyClean
-Version: 1.5.1(2013-07-10)
+Version: 1.6.2(2013-07-24)
 Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
 Usage:  
 Roche 454:
@@ -14,6 +14,7 @@ Roche 454:
 						  [--qual_only]
 						  [--fastq]
 						  [--keep_fastq_orig]
+                                                  [--ow]
 						  [-minimum_read_length <value>]
 						  [-polyat [cdna] [cerr] [crng] ]
 For Illumina:
@@ -27,6 +28,8 @@ For Illumina:
                                                                        [-i64]
                                                                        [-adapter_length <value>]
                                                                        [-ot <value>]
+                                                                       [--overlap <minoverlap=value>]
+                                                                       [--ow]
                                                                        [-polyat [cdna] [cerr] [crng] ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 
@@ -38,6 +41,7 @@ For Illumina single-end:
                                                                        [-qual max_avg_error max_error_at_ends]
                                                                        [--qual_only]
                                                                        [-minimum_read_length <value>]
+                                                                       [--ow]
                                                                        [-polyat [cdna] [cerr] [crng] ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 

@@ -14,10 +14,10 @@ seqyclean :   $(OBJ)main.o $(OBJ)flash.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.
 	
 main.o :  
 	$(CXX) -Wall -g  -c -o $(OBJ)main.o $(SRC)main.cpp 
-	
-flash.o :
-	$(CXX) -Wall -g -c -o $(OBJ)flash.o $(SRC)flash.cpp
 		
+flash.o : 
+	$(CXX) -Wall -g  -c -o $(OBJ)flash.o $(SRC)flash.cpp 
+
 MainPipeLine.o :
 	$(CXX) -Wall -g  -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	

@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.5.3 (2013-07-14)";
+string version = "1.6.2 (2013-07-24)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -58,6 +58,10 @@ map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
 
 vector<Read*> reads_1;
 vector<Read*> reads_2;
+
+//For removal of duplicates
+map<string, int > DupDict;
+
 /*----------End of data structure definition------------------*/
 
 
@@ -180,6 +184,9 @@ void MakeClipPointsIllumina(Read* read);
 void RocheRoutineDynamic();
 void PolyATIlluminaRoutine();
 void PolyATIlluminaRoutineSE();
+int IlluminaDynRoutine2(Read* read);
+void WriteSEOverlap(fstream &overlap_file, Read *read);
+
 
 string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2, 
                                     unsigned long long pe1_bases_anal, unsigned long long pe2_bases_anal, 
@@ -201,7 +208,8 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe1_accept_cnt, unsigned long long  se_pe1_bases_kept,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
-                                    double avg_len_pe1, double avg_len_pe2
+                                    double avg_len_pe1, double avg_len_pe2,
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
                                     
                                     );
 string PrintIlluminaStatisticsSE(unsigned long cnt, unsigned long long se_bases_anal, 
@@ -244,8 +252,8 @@ string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe1_accept_cnt, unsigned long long se_pe1_bases_kept,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
-                                    double avg_len_pe1, double avg_len_pe2
-                                    
+                                    double avg_len_pe1, double avg_len_pe2,
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
                                     );
 
 
@@ -348,7 +356,7 @@ volatile int shared_var = 0;
 bool shuffle_flag = false;
 
 /*Report files*/
-string rep_file_name1, rep_file_name2, pe_output_filename1, pe_output_filename2, shuffle_filename, se_filename, se_output_filename;
+string rep_file_name1, rep_file_name2, pe_output_filename1, pe_output_filename2, shuffle_filename, se_filename, se_output_filename, overlap_file_name;
 
 
 
@@ -377,6 +385,10 @@ bool i64_flag = false;
 
 int adapterlength = 40;
 double overlap_t = 0.9;
+int minoverlap = 10;
+bool overlap_flag = false;
+
+bool overwrite_flag = false;
 
 int main(int argc, char *argv[]) 
 {
@@ -472,10 +484,24 @@ int main(int argc, char *argv[])
            lucy_only_flag = true;
            trim_adapters_flag = false;
            continue;
-        }
+        } 
         if( string(argv[i]) == "--shuffle" ) 
         {
            shuffle_flag = true;
+           continue;
+        }
+        if( string(argv[i]) == "--ow" ) 
+        {
+           overwrite_flag = true;
+           continue;
+        }
+        if( string(argv[i]) == "--overlap" ) 
+        {
+           overlap_flag = true;
+           if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
+           {
+              minoverlap = atoi(argv[++i]);
+           }
            continue;
         }
         if( string(argv[i]) == "-max_al_mism" ) 
@@ -990,12 +1016,12 @@ int main(int argc, char *argv[])
     } else {
         if(illumina_flag || illumina_se_flag)
         {
-                if(exists( (char*)(output_prefix + "_PE1.fastq").c_str() ))
+                if(exists( (char*)(output_prefix + "_PE1.fastq").c_str() ) && !overwrite_flag)
                 {
                     cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
                     return 0;
                 }
-                if(exists( (char*)(output_prefix + "_PE2.fastq").c_str() ))
+                if(exists( (char*)(output_prefix + "_PE2.fastq").c_str() ) && !overwrite_flag)
                 {
                     cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
                     return 0;
@@ -1003,12 +1029,12 @@ int main(int argc, char *argv[])
         }
         if(roche_flag) 
         {
-            if(exists( (char*)(output_prefix + ".sff").c_str() ))
+            if(exists( (char*)(output_prefix + ".sff").c_str() ) && !overwrite_flag)
             {
                 cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
                 return 0;
             }
-            if(exists( (char*)(t_prefix + ".fastq").c_str() ) && output_fastqfile_flag)
+            if(exists( (char*)(t_prefix + ".fastq").c_str() ) && output_fastqfile_flag && !overwrite_flag)
             {
                 cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
                 return 0;
@@ -1068,7 +1094,7 @@ int main(int argc, char *argv[])
         if(!illumina_se_flag)
         {
         
-            sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tAvgLenPE1\tAvgLenPE2\n";
+            sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tAvgLenPE1\tAvgLenPE2\tperfect_ov\tpartial_ov\n";
     
                 cout << "Provided data files : " << endl;
                 sum_stat << "Provided data files : " << endl;
@@ -1089,8 +1115,8 @@ int main(int argc, char *argv[])
                         sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
                         cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
                         sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
-                        cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
-                        sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
+                        cout << "Distance between the first bases of two consecutive kmers: " << DISTANCE << endl;
+                        sum_stat << "Distance between the first bases of two consecutive kmers: " << DISTANCE << endl;
     
                 } 
                 else
@@ -1117,10 +1143,10 @@ int main(int argc, char *argv[])
                 {
                         cout << "Quality trimming: YES" << endl;
                         sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximim error: " << -10*log10(max_a_error) << endl;
-                        sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
-                        cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
-                        sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        cout << "Maximum error: " << -10*log10(max_a_error) << endl;
+                        sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
+                        cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
                 }
                 else
                 {
@@ -1140,6 +1166,8 @@ int main(int argc, char *argv[])
                 pe_output_filename2 =  output_prefix + "_PE2.fastq" ;
                 shuffle_filename = output_prefix + "_shuffled.fastq";
                 se_filename = output_prefix + "_SE.fastq";
+                
+                
         
                 cout << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
                 sum_stat << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
@@ -1158,6 +1186,11 @@ int main(int argc, char *argv[])
                 }    
                 cout << "Single-end reads: "<< se_filename << endl;
                 sum_stat << "Single-end reads: "<< se_filename << endl;
+                
+                if(overlap_flag) {
+                    overlap_file_name = output_prefix + "_SEOLP.fastq";
+                    sum_stat << "Single-end overlapped reads: "<< overlap_file_name << endl;
+                }
         
                 cout << "--------------------Other parameters--------------------\n";
                 sum_stat << "--------------------Other parameters--------------------\n";
@@ -2988,6 +3021,7 @@ void PrintHelp() {
 							"[-qual max_avg_error max_error_at_ends]\n"
 							"[--qual_only]\n"
 							"[--fastq]\n"
+                                                        "[--ow]\n"
 							"[--keep_fastq_orig]\n"
 							"[-minimum_read_length <value>]\n"
 							"[-polyat [cdna] [cerr] [crng] ]\n"
@@ -3004,6 +3038,8 @@ void PrintHelp() {
                                                         "[-i64]\n"
                                                         "[-adapter_length <value>]\n"
                                                         "[-ot <value>]\n"
+                                                        "[--overlap <minoverlap=value>]\n"
+                                                        "[--ow]\n"
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n"
             "For Illumina single-end reads:\n"
@@ -3016,6 +3052,7 @@ void PrintHelp() {
 							"[--qual_only]\n"
 							"[-minimum_read_length <value>]\n"
                                                         "[--shuffle]\n"
+                                                        "[--ow]\n"
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n";
 cout <<"Example:\n"
@@ -3089,6 +3126,7 @@ void IlluminaDynamic()
     unsigned long num_contaminants1, num_contaminants2; num_contaminants1 = num_contaminants2 = 0;
     unsigned long accepted1,accepted2; accepted1 = accepted2 = 0;
     unsigned long discarded1,discarded2; discarded1 = discarded2 = 0;
+    unsigned long perfect_ov_cnt, partial_ov_cnt; perfect_ov_cnt = partial_ov_cnt = 0;
 //    unsigned long discarded_by_quality1, discarded_by_quality2; discarded_by_quality1 = discarded_by_quality2 = 0;
     unsigned long discarded_by_contaminant1, discarded_by_contaminant2; discarded_by_contaminant1 = discarded_by_contaminant2 = 0;
     unsigned long discarded_by_read_length1, discarded_by_read_length2; discarded_by_read_length1 = discarded_by_read_length2 = 0;
@@ -3101,9 +3139,13 @@ void IlluminaDynamic()
     unsigned long right_trimmed_by_adapter1 , right_trimmed_by_adapter2; right_trimmed_by_adapter1 = right_trimmed_by_adapter2 = 0;
     unsigned long right_trimmed_by_vector1 , right_trimmed_by_vector2;  right_trimmed_by_vector1 = right_trimmed_by_vector2 = 0;
     
-    fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file;
+    fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file, overlap_file;
     rep_file1.open(rep_file_name1.c_str(),ios::out);
     rep_file2.open(rep_file_name2.c_str(),ios::out);
+    
+    if(overlap_flag)
+        overlap_file.open(overlap_file_name.c_str(),ios::out);
+    
     rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
     rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
     
@@ -3256,10 +3298,8 @@ void IlluminaDynamic()
                             read1->discarded = 1;
                         }
                         
-                        
-                        
                         //Establishing the most conservative adapters
-                        if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1) )
+                        if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1))
                         {
                             //Take the most conservative position:
                             if( read1->tru_sec_pos < read2->tru_sec_pos )
@@ -3286,40 +3326,101 @@ void IlluminaDynamic()
                         else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) )
                         {
                             
-                            //string tmp_read = MakeRevComplement(read2->read);
-                            int a = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength);
-                            if(a != 0) {
-                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-                                read1->tru_sec_pos = read1->initial_length + a - 1; read2->tru_sec_pos = read2->initial_length + a - 1;
-                                
+                            int o = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength, false);
+                            if( (o < 0) && (o != -10000)) {
+                               //dovetails, remove adapters:
+                               read1->tru_sec_found = 1; read2->tru_sec_found = 1;
+                               read1->tru_sec_pos = read1->initial_length + o - 1; read2->tru_sec_pos = read2->initial_length + o - 1;
                             }
                         }
-                        
-                        MakeClipPointsIllumina(read1);
-                        MakeClipPointsIllumina(read2);
-                        
                         cnt1+=1; cnt2+=1;
           
-                        if( read1->discarded_by_contaminant == 0)
-                        {    
-                                if( read1->lclip >= read1->rclip ) { read1->discarded = 1; read1->discarded_by_read_length = 1; } 
-                                if( read1->lclip >= (int)read1->read.length() ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
-                                if( read1->rclip > (int)read1->read.length() ) { read1->rclip = read1->read.length(); }
-                                if( (int)read1->read.length() < minimum_read_length ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
-                                if( (read1->rclip - read1->lclip) < minimum_read_length ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
+                        //Checking for overlap:
+                        bool overlap_found = false;
+                        Read *c;
+                        if( overlap_flag && (read1->discarded == 0) && (read2->discarded == 0) ) {
+                              Read *s1 = new Read(); s1->read = read1->read; s1->illumina_quality_string = read1->illumina_quality_string;
+                              Read *s2 = new Read(); s2->read = read2->read; s2->illumina_quality_string = read2->illumina_quality_string;
+                                        
+                              int ov;
+                              string tread = MakeRevComplement(s2->read);
+                              ov = find_overlap_pos(s1->read, tread, adapterlength, true);
+                              
+                              if(ov == 0) {
+                                  perfect_ov_cnt += 1;
+                                  //Perfect overlap, make consensus sequence:
+                                  s2->read = MakeRevComplement(s2->read);
+                                  c = make_consensus(s1, s2);  //don't cut, just overlap
+                                  overlap_found = true;
+                              }
+                              if( ov > 0 ) {
+                                  partial_ov_cnt += 1;
+                                  //Overlap, make consensus sequence:
+                                  s1->read = s1->read.substr(ov, s1->read.length() - ov);  // cut off left end
+                                  s2->read = MakeRevComplement(s2->read.substr(0,s2->read.length() - ov));  //cut off right end
+                                    
+                                  c = make_consensus(s1, s2);
+                                    
+                                  string c_se = read1->read.substr(0,ov) + c->read + MakeRevComplement(read2->read.substr(0,read2->read.length() - ov));
+                                                
+                                  string c_qual = read2->illumina_quality_string.substr(0,read2->illumina_quality_string.length() - ov);
+                                  c_qual = read1->illumina_quality_string.substr(0,ov) + c->illumina_quality_string + string ( c_qual.rbegin(), c_qual.rend() );
+                                    
+                                  //cout << read1->read.substr(0,ov) << endl << read1->illumina_quality_string.substr(0,ov) << endl;
+                                    
+                                  c->read = c_se;
+                                  c->illumina_quality_string = c_qual;
+                                  overlap_found = true;
+                                    //cout << c->read << endl << c->illumina_quality_string << endl;
+                              }
                         }
+                        
+                        if(overlap_found) {
+                            //Establis new clip points for SE overlap:
+                            MakeClipPointsIllumina(read1);
+                            MakeClipPointsIllumina(read2);
                             
-                        if( read2->discarded_by_contaminant == 0)
-                        {
-                                if( read2->lclip >= read2->rclip ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
-                                if( read2->lclip >= (int)read2->read.length() ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
-                                if( read2->rclip > (int)read2->read.length() ) {read2->rclip = read2->read.length(); }
-                                if( (int)read2->read.length() < minimum_read_length ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
-                                if( (read2->rclip - read2->lclip) < minimum_read_length ) { read2->discarded = 1; read2->discarded_by_read_length = 1; }
-                        }
+                            c->lclip = read1->lclip;
+                            c->rclip = c->read.length() - (read2->initial_length - read2->rclip);
+                            
+                            c->read = c->read.substr(0 , c->rclip );
+                            c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
+                            c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
+                            c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
+                            
+                            vector<string> temp_id;
+                            split_str( read1->illumina_readID, temp_id, " " );
+                            split_str( temp_id[0], temp_id, " " );
+                            c->illumina_readID = temp_id[0];
+                            WriteSEOverlap(overlap_file, c);
+                                        
+                        } else {
+                                        
+                        
+                                MakeClipPointsIllumina(read1);
+                                MakeClipPointsIllumina(read2);
+                        
+                        
+                                if( read1->discarded_by_contaminant == 0)
+                                {    
+                                        if( read1->lclip >= read1->rclip ) { read1->discarded = 1; read1->discarded_by_read_length = 1; } 
+                                        if( read1->lclip >= (int)read1->read.length() ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
+                                        if( read1->rclip > (int)read1->read.length() ) { read1->rclip = read1->read.length(); }
+                                        if( (int)read1->read.length() < minimum_read_length ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
+                                        if( (read1->rclip - read1->lclip) < minimum_read_length ) { read1->discarded = 1; read1->discarded_by_read_length = 1; }
+                                }
+                            
+                                if( read2->discarded_by_contaminant == 0)
+                                {
+                                        if( read2->lclip >= read2->rclip ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
+                                        if( read2->lclip >= (int)read2->read.length() ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
+                                        if( read2->rclip > (int)read2->read.length() ) {read2->rclip = read2->read.length(); }
+                                        if( (int)read2->read.length() < minimum_read_length ) {read2->discarded = 1; read2->discarded_by_read_length = 1; }
+                                        if( (read2->rclip - read2->lclip) < minimum_read_length ) { read2->discarded = 1; read2->discarded_by_read_length = 1; }
+                                }
 
-                        if( (read1->discarded == 0) && (read2->discarded == 0) )
-                        {
+                                if( (read1->discarded == 0) && (read2->discarded == 0) )
+                                {
                                         
                                     if(  read1->rclip < read1->initial_length  )
                                     {
@@ -3361,20 +3462,22 @@ void IlluminaDynamic()
                                     read2->read = read2->read.substr( read2->lclip, read2->read.length() - read2->lclip );
                                     read2->illumina_quality_string = read2->illumina_quality_string.substr( read2->lclip, read2->illumina_quality_string.length() - read2->lclip );
         	
+                                    
                                     if (!shuffle_flag)
-                                    {
-                                        WritePEFile(pe_output_file1, read1);
-                                        WritePEFile(pe_output_file2, read2);
-                                        pe_accept_cnt+=1;
-                                        pe_bases_kept += read1->read.length();
-                                        pe_bases_kept += read2->read.length();
-                                    } else 
-                                    {
-                                        WriteShuffleFile( shuffle_file, read1, read2 );
-                                        pe_accept_cnt+=1;
-                                        pe_bases_kept += read1->read.length();
-                                        pe_bases_kept += read2->read.length();
-                                    }
+                                        {
+                                                WritePEFile(pe_output_file1, read1);
+                                                WritePEFile(pe_output_file2, read2);
+                                                pe_accept_cnt+=1;
+                                                pe_bases_kept += read1->read.length();
+                                                pe_bases_kept += read2->read.length();
+                                        } else 
+                                        {
+                                                WriteShuffleFile( shuffle_file, read1, read2 );
+                                                pe_accept_cnt+=1;
+                                                pe_bases_kept += read1->read.length();
+                                                pe_bases_kept += read2->read.length();
+                                        }
+                                    
                  
                                     if( read1->initial_length > (int)read1->read.length() )
                                     {
@@ -3398,8 +3501,8 @@ void IlluminaDynamic()
                                     /////////////avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
                 
                                         
-                        } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
-                        {
+                                } else if ((read1->discarded == 0) && (read2->discarded == 1)) 
+                                {
                                     
                                     read1->read = read1->read.substr(0 , read1->rclip );
                                     read1->illumina_quality_string = read1->illumina_quality_string.substr(0,read1->rclip) ; 
@@ -3415,8 +3518,8 @@ void IlluminaDynamic()
                                     se_pe1_bases_kept += read1->read.length();
                  
                                     
-                        } else if( (read1->discarded == 1) && (read2->discarded == 0) )
-                        {
+                                } else if( (read1->discarded == 1) && (read2->discarded == 0) )
+                                {
                                       
                                     read2->read = read2->read.substr(0 , read2->rclip );
                                     read2->illumina_quality_string = read2->illumina_quality_string.substr(0,read2->rclip) ; 
@@ -3429,11 +3532,12 @@ void IlluminaDynamic()
                                     WriteSEFile( se_file, read2 );
                                     se_pe2_accept_cnt +=1;
                                     se_pe2_bases_kept += read2->read.length();
-                        } else 
-                        {
+                                } else 
+                                {
                                         pe_discard_cnt+=1;
                                         pe_bases_discarded += read1->read.length();
                                         pe_bases_discarded += read2->read.length();
+                                }
                         }
                         
                         rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
@@ -3465,7 +3569,9 @@ void IlluminaDynamic()
                         if (read2->right_trimmed_by_quality == 1) right_trimmed_by_quality2++;
                         if (read2->right_trimmed_by_adapter == 1) right_trimmed_by_adapter2++;
                         if (read2->right_trimmed_by_vector == 1) right_trimmed_by_vector2++;
-          
+                        
+                        
+                        
                         record_block1.clear();
                         read1->illumina_readID.clear(); 
                         read1->illumina_quality_string.clear();
@@ -3501,7 +3607,8 @@ void IlluminaDynamic()
                                     se_pe1_accept_cnt, se_pe1_bases_kept,
                                     se_pe2_accept_cnt, se_pe2_bases_kept,
                                     avg_trim_len_pe1, avg_trim_len_pe2,
-                                    avg_len_pe1, avg_len_pe2
+                                    avg_len_pe1, avg_len_pe2,
+                                    perfect_ov_cnt, partial_ov_cnt
                                    );
                             
                             if (cnt1 > 1000)
@@ -3546,7 +3653,8 @@ void IlluminaDynamic()
                             se_pe1_accept_cnt, se_pe1_bases_kept,
                             se_pe2_accept_cnt, se_pe2_bases_kept,
                             avg_trim_len_pe1, avg_trim_len_pe2,
-                            avg_len_pe1, avg_len_pe2
+                            avg_len_pe1, avg_len_pe2,
+                            perfect_ov_cnt, partial_ov_cnt
                             );
     
     
@@ -3584,7 +3692,8 @@ void IlluminaDynamic()
                             se_pe1_accept_cnt, se_pe1_bases_kept,
                             se_pe2_accept_cnt, se_pe2_bases_kept,
                             avg_trim_len_pe1, avg_trim_len_pe2,
-                            avg_len_pe1, avg_len_pe2
+                            avg_len_pe1, avg_len_pe2,
+                            perfect_ov_cnt, partial_ov_cnt
                             ) 
                  << endl;
                 
@@ -3770,6 +3879,45 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     return 0;
 }
 
+//For overlapped reads:
+int IlluminaDynRoutine2(Read* read)
+{
+    if(contaminants_flag )
+    {
+       if(CheckContaminants(read->read) == 0) 
+       {
+           read->contam_found = 1;
+           read->discarded_by_contaminant = 1;
+           read->contaminants = 1;
+           read->discarded = 1;
+           return -1;
+       }
+    }
+            
+    //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
+    if( qual_trim_flag  ) 
+    {
+       QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
+       if (read->discarded_by_quality == 1)
+       {
+          read->discarded = 1;
+          return -1;
+       }
+       if (lucy_only_flag)
+       {
+           read->rclip = read->lucy_rclip;
+           read->lclip = read->lucy_lclip;
+           return 0;
+       }
+    }
+     
+    if( vector_flag ) 
+        CheckVector(read);
+            
+    
+    return 0;
+}
+
 void MakeClipPointsIllumina(Read* read) 
 {
     //Clip points
@@ -3950,6 +4098,15 @@ string New2OldNbl(string header)
     return tmp;
     
 }
+
+void WriteSEOverlap(fstream &overlap_file, Read *read)
+{
+    overlap_file << read->illumina_readID << endl;
+    overlap_file << read->read << endl;
+    overlap_file << '+' << endl;
+    overlap_file << read->illumina_quality_string << endl;
+}
+
 
 void WritePEFile(fstream &pe_output_file, Read *read)
 {
@@ -4331,7 +4488,8 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe1_accept_cnt, unsigned long long se_pe1_bases_kept,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
-                                    double avg_len_pe1, double avg_len_pe2
+                                    double avg_len_pe1, double avg_len_pe2,
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
                                     
                                     )
 {
@@ -4378,7 +4536,9 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                         ("Single Reads PE1 kept: " + i2str(se_pe1_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe1_bases_kept,new char[15],10) +"\n") +
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
-                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n");
+                        ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n") +
+                        (overlap_flag ? "Perfect overlaps: " + int2str(perfect_ov_cnt) + "\n" : "") +
+                        (overlap_flag ? "Partial overlaps: " + int2str(partial_ov_cnt) + "\n" : "");
                         //("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
                         //("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
             
@@ -4407,8 +4567,8 @@ string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe1_accept_cnt, unsigned long long se_pe1_bases_kept,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
-                                    double avg_len_pe1, double avg_len_pe2
-                                    
+                                    double avg_len_pe1, double avg_len_pe2,
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
                                     )
 {
     
@@ -4476,7 +4636,8 @@ string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2,
                        (i2str(se_pe1_accept_cnt,new char[15],10) + "\t" + i2str(se_pe1_bases_kept,new char[15],10) +"\t") +
                        (i2str(se_pe2_accept_cnt,new char[15],10) + "\t" + i2str(se_pe2_bases_kept,new char[15],10) +"\t") +
                        (double2str(avg_trim_len_pe1) + "\t") +
-                       (double2str(avg_trim_len_pe2) + "\t");// +
+                       double2str(avg_trim_len_pe2) +
+                       ( overlap_flag ? "\t" + int2str(perfect_ov_cnt) + "\t" + int2str(partial_ov_cnt) : ""); 
                       // (double2str(avg_len_pe1) + "\t") +
                       // (double2str(avg_len_pe2));
             
