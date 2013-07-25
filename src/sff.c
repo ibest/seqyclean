@@ -192,6 +192,12 @@ void write_sff_read_header(FILE *fp, sff_read_header *rh) {
 
 void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t nbases) {
     
+    /* sff files are in big endian notation so adjust appropriately */
+    for (int i = 0; i < nflows; i++) {
+        //flowgram[i] = htobe16(flowgram[i]);
+        rd->flowgram[i] = ntohs(rd->flowgram[i]);
+    }
+    
     fwrite(rd->flowgram, sizeof(uint16_t), (size_t) nflows, fp);
     fwrite(rd->flow_index, sizeof(uint8_t), (size_t) nbases, fp);
     fwrite(rd->bases, sizeof(char), (size_t) nbases, fp);

@@ -31,7 +31,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.6.1 (2013-07-22)";
+string version = "1.6.2 (2013-07-24)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -1115,8 +1115,8 @@ int main(int argc, char *argv[])
                         sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
                         cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
                         sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
-                        cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
-                        sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
+                        cout << "Distance between the first bases of two consecutive kmers: " << DISTANCE << endl;
+                        sum_stat << "Distance between the first bases of two consecutive kmers: " << DISTANCE << endl;
     
                 } 
                 else
@@ -1143,10 +1143,10 @@ int main(int argc, char *argv[])
                 {
                         cout << "Quality trimming: YES" << endl;
                         sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximim error: " << -10*log10(max_a_error) << endl;
-                        sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
-                        cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
-                        sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        cout << "Maximum error: " << -10*log10(max_a_error) << endl;
+                        sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
+                        cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
                 }
                 else
                 {

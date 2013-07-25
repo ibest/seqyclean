@@ -117,6 +117,7 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         read->flowgram = new uint16_t[h.flow_len];
         for(int j=0; j<h.flow_len; j++) {
                 read->flowgram[j] = rd.flowgram[j];
+                //cout << rd.flowgram[j] << " " << endl;
                 
         }
         
@@ -254,6 +255,9 @@ void process_fastq_to_sff(char *sff_file) {
     unsigned int numreads = reads.size();
     for (unsigned int i = 0; i < numreads; i++) 
     {
+        
+        if(reads[i]->discarded) continue;
+        
         sff_read_header readHeader;
         readHeader.nbases = reads[i]->read.length();
         readHeader.name = (char*)malloc(sizeof(char)*strlen(reads[i]->readID));
@@ -291,6 +295,7 @@ void process_fastq_to_sff(char *sff_file) {
         readData.flow_index = reads[i]->flow_index;
         readData.flowgram = reads[i]->flowgram;
         
+        
         readData.quality = (uint8_t*)malloc(sizeof(uint8_t)*(readHeader.nbases));
         int j=0;
         for(j=0; j<readHeader.nbases; ++j)
@@ -316,7 +321,7 @@ void process_fastq_to_sff(char *sff_file) {
     ch.index_offset = be64toh( ftell(sff_fp) );
     */
     
-    ch.nreads       = ntohs(ch.nreads);//be32toh(reads.size());
+    ch.nreads       = ntohl(ch.nreads);
     ch.index_offset = be64toh( ftell(sff_fp) );
     
     write_manifest(sff_fp);
