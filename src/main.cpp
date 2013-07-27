@@ -22,6 +22,7 @@
 #include "gzstream.h"
 #include "QualTrim.h"
 #include "flash.h"
+#include "dup.h"
 
 
 using namespace std;
@@ -31,7 +32,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.6.3 (2013-07-26)";
+string version = "1.7.1 (2013-07-26)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -209,7 +210,8 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
-                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt,
+                                    unsigned long duplicates
                                     
                                     );
 string PrintIlluminaStatisticsSE(unsigned long cnt, unsigned long long se_bases_anal, 
@@ -390,6 +392,8 @@ bool overlap_flag = false;
 
 bool overwrite_flag = false;
 
+bool rem_dup = false;
+
 int main(int argc, char *argv[]) 
 {
     double start, finish, elapsed;
@@ -488,6 +492,11 @@ int main(int argc, char *argv[])
         if( string(argv[i]) == "--shuffle" ) 
         {
            shuffle_flag = true;
+           continue;
+        }
+        if( string(argv[i]) == "--dup" ) 
+        {
+           rem_dup = true;
            continue;
         }
         if( string(argv[i]) == "--ow" ) 
@@ -3139,6 +3148,8 @@ void IlluminaDynamic()
     unsigned long right_trimmed_by_adapter1 , right_trimmed_by_adapter2; right_trimmed_by_adapter1 = right_trimmed_by_adapter2 = 0;
     unsigned long right_trimmed_by_vector1 , right_trimmed_by_vector2;  right_trimmed_by_vector1 = right_trimmed_by_vector2 = 0;
     
+    unsigned long duplicates = 0;
+    
     fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file, overlap_file;
     rep_file1.open(rep_file_name1.c_str(),ios::out);
     rep_file2.open(rep_file_name2.c_str(),ios::out);
@@ -3283,6 +3294,10 @@ void IlluminaDynamic()
                         }
           
                         //Serial realization - useful for debugging if something does not work as expected
+                        //Duplicates removal
+                        if(rem_dup)
+                            screen_duplicates(read1, read2, duplicates);
+                        
                         
                         IlluminaDynRoutine(read1, adapter_found1, query_string1);
                         
@@ -3608,7 +3623,8 @@ void IlluminaDynamic()
                                     se_pe2_accept_cnt, se_pe2_bases_kept,
                                     avg_trim_len_pe1, avg_trim_len_pe2,
                                     avg_len_pe1, avg_len_pe2,
-                                    perfect_ov_cnt, partial_ov_cnt
+                                    perfect_ov_cnt, partial_ov_cnt,
+                                    duplicates
                                    );
                             
                             if (cnt1 > 1000)
@@ -3654,7 +3670,8 @@ void IlluminaDynamic()
                             se_pe2_accept_cnt, se_pe2_bases_kept,
                             avg_trim_len_pe1, avg_trim_len_pe2,
                             avg_len_pe1, avg_len_pe2,
-                            perfect_ov_cnt, partial_ov_cnt
+                            perfect_ov_cnt, partial_ov_cnt,
+                            duplicates
                             );
     
     
@@ -4489,8 +4506,8 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
-                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
-                                    
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt,
+                                    unsigned long duplicates
                                     )
 {
     
@@ -4538,7 +4555,8 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
                         ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n") +
                         (overlap_flag ? "Perfect overlaps: " + int2str(perfect_ov_cnt) + "\n" : "") +
-                        (overlap_flag ? "Partial overlaps: " + int2str(partial_ov_cnt) + "\n" : "");
+                        (overlap_flag ? "Partial overlaps: " + int2str(partial_ov_cnt) + "\n" : "") + 
+                        (rem_dup ? "Duplicates: " + int2str(duplicates) + "\n" : "");
                         //("Average read length PE1: " + double2str(avg_len_pe1) + " bp\n") +
                         //("Average read length PE2: " + double2str(avg_len_pe2) + " bp\n");
             

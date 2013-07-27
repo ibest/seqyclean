@@ -29,6 +29,7 @@
         <in>abi.h</in>
         <in>ascii.cpp</in>
         <in>ascii.h</in>
+        <in>dup.cpp</in>
         <in>dup.h</in>
         <in>endian.h</in>
         <in>flash.cpp</in>

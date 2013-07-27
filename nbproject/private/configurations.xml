@@ -28,13 +28,14 @@
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE1.fastq -2 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE2.fastq -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --overlap 50 --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow --debug</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow -d</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --overlap 50 --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --dup --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow -d</runcommand>
+        <runcommand>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --dup --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
