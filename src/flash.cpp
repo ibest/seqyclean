@@ -45,7 +45,7 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
         //Finally check for partial overlap
         for(int i = 1; i < rlen-minoverlap; i++) {
             //cout << (double)(rlen - strdist(s1.substr(i,rlen), s2.substr(0,rlen-i)))/(double)rlen << endl;
-                if((double)(rlen - strdist(s1.substr(i,rlen), s2.substr(0,rlen-i)))/(double)rlen >= overlap_t ) {
+                if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= overlap_t ) {
                 //found dovetail overlap
                     //cout << (double)(rlen - strdist(s1.substr(i,rlen), s2.substr(0,rlen-i)))/(double)rlen << endl;
                         return i;
@@ -69,14 +69,13 @@ Read *make_consensus(Read *seq1, Read *seq2) {
         } else {
             if(seq1->illumina_quality_string[i] >= seq2->illumina_quality_string[i] ) {
                 new_seq += seq1->read[i];
-                new_qual += seq1->illumina_quality_string[i];
-                //new_qual += static_cast<char>( (int)seq1->illumina_quality_string[i] - (int)seq2->illumina_quality_string[i] );
-                //cout << seq1->illumina_quality_string[i] << endl << seq2->illumina_quality_string[i] << endl;
+                //new_qual += seq1->illumina_quality_string[i];
+                new_qual += (char)(( (unsigned int)seq1->illumina_quality_string[i] + (unsigned int)seq2->illumina_quality_string[i] ) >> 2);
+                //cout << (char)( (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i] ) << endl;
                 //cout << static_cast<char>((int)seq1->illumina_quality_string[i] - (int)seq2->illumina_quality_string[i]) << endl;
             } else {
                 new_seq += seq2->read[i];
-                new_qual += seq2->illumina_quality_string[i];
-                //new_qual += (char)( (int)seq2->illumina_quality_string[i] - (int)seq1->illumina_quality_string[i] );
+                new_qual += (char)(( (unsigned int)seq1->illumina_quality_string[i] + (unsigned int)seq2->illumina_quality_string[i] ) >> 2);
             }
         }
     }

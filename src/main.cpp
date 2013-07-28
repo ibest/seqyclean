@@ -32,7 +32,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.7.1 (2013-07-26)";
+string version = "1.7.4 (2013-07-27)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -3049,6 +3049,7 @@ void PrintHelp() {
                                                         "[-ot <value>]\n"
                                                         "[--overlap <minoverlap=value>]\n"
                                                         "[--ow]\n"
+                                                        "[--dup]\n" 
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n"
             "For Illumina single-end reads:\n"
