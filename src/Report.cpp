@@ -17,7 +17,7 @@ void MakeClipPoints()
                 int b = reads[ff]->read.length() - reads[ff]->v_end;
                 if( a >= b ) //Vector is on the right side
                 {
-                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip, reads[ff]->v_start) ) );
+                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip, reads[ff]->v_start) ) );
 
                         if( reads[ff]->rclip == reads[ff]->lucy_rclip )
                         {
@@ -48,7 +48,7 @@ void MakeClipPoints()
                 }
                 else //Vector is on the left side
                 {
-                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
+                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
 
                         if( reads[ff]->rclip == reads[ff]->lucy_rclip )
                         {
@@ -98,7 +98,7 @@ void MakeClipPoints()
                     
                 if( a >= b ) //Vector is on the right side
                 {
-                    reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->v_start) );
+                    reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->v_start) );
 
                     if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                     {
@@ -119,7 +119,7 @@ void MakeClipPoints()
                 }
                 else //Vector is on the left side
                 {
-                    reads[ff]->rclip = min( reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start ,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos ) );
+                    reads[ff]->rclip = min( (int)reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start ,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos ) );
 
                     if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                     {
@@ -155,7 +155,7 @@ void MakeClipPoints()
        {
            if (reads[ff]->discarded == 0)
            {
-                reads[ff]->rclip = min( reads[ff]->rlmid.rmid_start == 0 ? reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? reads[ff]->read.length()  : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
+                reads[ff]->rclip = min( reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length()  : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
                 
                 if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                 {
@@ -597,7 +597,7 @@ void MakeFinalStatistics( fstream &sum_stat )
         bases_anal+=reads[i]->initial_length;
         
        if(reads[i]->rlmid.lmid_start != 0 ) left_mid_tag+=1;
-       if( (reads[i]->rlmid.rmid_start != 0) && (reads[i]->rlmid.rmid_start < reads[i]->read.length()) ) right_mid_tag+=1;
+       if( (reads[i]->rlmid.rmid_start != 0) && (reads[i]->rlmid.rmid_start < (int)reads[i]->read.length()) ) right_mid_tag+=1;
        
        if(reads[i]->vector_found == 1) num_vectors+=1;
        if(reads[i]->contaminants == 1) num_contaminants+=1;

@@ -298,6 +298,7 @@ bool InsideBand(int i, int j, int k) {
 AlignScores CalcScores(string &seq_1, string &seq_2, int lim, int dir) {
     
     AlignScores al_scores;
+    al_scores.trim_pos = 0;
     
     short scores = 0;
     short mismatches = 0;
@@ -374,7 +375,7 @@ AlignScores CalcScores(string &seq_1, string &seq_2, int lim, int dir) {
 AlignScores CalcScores2(string &seq_1, int lim, int dir) {
     
     AlignScores al_scores;
-    
+    al_scores.trim_pos = 0;
     short scores = 0;
     short mismatches = 0;
 //    char prev_symb = '-';

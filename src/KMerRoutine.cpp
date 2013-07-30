@@ -131,7 +131,7 @@ int CheckVectorRight(Read &read) {
              if( (matches[msize-1].pos <= 2*(KMER_SIZE+DISTANCE) /*~50*/ ) && (matches[0].pos >= line_len-25) /*~ (line_len - 25)*/ ) 
              {
                  /*Check if no long gaps between matches :*/
-                 DistanceStruct dist_struct = CheckDistance(matches,0);
+                 DistanceStruct dist_struct = CheckDistance(matches);
                  if ( dist_struct.flag == false ) 
                  {
                     //Completely throw away this read :  
@@ -166,7 +166,7 @@ int CheckVectorRight(Read &read) {
                     //Doing a pairwise alignment :
                     good_flag = true;
                                 
-                    DistanceStruct dist_struct = CheckDistance(matches,0);
+                    DistanceStruct dist_struct = CheckDistance(matches);
                     if( dist_struct.flag == true ) 
                     {
                       /*Looking for the right clip point : */
@@ -271,7 +271,7 @@ int CheckVectorLeft(Read &read)
                /*Doing a pairwise alignment : */
                if(matches[msize-1].pos >= (line_len-KMER_SIZE - 30) &&  (matches[0].pos <= (15 + KMER_SIZE)) ) 
                {
-                    DistanceStruct dist_struct = CheckDistance(matches,1);
+                    DistanceStruct dist_struct = CheckDistance(matches);
                     if ( dist_struct.flag == false ) 
                     {
                        //Completely throw away this read :  
@@ -290,7 +290,7 @@ int CheckVectorLeft(Read &read)
                   {
                      //Doing a pairwise alignment :
                      good_flag = true;
-                     DistanceStruct dist_struct = CheckDistance(matches,1);
+                     DistanceStruct dist_struct = CheckDistance(matches);
                      if( dist_struct.flag == true ) 
                      {
                         /*Looking for the right clip point : */
@@ -334,9 +334,11 @@ int CheckVectorLeft(Read &read)
     return (good_flag == true) ? 1 : 0 ;
 }
 
-DistanceStruct CheckDistance(vector <HitData> matches, int dir) {
+DistanceStruct CheckDistance(vector <HitData> matches/*, int dir*/) {
     DistanceStruct dist_struct;
-    
+    dist_struct.i = 0;
+    dist_struct.flag = false;
+    dist_struct.pos = 0;
     for(int i=1; i<(int)matches.size(); i++) {
         if( abs(matches[i-1].pos - matches[i].pos) > 2*DISTANCE ) {
            dist_struct.flag = true;

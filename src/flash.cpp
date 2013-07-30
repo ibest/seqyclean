@@ -26,7 +26,7 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     unsigned int rlen = s1.length();
     //first check for dovetail:
     if( s1.length() != s2.length() ) return -10000;
-    if(s1.length() < adapterlength) return -10000;
+    if((int)s1.length() < adapterlength) return -10000;
     if(!flag) {
         //print "checking dovetail"
         for(int i = adapterlength; i>=0; i--) {
@@ -43,7 +43,7 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
                 return 0;
         }
         //Finally check for partial overlap
-        for(int i = 1; i < rlen-minoverlap; i++) {
+        for(unsigned int i = 1; i < rlen-minoverlap; i++) {
             //cout << (double)(rlen - strdist(s1.substr(i,rlen), s2.substr(0,rlen-i)))/(double)rlen << endl;
                 if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= overlap_t ) {
                 //found dovetail overlap
@@ -61,21 +61,20 @@ Read *make_consensus(Read *seq1, Read *seq2) {
     //set qualities, and return a new sequence
     string new_seq = "";
     string new_qual = "";
-    for(int i = 0; i < seq1->read.length(); ++i ) {
+    for(unsigned int i = 0; i < seq1->read.length(); ++i ) {
         if( seq1->read[i] == seq2->read[i] ) {
             new_seq += seq1->read[i];
             new_qual += max(seq1->illumina_quality_string[i], seq2->illumina_quality_string[i]);
-            //cout << max(seq1->illumina_quality_string[i], seq2->illumina_quality_string[i]);
         } else {
-            if(seq1->illumina_quality_string[i] >= seq2->illumina_quality_string[i] ) {
+            if(seq1->illumina_quality_string[i] == seq2->illumina_quality_string[i] ) {
                 new_seq += seq1->read[i];
-                //new_qual += seq1->illumina_quality_string[i];
-                new_qual += (char)(( (unsigned int)seq1->illumina_quality_string[i] + (unsigned int)seq2->illumina_quality_string[i] ) >> 2);
-                //cout << (char)( (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i] ) << endl;
-                //cout << static_cast<char>((int)seq1->illumina_quality_string[i] - (int)seq2->illumina_quality_string[i]) << endl;
+                new_qual += seq1->illumina_quality_string[i];
+            } else if(seq1->illumina_quality_string[i] > seq2->illumina_quality_string[i] ) {
+                new_seq += seq1->read[i];
+                new_qual += (char)( (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i]);
             } else {
                 new_seq += seq2->read[i];
-                new_qual += (char)(( (unsigned int)seq1->illumina_quality_string[i] + (unsigned int)seq2->illumina_quality_string[i] ) >> 2);
+                new_qual += (char)( (unsigned int)seq2->illumina_quality_string[i] - (unsigned int)seq1->illumina_quality_string[i]);
             }
         }
     }

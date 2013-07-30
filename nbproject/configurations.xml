@@ -11,6 +11,8 @@
       <df name="src">
         <in>Dictionary.cpp</in>
         <in>Dictionary.h</in>
+        <in>Illumina.cpp</in>
+        <in>Illumina.h</in>
         <in>KMerRoutine.cpp</in>
         <in>KMerRoutine.h</in>
         <in>MainPipeLine.cpp</in>
@@ -23,8 +25,12 @@
         <in>Read.h</in>
         <in>Report.cpp</in>
         <in>Report.h</in>
+        <in>Roche.cpp</in>
+        <in>Roche.h</in>
         <in>TrimLucy.cpp</in>
         <in>TrimLucy.h</in>
+        <in>UnitTest.cpp</in>
+        <in>UnitTest.h</in>
         <in>abi.c</in>
         <in>abi.h</in>
         <in>ascii.cpp</in>
@@ -53,6 +59,13 @@
         <in>util.h</in>
       </df>
       <df name="test">
+        <in>testIlluminaPE_PE1.fastq</in>
+        <in>testIlluminaPE_PE1_Report.tsv</in>
+        <in>testIlluminaPE_PE2.fastq</in>
+        <in>testIlluminaPE_PE2_Report.tsv</in>
+        <in>testIlluminaPE_SE.fastq</in>
+        <in>testIlluminaPE_SummaryStatistics.tsv</in>
+        <in>testIlluminaPE_SummaryStatistics.txt</in>
       </df>
       <df name="test_data">
       </df>

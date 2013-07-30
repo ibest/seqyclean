@@ -159,7 +159,7 @@ void gzstreambase::close() {
 }
 
 #ifdef GZSTREAM_NAMESPACE
-} // namespace GZSTREAM_NAMESPACE
+}  namespace GZSTREAM_NAMESPACE
 #endif
 
 // ============================================================================
