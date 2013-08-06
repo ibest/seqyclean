@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.8.1 (2013-07-28)";
+string version = "1.8.2 (2013-08-06)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -471,7 +471,7 @@ int main(int argc, char *argv[])
         {
            if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
-             adapterlength = atoi(argv[++i]); /*Custom file with RL MIDS given*/
+             adapterlength = atoi(argv[++i]); 
            }
            continue;
         }
@@ -479,7 +479,7 @@ int main(int argc, char *argv[])
         {
            if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
-             overlap_t = atof(argv[++i]); /*Custom file with RL MIDS given*/
+             overlap_t = atof(argv[++i]);
            }
            continue;
         }
@@ -839,7 +839,7 @@ int main(int argc, char *argv[])
                                         //Old headers == True
                                         old_style_illumina_flag = true;
                                         
-                                } else if ( (fields1.size() == 10) && (fields2.size() == 10) )
+                                } else if ( ( (fields1.size() == 9) && (fields2.size() == 9) ) || ((fields1.size() == 10) && (fields2.size() == 10)) )
                                 {
                                         //Old headers == False
                                         old_style_illumina_flag = false;
@@ -850,7 +850,8 @@ int main(int argc, char *argv[])
                                 } else 
                                 {
                                     cout << "Warning: unknown header format in file: " << pe1_names[i] << ", " << pe2_names[i] << endl;
-                                     old_style_illumina_flag = false;
+                                    cout << "Header is:\n" << line1 << "(R1),\n" << line2 << "(R2)" << endl;
+                                    old_style_illumina_flag = false;
                                 }
                         }
                         
