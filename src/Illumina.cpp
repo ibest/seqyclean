@@ -331,9 +331,6 @@ void IlluminaDynamic()
                               //  }
                                 MakeClipPointsIllumina(read2);
                                 
-                                
-                        
-                        
                                 if( read1->discarded_by_contaminant == 0)
                                 {    
                                         if( read1->lclip >= read1->rclip ) { read1->discarded = 1; read1->discarded_by_read_length = 1; } 

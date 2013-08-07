@@ -27,6 +27,8 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     //first check for dovetail:
     if( s1.length() != s2.length() ) return -10000;
     if((int)s1.length() < adapterlength) return -10000;
+    if((int)s2.length() < adapterlength) return -10000;
+    
     if(!flag) {
         //print "checking dovetail"
         for(int i = adapterlength; i>=0; i--) {
