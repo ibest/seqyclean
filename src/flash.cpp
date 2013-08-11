@@ -32,8 +32,8 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     if(!flag) {
         //print "checking dovetail"
         for(int i = adapterlength; i>=0; i--) {
-                if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= overlap_t ) {
-                //found dovetail overlap
+                if((double)(/*rlen*/i - strdist(s1.substr(i,rlen-i), s2.substr(0,rlen-i)))/(double)i/*rlen*/ >= overlap_t ) {
+                        //found dovetail overlap
                         return -i;
                 }
         }
@@ -41,17 +41,15 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     if(flag) {
         //Next check for perfect overlap
         if((double)(rlen - strdist(s1, s2))/(double)rlen >= overlap_t ) {
-                //found perfecr overlap
+                //found perfect overlap
                 return 0;
         }
         //Finally check for partial overlap
-        for(unsigned int i = 1; i < rlen-minoverlap; i++) {
-            //cout << (double)(rlen - strdist(s1.substr(i,rlen), s2.substr(0,rlen-i)))/(double)rlen << endl;
-                if((double)(rlen - strdist(s1.substr(0,s1.length()-i), s2.substr(i,s2.length())))/(double)rlen >= overlap_t ) {
-                //found dovetail overlap
-                    //cout << (double)(rlen - strdist(s1.substr(i,rlen), s2.substr(0,rlen-i)))/(double)rlen << endl;
-                        return i;
-                }
+        for(unsigned int i = 1; i <= rlen-minoverlap; i++) {
+            if((double)( (rlen-i) - strdist(s1.substr(i,rlen-i), s2.substr(0,rlen-i)))/(double)(rlen-i) >= overlap_t ) {
+                return i;
+            }
+            
         }
     }
     

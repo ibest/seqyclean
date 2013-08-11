@@ -2,7 +2,11 @@
 <configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="SeqyClean" root=".">
+      <df name="bin">
+      </df>
       <df name="man">
+      </df>
+      <df name="obj">
       </df>
       <df name="src">
         <in>Dictionary.cpp</in>
@@ -53,6 +57,8 @@
         <in>timer.h</in>
         <in>util.cpp</in>
         <in>util.h</in>
+      </df>
+      <df name="test">
       </df>
       <df name="test_data">
       </df>
