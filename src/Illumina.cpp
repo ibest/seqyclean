@@ -316,10 +316,12 @@ void IlluminaDynamic()
                             
                             vector<string> temp_id;
                             split_str( read1->illumina_readID, temp_id, " " );
-                            split_str( temp_id[0], temp_id, " " );
-                            c->illumina_readID = temp_id[0];
+                            vector<string> temp_id1;
+                            split_str( temp_id[0], temp_id1, " " );
+                            c->illumina_readID = temp_id1[0];
                             WriteSEOverlap(overlap_file, c);
-                                        
+                            temp_id.clear();
+                            temp_id1.clear();
                         } else {
                                         
                                 
