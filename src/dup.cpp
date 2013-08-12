@@ -25,6 +25,4 @@ void screen_duplicates(Read *seq1, Read *seq2, unsigned long &duplicates) {
      seq1->discarded = 1;
      seq2->discarded = 1;
     }
-    //print "Pairs:", i, "Duplicates:", duplicates, "| fw:", duplicates-rev, "| rev", rev, "| percent:", 100.0*duplicates/i, "| reads/second:", i/(time.time() - start)
-
 }
