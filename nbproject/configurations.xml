@@ -2,7 +2,11 @@
 <configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="SeqyClean" root=".">
+      <df name="bin">
+      </df>
       <df name="man">
+      </df>
+      <df name="obj">
       </df>
       <df name="src">
         <in>Dictionary.cpp</in>
@@ -53,6 +57,15 @@
         <in>timer.h</in>
         <in>util.cpp</in>
         <in>util.h</in>
+      </df>
+      <df name="test">
+        <in>testIlluminaDup_PE1.fastq</in>
+        <in>testIlluminaDup_PE1_Report.tsv</in>
+        <in>testIlluminaDup_PE2.fastq</in>
+        <in>testIlluminaDup_PE2_Report.tsv</in>
+        <in>testIlluminaDup_SE.fastq</in>
+        <in>testIlluminaDup_SummaryStatistics.tsv</in>
+        <in>testIlluminaDup_SummaryStatistics.txt</in>
       </df>
       <df name="test_data">
       </df>

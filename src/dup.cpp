@@ -10,12 +10,20 @@ void screen_duplicates(Read *seq1, Read *seq2, unsigned long &duplicates) {
     
     string rcomb = MakeRevComplement(comb);
     map<string, int>::iterator it_DupDict;
-    it_DupDict = DupDict.find(rcomb);
+    it_DupDict = DupDict.find(comb);
     if(it_DupDict != DupDict.end()) {
      it_DupDict->second += 1;
      c = it_DupDict->second;
     }else{
      DupDict.insert(std::pair<string, int>(comb, 1));
+     c = 1;
+    }
+    it_DupDict = DupDict.find(rcomb);
+    if(it_DupDict != DupDict.end()) {
+     it_DupDict->second += 1;
+     c = it_DupDict->second;
+    }else{
+     DupDict.insert(std::pair<string, int>(rcomb, 1));
      c = 1;
     }
     if( c == 1 ) {

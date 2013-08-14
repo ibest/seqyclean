@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --dup --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 ../overlap/test_no_overlap_PE1.fastq -2 ../overlap/test_no_overlap_PE2.fastq -o test/test_ov_seqyclean --overlap --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test_ov_seqyclean --overlap --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test_ov_seqyclean --overlap --ow</runcommandpicklistitem>
@@ -34,8 +33,9 @@
           <runcommandpicklistitem>./bin/seqyclean --new2old_illumina -qual 24 24 --dup --overlap -1 test_data/testIlluminaPE_PE1.fastq -2 test_data/testIlluminaPE_PE2.fastq -o test/sam_dup_overlap</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean --new2old_illumina -qual 24 24 --dup --overlap -1 test_data/testIlluminaPE_PE1.fastq -2 test_data/testIlluminaPE_PE2.fastq -o test/sam_dup_overlap --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean --overlap -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/testIlluminaDup --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean --overlap -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test --ow</runcommand>
+        <runcommand>./bin/seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/testIlluminaDup --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

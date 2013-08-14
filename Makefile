@@ -123,5 +123,27 @@ test :
 	else \
             echo "Test Ilumina SE failed"; exit 1; \
 	fi
+	@echo "Test Illumina overlap..."
+	@bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual -o unit_test/testIlluminaOLP --overlap > /dev/null
+	@diff test_data/testIlluminaOLP_SEOLP.fastq unit_test/testIlluminaOLP_SEOLP.fastq; \
+	RETVAL=$$?; \
+	if [ $$RETVAL -eq 0 ]; then \
+            echo "Success!"; \
+	else \
+            echo "Test Ilumina overlap failed"; exit 1; \
+	fi
+	@echo "Test removing of duplicates..."
+	@./bin/seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup > /dev/null
+	@diff test_data/testIlluminaDup_PE1.fastq unit_test/testIlluminaDup_PE1.fastq; \
+	RETVAL1=$$?; \
+	diff test_data/testIlluminaDup_PE2.fastq unit_test/testIlluminaDup_PE2.fastq; \
+	RETVAL2=$$?; \
+	diff test_data/testIlluminaDup_SE.fastq unit_test/testIlluminaDup_SE.fastq; \
+	RETVAL3=$$?; \
+	if [[ $$RETVAL1 -eq 0 && $$RETVAL2 -eq 0 && $$RETVAL3 -eq 0 ]]; then \
+            echo "Success!"; \
+	else \
+            echo "Test removing of duplicates failed"; exit 1; \
+	fi
 	@echo "All tests succeed"
 	@rm -r unit_test
