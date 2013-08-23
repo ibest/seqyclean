@@ -349,7 +349,8 @@ static void *t_FindRLClip(void *targs) {
   line_counter++;
   if(line_counter%50000 == 0)
      cout << "Line No: " << line_counter << endl;
-         
+  
+  
   pthread_exit(NULL);
     
 }

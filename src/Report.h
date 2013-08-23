@@ -71,6 +71,7 @@ extern string roche_output_file_name;
 extern float max_a_error;
 extern float max_e_at_ends;
 extern unsigned short NUM_THREADS;
+extern bool polyat_flag;
 
 void MakeReport(string file_name);
 void MakeLucyReport();
@@ -85,28 +86,6 @@ void WriteToSFFIllumina(char* file_name);
 void CreateOutputFiles(string file_name);
 void MakeLucyFastq(string custom_file_name);
 void MakeLucyReport2(char *filename, vector<Read*>& reads);
-void MakeFinalStatistics(fstream &sum_stat);
-void MakeClipPoints();
-string PrintRocheStatisticsTSV(unsigned long cnt,
-                                    unsigned long long bases_anal, 
-                                    unsigned long left_mid_tag,
-                                    unsigned long right_mid_tag,
-                                    unsigned long num_vectors, 
-                                    unsigned long num_contaminants, 
-                                    unsigned long left_trimmed_by_adapter,
-                                    unsigned long left_trimmed_by_quality,
-                                    unsigned long left_trimmed_by_vector,
-                                    double avg_left_trim_len, 
-                                    unsigned long right_trimmed_by_adapter, 
-                                    unsigned long right_trimmed_by_quality,
-                                    unsigned long right_trimmed_by_vector,
-                                    double avg_right_trim_len,
-                                    unsigned long discarded, 
-                                    unsigned long discarded_by_contaminant, 
-                                    unsigned long discarded_by_read_length,
-                                    unsigned long accepted, 
-                                    double avg_trim_len
-                               );
 
 #endif	/* REPORT_H */
 

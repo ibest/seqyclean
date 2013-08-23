@@ -10,6 +10,28 @@
 #define A 0
 #define T 3
 
+void PolyAT_Trim(Read* read)
+{
+    int left, right;
+    left = right = 0;
+
+    left = poly_at_left( (char*)read->read.substr( read->lucy_lclip, read->read.length() - read->lucy_lclip ).c_str(), read->lucy_rclip - read->lucy_lclip + 1); 
+    
+    if (left) 
+    {
+        read->poly_T_clip = left;
+    }
+	
+    right = poly_at_right((char*)read->read.substr( 0, read->lucy_rclip).c_str(), read->lucy_rclip - read->lucy_lclip + 1);
+    
+    if (right) 
+    {
+        read->poly_A_clip = right;
+    }
+    
+    
+}
+
 
 int poly_at_left(char *seq, int len)
 {

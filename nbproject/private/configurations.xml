@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./bin/seqyclean -1 ../overlap/test_no_overlap_PE1.fastq -2 ../overlap/test_no_overlap_PE2.fastq -o test/test_ov_seqyclean --overlap --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test_ov_seqyclean --overlap --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test_ov_seqyclean --overlap --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test_ov_seqyclean --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/testIlluminaPE --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual -o test/testIlluminaPE --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean --new2old_illumina -qual 24 24 --dup --overlap -1 test_data/testIlluminaPE_PE1.fastq -2 test_data/testIlluminaPE_PE2.fastq -o test/sam_dup_overlap</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean --new2old_illumina -qual 24 24 --dup --overlap -1 test_data/testIlluminaPE_PE1.fastq -2 test_data/testIlluminaPE_PE2.fastq -o test/sam_dup_overlap --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean --overlap -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/testIlluminaDup --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow -v test_data/vectors.fasta -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -2 -o test/poly -polyat --ow -v test_data/vectors.fasta -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/poly --ow -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/poly --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/poly --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/test_polAT --ow -qual 30 30</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/test_polAT --ow -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o testt/test_polAT_IlluminaPE --ow -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -U test_data/R1.fastq -o testt/test_polAT_IlluminaSE --ow -qual 30 30 -polyat</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/testIlluminaDup --ow</runcommand>
+        <runcommand>./bin/seqyclean -U test_data/R1.fastq -o testt/test_polAT_IlluminaSE --ow -qual 30 30 -polyat</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

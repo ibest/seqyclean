@@ -18,6 +18,7 @@
 #include "MainPipeLine.h"
 #include "Dictionary.h"
 #include "gzstream.h"
+#include "poly.h"
 
 using namespace std;
 
@@ -41,11 +42,37 @@ extern bool sff_file_flag;
 extern bool fastq_file_flag;
 extern fstream sum_stat, sum_stat_tsv;
 extern bool lucy_only_flag;
+extern unsigned short cdna, c_err, crng;
 
 void RocheRoutine();
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads);
 void QualityTrimming( vector<Read*>& reads );
 void RemoveContaminants454(vector<Read*>& reads454);
+void MakeClipPoints();
+string PrintRocheStatisticsTSV(unsigned long cnt,
+                                    unsigned long long bases_anal, 
+                                    unsigned long left_mid_tag,
+                                    unsigned long right_mid_tag,
+                                    unsigned long num_vectors, 
+                                    unsigned long num_contaminants, 
+                                    unsigned long left_trimmed_by_adapter,
+                                    unsigned long left_trimmed_by_quality,
+                                    unsigned long left_trimmed_by_vector,
+                                    double avg_left_trim_len, 
+                                    unsigned long right_trimmed_by_adapter, 
+                                    unsigned long right_trimmed_by_quality,
+                                    unsigned long right_trimmed_by_vector,
+                                    double avg_right_trim_len,
+                                    unsigned long discarded, 
+                                    unsigned long discarded_by_contaminant, 
+                                    unsigned long discarded_by_read_length,
+                                    unsigned long accepted, 
+                                    double avg_trim_len,
+                                    unsigned long left_trimmed_by_polyat,
+                                    unsigned long right_trimmed_by_polyat
+                               );
+void MakeFinalStatistics(fstream &sum_stat);
+
 
 #endif	/* ROCHE_H */
 

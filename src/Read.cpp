@@ -36,10 +36,12 @@ Read::Read()
     this->rlmid.lmid_id = 0;
     this->rlmid.lmid_err = 0;
     
-    this->rlmid.rmid_start = 0;
-    this->rlmid.rmid_end = 0;
+    this->rlmid.rmid_start = 100000;
+    this->rlmid.rmid_end = 100000;
     this->rlmid.rmid_id = 0;
     this->rlmid.rmid_err = 0;
+    
+    this->b_adapter_pos = 100000;
             
     this->discarded = 0;
     this->discarded_by_quality = 0;

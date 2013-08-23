@@ -48,6 +48,5 @@ vector< vector<string> > GetPEfilenames(string prefix1, string prefix2, char *di
 string i2str(int value, char* result, int base);
 string double2str(double num);
 string int2str(int num);
-
 #endif	/* UTIL_H */
 

@@ -145,5 +145,36 @@ test :
 	else \
             echo "Test removing of duplicates failed"; exit 1; \
 	fi
+	@echo "Test poly A/T 454..."
+	@bin/./seqyclean -454 test_data/in.sff -qual 30 30 -polyat -o unit_test/test_polAT > /dev/null
+	@diff test_data/test_polAT.sff unit_test/test_polAT.sff; \
+	RETVAL=$$?; \
+	if [ $$RETVAL -eq 0 ]; then \
+            echo "Success!"; \
+	else \
+            echo "Test 454 failed"; exit 1; \
+	fi
+	@echo "Test Illumina poly A/T PE..."
+	@bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual 30 30 -polyat -o unit_test/test_polAT_IlluminaPE > /dev/null
+	@diff test_data/test_polAT_IlluminaPE_PE1.fastq unit_test/test_polAT_IlluminaPE_PE1.fastq; \
+	RETVAL1=$$?; \
+	diff test_data/test_polAT_IlluminaPE_PE2.fastq unit_test/test_polAT_IlluminaPE_PE2.fastq; \
+	RETVAL2=$$?; \
+	diff test_data/test_polAT_IlluminaPE_SE.fastq unit_test/test_polAT_IlluminaPE_SE.fastq; \
+	RETVAL3=$$?; \
+	if [[ $$RETVAL1 -eq 0 && $$RETVAL2 -eq 0 && $$RETVAL3 -eq 0 ]]; then \
+            echo "Success!"; \
+	else \
+            echo "Test Ilumina poly A/T PE failed"; exit 1; \
+	fi
+	@echo "Test Illumina SE..."
+	@bin/./seqyclean -U test_data/R1.fastq -qual 30 30 -polyat -o unit_test/test_polAT_IlluminaSE > /dev/null
+	@diff test_data/test_polAT_IlluminaSE_SE.fastq unit_test/test_polAT_IlluminaSE_SE.fastq; \
+	RETVAL=$$?; \
+	if [ $$RETVAL -eq 0 ]; then \
+            echo "Success!"; \
+	else \
+            echo "Test Ilumina poly A/T SE failed"; exit 1; \
+	fi
 	@echo "All tests succeed"
 	@rm -r unit_test

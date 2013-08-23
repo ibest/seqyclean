@@ -440,7 +440,6 @@ void GetRClip(HitData &hit_data, string sss, Read &read) {
            it_VectorSeqs2 = VectorSeqs.find(hit_data.kmers[s].seq_id);
            if(it_VectorSeqs2 != VectorSeqs.end()) 
            {
-            
                 if(string_to_align.length() > ((*it_VectorSeqs2).second.length() - vpos)) {
                 //if(string_to_align.length() > ((*it_VectorSeqs).second.length() - vpos)) {
                      //vector_string_to_align = (*it_VectorSeqs).second.substr(vpos, (*it_VectorSeqs).second.length() - vpos );
@@ -790,7 +789,6 @@ void GetLClip(HitData &hit_data, string sss, Read &read) {
 }
 
 
-/*Vectors : parsing from the right end*/
 int CheckVector(Read* read) {
     
     /*

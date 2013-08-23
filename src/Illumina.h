@@ -20,7 +20,7 @@
 #include "flash.h"
 #include "dup.h"
 #include "Dictionary.h"
-
+#include "poly.h"
 
 using namespace std;
 
@@ -33,6 +33,7 @@ extern string adapter_type_R1;
 extern string adapter_type_R2;
 extern string query_str1;
 extern string query_str2;
+extern bool polyat_flag;
 /*Illumina data structures*/
 
 
@@ -98,7 +99,7 @@ extern string stat_str, tsv_stat_str;
 extern int window0;
 extern int window1;
 
-
+extern unsigned short cdna, c_err, crng;
 
 
 void IlluminaDynamic();
@@ -135,8 +136,9 @@ string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
                                     unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt,
-                                    unsigned long duplicates
-                                    
+                                    unsigned long duplicates,
+                                    unsigned long left_trimmed_by_polyat1, unsigned long right_trimmed_by_polyat1,
+                                    unsigned long left_trimmed_by_polyat2, unsigned long right_trimmed_by_polyat2
                                     );
 
 string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2, 
@@ -160,8 +162,10 @@ string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
-                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt
-                                    );
+                                    unsigned long perfect_ov_cnt, unsigned long partial_ov_cnt,
+                                    unsigned long left_trimmed_by_polyat1, unsigned long right_trimmed_by_polyat1,
+                                    unsigned long left_trimmed_by_polyat2, unsigned long right_trimmed_by_polyat2,
+                                    unsigned long duplicates);
 
 string PrintIlluminaStatisticsSE(unsigned long cnt, unsigned long long se_bases_anal, 
                                     unsigned long ts_adapters,
@@ -180,7 +184,9 @@ string PrintIlluminaStatisticsSE(unsigned long cnt, unsigned long long se_bases_
                                     unsigned long se_accept_cnt, unsigned long long se_bases_kept, 
                                     unsigned long se_discard_cnt,unsigned long long  se_bases_discarded, 
                                     double avg_trim_len_se,
-                                    double avg_len_se
+                                    double avg_len_se,
+                                    unsigned long left_trimmed_by_polyat, unsigned long right_trimmed_by_polyat,
+                                    unsigned long discarded_by_polyAT
                                     );
 
 string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
@@ -199,7 +205,9 @@ string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
                                     unsigned long discarded_by_contaminant, 
                                     unsigned long discarded_by_read_length,
                                     unsigned long se_accept_cnt, 
-                                    double avg_trim_len_se
+                                    double avg_trim_len_se,
+                                    unsigned long left_trimmed_by_polyat, unsigned long right_trimmed_by_polyat,
+                                    unsigned long discarded_by_polyAT
                                    );
 
 
