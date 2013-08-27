@@ -60,10 +60,6 @@
       </df>
       <df name="test_data">
       </df>
-      <df name="testt">
-        <in>test_polAT_SummaryStatistics.tsv</in>
-        <in>test_polAT_SummaryStatistics.txt</in>
-      </df>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
