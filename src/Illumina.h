@@ -101,6 +101,7 @@ extern int window1;
 
 extern unsigned short cdna, c_err, crng;
 
+extern bool trim_adapters_flag;
 
 void IlluminaDynamic();
 void IlluminaDynamic();

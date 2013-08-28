@@ -1,5 +1,5 @@
 Program SeqyClean
-Version: 1.8.6 (2013-08-21)
+Version: 1.8.7 (2013-08-27)
 Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
 Usage:  
 Roche 454:
@@ -32,6 +32,7 @@ For Illumina:
                                                                        [--ow]
                                                                        [--dup]
                                                                        [-polyat [cdna] [cerr] [crng] ]
+                                                                       [--no_ts_adapter_trim ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 
 For Illumina single-end:
@@ -44,6 +45,7 @@ For Illumina single-end:
                                                                        [-minimum_read_length <value>]
                                                                        [--ow]
                                                                        [-polyat [cdna] [cerr] [crng] ]
+                                                                       [--no_ts_adapter_trim ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 
 Example:

@@ -58,6 +58,15 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
+      <df name="test111">
+        <in>test_PE1.fastq</in>
+        <in>test_PE1_Report.tsv</in>
+        <in>test_PE2.fastq</in>
+        <in>test_PE2_Report.tsv</in>
+        <in>test_SE.fastq</in>
+        <in>test_SummaryStatistics.tsv</in>
+        <in>test_SummaryStatistics.txt</in>
+      </df>
       <df name="test_data">
       </df>
     </df>

@@ -24,18 +24,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow -v test_data/vectors.fasta -qual</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -2 -o test/poly -polyat --ow -v test_data/vectors.fasta -qual</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/poly --ow -qual</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/poly --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/poly --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/test_polAT --ow -qual 30 30</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/test_polAT --ow -qual 30 30 -polyat</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o testt/test_polAT_IlluminaPE --ow -qual 30 30 -polyat</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -U test_data/R1.fastq -o testt/test_polAT_IlluminaSE --ow -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow1</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapters</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean -U test_data/R1.fastq -o testt/test_polAT_IlluminaSE --ow -qual 30 30 -polyat</runcommand>
+        <runcommand>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

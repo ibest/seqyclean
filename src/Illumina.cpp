@@ -251,9 +251,8 @@ void IlluminaDynamic()
                             read1->tru_sec_pos = read2->tru_sec_pos;
                             read1->tru_sec_found = 1;
                         }
-                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) )
+                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && trim_adapters_flag)
                         {
-                            
                             int o = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength, false);
                             if( (o < 0) && (o != -10000)) {
                                //dovetails, remove adapters:
@@ -326,14 +325,15 @@ void IlluminaDynamic()
                             temp_id1.clear();
                         } else {
                                         
+                                if(read1->discarded == 0)
+                                {
+                                        MakeClipPointsIllumina(read1);
+                                }
                                 
-                                MakeClipPointsIllumina(read1);
-                                //if(read1->illumina_readID == "@MISEQ:6:000000000-A13PY:1:1101:18001:4265 1:N:0:GCCAAT") {
-                            //
-                            //            cout << "@@@@ " << "read1->rclip" << endl;
-             
-                              //  }
-                                MakeClipPointsIllumina(read2);
+                                if(read2->discarded == 0)
+                                {
+                                        MakeClipPointsIllumina(read2);
+                                }
                                 
                                 if( read1->discarded_by_contaminant == 0)
                                 {    
@@ -657,7 +657,7 @@ void IlluminaDynamic()
 int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
 {
     //Remove not-needed Ns:
-    TrimNs( read->read );
+    //TrimNs( read->read );
     
     if((int)read->read.length() > minimum_read_length)
     {
@@ -705,154 +705,139 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
            return 0;
        }
     }
+    
+    if( vector_flag ) 
+            CheckVector(read); 
+       
     //Run the main routine: Adapter + Vector/Contaminants trimming or only Adaptors
     //First 15 bases of i5 adapter forward
-    size_t found;
-    if (!adapter_found)
-    {
-        string ts_adapter = tmpl_i5_1.substr(0,15);
-        found = read->read.find( ts_adapter );
-        if( found != string::npos ) 
+    if(trim_adapters_flag) {
+        size_t found;
+        if (!adapter_found)
         {
-            cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-            sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-            adapter_found = true;
-            query_str = ts_adapter;
-            read->tru_sec_pos = found;
-            read->tru_sec_found = 1;
-        }
-        else
-        {
-            //First 20 bases of i5 adapter in reverse complement
-            ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
-            found = read->read.find( ts_adapter );
-            if( found != string::npos ) 
-            {
-                cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                adapter_found = true;
-                query_str = ts_adapter;
-                read->tru_sec_pos = found;
-                read->tru_sec_found = 1;
-            }
-            else
-            {
-                //First 20 bases of i7 adapter forward
-                ts_adapter = tmpl_i7_1.substr(0,15);
+                string ts_adapter = tmpl_i5_1.substr(0,15);
                 found = read->read.find( ts_adapter );
                 if( found != string::npos ) 
                 {
-                    cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    adapter_found = true;
-                    query_str = ts_adapter;
-                    read->tru_sec_pos = found;
-                    read->tru_sec_found = 1;
-                } 
-                else
-                {
-                    //First 20 bases of i5 adapter in reverse complement
-                    ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
-                    found = read->read.find( ts_adapter );
-                    if( found != string::npos ) 
-                    {
-                        cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                        sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                        cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                        sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
                         adapter_found = true;
                         query_str = ts_adapter;
                         read->tru_sec_pos = found;
                         read->tru_sec_found = 1;
-                    } 
-                    else
-                    {
-                        if( vector_flag ) 
-                           CheckVector(read); 
-                        
+                }
+                else
+                {
+                        //First 20 bases of i5 adapter in reverse complement
+                        ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
+                        found = read->read.find( ts_adapter );
+                        if( found != string::npos ) 
+                        {
+                                cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                                adapter_found = true;
+                                query_str = ts_adapter;
+                                read->tru_sec_pos = found;
+                                read->tru_sec_found = 1;
+                        }
+                        else
+                        {
+                                //First 20 bases of i7 adapter forward
+                                ts_adapter = tmpl_i7_1.substr(0,15);
+                                found = read->read.find( ts_adapter );
+                                if( found != string::npos ) 
+                                {
+                                        cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                                        sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                                        adapter_found = true;
+                                        query_str = ts_adapter;
+                                        read->tru_sec_pos = found;
+                                        read->tru_sec_found = 1;
+                                } 
+                                else
+                                {
+                                        //First 20 bases of i5 adapter in reverse complement
+                                        ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
+                                        found = read->read.find( ts_adapter );
+                                        if( found != string::npos ) 
+                                        {
+                                                cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                                                sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                                                adapter_found = true;
+                                                query_str = ts_adapter;
+                                                read->tru_sec_pos = found;
+                                                read->tru_sec_found = 1;
+                                        } 
+                                        else
+                                        {
+                                                read->tru_sec_pos = -1;
+                                                read->tru_sec_found = 0;
+                                        }
+                                }
+                        }
+                }
+        }
+        else
+        {
+                bool adp_found = false;
+                found = read->read.rfind( query_str );
+                if( found != string::npos ) 
+                {
+                        adp_found = true;
+                        read->tru_sec_pos = found;
+                        read->tru_sec_found = 1;
+                } 
+                else 
+                {
+                        //SSAHA job starts here
+                        iz_SSAHA *izssaha = new iz_SSAHA();
+                        AlignResult al_res = izssaha->Find( read->read , query_str );
+                        AlignScores scores;
+                        if( al_res.found_flag  ) 
+                        {
+                                scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
+                                if(scores.mismatches <= max_al_mism  ) 
+                                {
+                                        adp_found = true;
+                                        read->tru_sec_pos = al_res.pos;
+                                        read->tru_sec_found = 1;
+                                }
+                        }
+                        delete izssaha;
+                }
+        
+                if(!adp_found) 
+                {
                         read->tru_sec_pos = -1;
                         read->tru_sec_found = 0;
-                        
-                        //In this case we have to establish right clip point:
-                        
-         
-                    }
                 }
-             }
-         }
-    }
-    else
-    {
-        if( vector_flag ) 
-            CheckVector(read); 
-       
-        bool adp_found = false;
-        found = read->read.rfind( query_str );
-        if( found != string::npos ) 
-        {
-            adp_found = true;
-            read->tru_sec_pos = found;
-            read->b_adapter = adapter_type_R1;
-            read->tru_sec_found = 1;
-        } 
-        else 
-        {
-            //SSAHA job starts here
-            iz_SSAHA *izssaha = new iz_SSAHA();
-            AlignResult al_res = izssaha->Find( read->read , query_str );
-            AlignScores scores;
-            if( al_res.found_flag  ) 
-            {
-                    scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-                    if(scores.mismatches <= max_al_mism  ) 
-                    {
-                        adp_found = true;
-                        read->tru_sec_pos = al_res.pos;
-                        read->b_adapter = adapter_type_R1;
-                        read->tru_sec_found = 1;
-                    }
-            }
-         
-            if(!adp_found) 
-            {
-                read->tru_sec_pos = -1;
-                read->tru_sec_found = 0;
-                
-            }
-         
-            delete izssaha;
         }
     }
-            
-    
     return 0;
 }
 
 void MakeClipPointsIllumina(Read* read) 
 {
     //Clip points
-   if(read->discarded == 0)
+   if( (qual_trim_flag ) && (vector_flag ) )
    {
-    if( (qual_trim_flag ) && (vector_flag ) )
-    {
         if(read->vector_found == 1)
         {
            if( read->v_start >= (int)(read->read.length() - read->v_end) ) //Vector is on the right side
            {
-               read->lclip = read->lucy_lclip;//max(read->lucy_lclip, 1);
+               read->lclip = read->lucy_lclip;
+               
                if(read->lclip > 0)
                   read->left_trimmed_by_quality = 1;
                
-               /*if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1)) 
-               {
-                   read->left_trimmed_by_quality = 1;
-               }*/
-                              
-               read->rclip = min(read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos, min(read->lucy_rclip, read->v_start) );
+               
+               read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), min(read->lucy_rclip, read->v_start) );
                     
                if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
                }
-               else if(read->rclip == read->tru_sec_pos)
+               else if((read->rclip == read->tru_sec_pos) && trim_adapters_flag)
                {
                  if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
@@ -875,14 +860,14 @@ void MakeClipPointsIllumina(Read* read)
                  read->left_trimmed_by_vector = 1;
                }
            
-               read->rclip = min(read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos, read->lucy_rclip );
+               read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->lucy_rclip );
                if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
                }
                else
                {
-                   if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+                   if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
                         read->right_trimmed_by_adapter = 1;
                }
            }
@@ -894,41 +879,30 @@ void MakeClipPointsIllumina(Read* read)
             if(read->lclip > 0)
                 read->left_trimmed_by_quality = 1;
             
-            /*if( (read->lclip == read->lucy_lclip) )//&& (read->lucy_lclip > 1))  
-                read->left_trimmed_by_quality = 1;
-            */
-            
-            
-            read->rclip = min(read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos, read->lucy_rclip );
+            read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->lucy_rclip );
             if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
             {
               read->right_trimmed_by_quality = 1;
             }
             else
             {
-              if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+              if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
                         read->right_trimmed_by_adapter = 1;
             }
         }
     }
     else if( (qual_trim_flag ) && (!vector_flag) )
     {
-        //if(read->illumina_readID == "@MISEQ:6:000000000-A13PY:1:1101:18001:4265 1:N:0:GCCAAT") {
-        //                    
-        //     cout << read->lucy_lclip << " " << read->lucy_rclip << endl;
-        //     cout << read->tru_sec_pos << endl << "----------------" << endl;
-        //}
-        
         read->lclip = read->lucy_lclip;//max(read->lucy_lclip,1);
         if(read->lclip > 0)
            read->left_trimmed_by_quality = 1;
         
-        read->rclip = min(read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos,read->lucy_rclip );
+        read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(),read->lucy_rclip );
         if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
         {
            read->right_trimmed_by_quality = 1;
         }
-        else if(read->rclip == read->tru_sec_pos)
+        else if( (read->rclip == read->tru_sec_pos) && trim_adapters_flag)
         {
            
             if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
@@ -952,9 +926,9 @@ void MakeClipPointsIllumina(Read* read)
        {
           read->lclip = 0;
             
-          read->rclip = min(read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos, read->v_start == -1 ? read->tru_sec_pos : read->v_start );
+          read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->v_start == -1 ? read->tru_sec_pos : read->v_start );
                     
-          if(read->rclip == (unsigned short)read->tru_sec_pos)
+          if( (read->rclip == (unsigned short)read->tru_sec_pos) && trim_adapters_flag)
           {
              if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                         read->right_trimmed_by_adapter = 1;
@@ -974,8 +948,8 @@ void MakeClipPointsIllumina(Read* read)
              read->left_trimmed_by_vector = 1;
           }
            
-          read->rclip = read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos;
-          if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+          read->rclip = trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length();
+          if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
           {
                         read->right_trimmed_by_adapter = 1;
           }
@@ -988,8 +962,8 @@ void MakeClipPointsIllumina(Read* read)
     }
     else if((!qual_trim_flag) && (!vector_flag))
     {
-       read->rclip = read->tru_sec_pos == -1 ? read->read.length() : read->tru_sec_pos;
-       if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+       read->rclip = trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length();
+       if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
           read->right_trimmed_by_adapter = 1;
             
        read->lclip = 0;
@@ -1019,8 +993,6 @@ void MakeClipPointsIllumina(Read* read)
              read->lclip = read->poly_T_clip;
              read->left_trimmed_by_polyat = 1;
           }
-      }
-   
    }
    
    return;
@@ -1210,7 +1182,11 @@ void IlluminaDynamicSE()
                         //Serial realization - useful for debugging if something does not work as expected
           
                         IlluminaDynRoutine(read, adapter_found, query_string);
-                        MakeClipPointsIllumina(read);
+                        
+                        if(read->discarded == 0)
+                        {
+                           MakeClipPointsIllumina(read);
+                        }
                         
                         cnt+=1;
           

@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.8.6 (2013-08-21)";
+string version = "1.8.7 (2013-08-27)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
            cout << "Version: " << version << endl;
            exit(1);
         }
-        if( string(argv[i]) == "-qual" ) 
+        else if( string(argv[i]) == "-qual" ) 
         {
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) 
@@ -308,28 +308,28 @@ int main(int argc, char *argv[])
            
            continue;
         }
-        if( string(argv[i]) == "--qual_only" ) 
+        else if( string(argv[i]) == "--qual_only" ) 
         {
            lucy_only_flag = true;
            trim_adapters_flag = false;
            continue;
         } 
-        if( string(argv[i]) == "--shuffle" ) 
+        else if( string(argv[i]) == "--shuffle" ) 
         {
            shuffle_flag = true;
            continue;
         }
-        if( string(argv[i]) == "--dup" ) 
+        else if( string(argv[i]) == "--dup" ) 
         {
            rem_dup = true;
            continue;
         }
-        if( string(argv[i]) == "--ow" ) 
+        else if( string(argv[i]) == "--ow" ) 
         {
            overwrite_flag = true;
            continue;
         }
-        if( string(argv[i]) == "--overlap" ) 
+        else if( string(argv[i]) == "--overlap" ) 
         {
            overlap_flag = true;
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
@@ -338,17 +338,22 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if( string(argv[i]) == "-max_al_mism" ) 
+        else if( string(argv[i]) == "-max_al_mism" ) 
         {
            max_al_mism = atoi(argv[i]);
            continue;
         }
-        if( string(argv[i]) == "--keep_fastq_orig" ) 
+        else if( string(argv[i]) == "--keep_fastq_orig" ) 
         {
            keep_fastq_orig = true;
            continue;
         }
-        if( string(argv[i]) == "-polyat" ) 
+        else if( string(argv[i]) == "--no_ts_adapter_trim" ) 
+        {
+           trim_adapters_flag = false;
+           continue;
+        }
+        else if( string(argv[i]) == "-polyat" ) 
         {
            polyat_flag = true;
            //trim_adapters_flag = false; 
@@ -372,7 +377,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-v" )
+        else if(string(argv[i]) == "-v" )
         {
            if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -381,7 +386,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-c" )
+        else if(string(argv[i]) == "-c" )
         { 
            if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -390,7 +395,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-m" )
+        else if(string(argv[i]) == "-m" )
         {
            if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -399,7 +404,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-adapter_length" )
+        else if(string(argv[i]) == "-adapter_length" )
         {
            if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -407,7 +412,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-ot" )
+        else if(string(argv[i]) == "-ot" )
         {
            if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -415,7 +420,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-k" )
+        else if(string(argv[i]) == "-k" )
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
@@ -427,7 +432,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-f" )
+        else if(string(argv[i]) == "-f" )
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
@@ -435,7 +440,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "--test" )
+        else if(string(argv[i]) == "--test" )
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
@@ -443,7 +448,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-t" )
+        else if(string(argv[i]) == "-t" )
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
@@ -455,7 +460,7 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-p" )
+        else if(string(argv[i]) == "-p" )
         {
            if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -464,56 +469,56 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        if(string(argv[i]) == "-i64" )
+        else if(string(argv[i]) == "-i64" )
         {
            i64_flag = true;
            
            continue;
         }
-        if(string(argv[i]) == "--serial" )
+        else if(string(argv[i]) == "--serial" )
         {
            serial_flag = true;
            continue;
         }
-        if(string(argv[i]) == "-d" )
+        else if(string(argv[i]) == "-d" )
         {
            debug_flag = true;
            continue;
         }
-        if(string(argv[i]) == "--new2old_illumina" )
+        else if(string(argv[i]) == "--new2old_illumina" )
         {
            new2old_illumina = true;
            continue;
         }
-        if(string(argv[i]) == "-L_limit" )
+        else if(string(argv[i]) == "-L_limit" )
         {
            if ( isdigit(argv[i+1][0]) ) 
                 L_limit = atoi(argv[++i]);
            
            continue;
         }
-        if(string(argv[i]) == "-R_limit" )
+        else if(string(argv[i]) == "-R_limit" )
         {
            if ( isdigit(argv[i+1][0]) ) 
                 R_limit = atoi(argv[++i]);
            
            continue;
         }
-        if(string(argv[i]) == "-vmr" )
+        else if(string(argv[i]) == "-vmr" )
         {
            if ( isdigit(argv[i+1][0]) ) 
                 vmr = atoi(argv[++i]);
            
            continue;
         }
-        if(string(argv[i]) == "-vml" )
+        else if(string(argv[i]) == "-vml" )
         {
            if ( isdigit(argv[i+1][0]) ) 
                 vml = atoi(argv[++i]);
            
            continue;
         }
-        if(string(argv[i]) == "-allowable_distance" )
+        else if(string(argv[i]) == "-allowable_distance" )
         {
            if ( isdigit(argv[i+1][0]) ) {
                 allowable_distance = atoi(argv[++i]);
@@ -527,7 +532,7 @@ int main(int argc, char *argv[])
            
            continue; 
         }
-        if(string(argv[i]) == "-minimum_read_length" )
+        else if(string(argv[i]) == "-minimum_read_length" )
         {
            if ( isdigit(argv[i+1][0]) ) {
                 minimum_read_length = atoi(argv[++i]);
@@ -544,7 +549,7 @@ int main(int argc, char *argv[])
            
            continue;
         }
-	if(string(argv[i]) == "-kc" )
+	else if(string(argv[i]) == "-kc" )
         {
            if ( isdigit(argv[i+1][0]) ) {
                 KMER_SIZE_CONT = atoi(argv[++i]);
@@ -556,7 +561,7 @@ int main(int argc, char *argv[])
            
            continue;
         }
-        if(string(argv[i]) == "--RLMIDS" )
+        else if(string(argv[i]) == "--RLMIDS" )
         {
            cout << "Supported RL MIDS:\n";
            for(int i=0; i<36; i++) 
@@ -566,7 +571,7 @@ int main(int argc, char *argv[])
            
            return 0;
         }
-        if(string(argv[i]) == "-o" ) 
+        else if(string(argv[i]) == "-o" ) 
         {
            if(argv[i+1] == NULL) 
            {
@@ -578,22 +583,22 @@ int main(int argc, char *argv[])
                output_prefix = string(argv[++i]);
            }
         }
-        if( string(argv[i]) == "--fastq" ) 
+        else if( string(argv[i]) == "--fastq" ) 
         {
            output_fastqfile_flag = true; //output file with cleaned reads in FASTQ format, for 454 mode only
            continue;
         }
-        if(string(argv[i]) == "-?" )
+        else if(string(argv[i]) == "-?" )
         {
            PrintHelp();
            exit(1);
         }   
-        if(string(argv[i]) == "-h" )
+        else if(string(argv[i]) == "-h" )
         {
            PrintHelp();
            exit(1);
         }
-        if( string(argv[i]) == "-1" )
+        else if( string(argv[i]) == "-1" )
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
@@ -613,7 +618,7 @@ int main(int argc, char *argv[])
            
            continue;
         }
-        if( string(argv[i]) == "-2" )
+        else if( string(argv[i]) == "-2" )
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
@@ -633,7 +638,7 @@ int main(int argc, char *argv[])
            
            continue;
         } 
-        if( string(argv[i]) == "-U" ) //single-end file mode
+        else if( string(argv[i]) == "-U" ) //single-end file mode
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
@@ -653,7 +658,7 @@ int main(int argc, char *argv[])
            
            continue;
         }
-        if( string(argv[i]) == "-454" ) 
+        else if( string(argv[i]) == "-454" ) 
         {
             if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
             {
@@ -672,20 +677,24 @@ int main(int argc, char *argv[])
             
             continue;
         }
-        if( string(argv[i]) == "--MakeRocheReport" ) 
+        else if( string(argv[i]) == "--MakeRocheReport" ) 
         {
             MakeRocheReport((char*)"RocheClipPoints_report.tsv", argv[++i]);
             return 0;
         }
-        if( string(argv[i]) == "-pmax" ) 
+        else if( string(argv[i]) == "-pmax" ) 
         {
             pmax = atoi(argv[++i]);
             continue;
         }
-        if( string(argv[i]) == "--vonly" ) 
+        else if( string(argv[i]) == "--vonly" ) 
         {
             VectorOnlyFlag = true;
             continue;    
+        } else {
+            cout << "Unknown parameter: " << argv[i] << endl;
+            PrintHelp();
+            return 0;
         }
     }
     
@@ -1367,6 +1376,7 @@ void PrintHelp() {
                                                         "[--ow]\n"
                                                         "[--dup]\n" 
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
+                                                        "[--no_ts_adapter_trim]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n"
             "For Illumina single-end reads:\n"
             "./seqyclean -U input_file_name -o output_prefix\n"
@@ -1380,6 +1390,7 @@ void PrintHelp() {
                                                         "[--shuffle]\n"
                                                         "[--ow]\n"
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
+                                                        "[--no_ts_adapter_trim]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n";
 cout <<"Example:\n"
 "Roche:\n"
