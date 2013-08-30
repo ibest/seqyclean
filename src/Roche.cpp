@@ -532,7 +532,7 @@ void MakeFinalStatistics( fstream &sum_stat )
         
        if(reads[i]->discarded == 1) {
            discarded+=1;
-           cout << reads[i]->rclip << " " << reads[i]->lclip << endl;
+           //cout << reads[i]->rclip << " " << reads[i]->lclip << endl;
        }
        if(reads[i]->discarded == 0) accepted+=1;
        
