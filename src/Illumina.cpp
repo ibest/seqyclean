@@ -136,7 +136,7 @@ void IlluminaDynamic()
                         {
                             split_str( line1, fields1, " " );
                             split_str( fields1[0], fields2, ":" );
-                            line1 = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0/" + fields1[1].substr(0,1) );//+ " (" + line1 + ")");
+                            line1 = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0/1"); //+ fields1[1].substr(0,1) );//+ " (" + line1 + ")");
                             
                             fields1.clear();
                             fields2.clear();
@@ -144,7 +144,7 @@ void IlluminaDynamic()
                             split_str( line2, fields1, " " );
                             split_str( fields1[0], fields2, ":" );
                             
-                            line2 = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0/" + fields1[1].substr(0,1) ); // + " (" + line2 + ")");
+                            line2 = string(fields2[0] + "_" + fields2[2] + ":" + fields2[3] + ":" + fields2[4] + ":" + fields2[5] + ":" + fields2[6] + "#0/2");// + fields1[1].substr(0,1) ); // + " (" + line2 + ")");
                             
                             fields1.clear();
                             fields2.clear();

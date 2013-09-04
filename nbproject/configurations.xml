@@ -2,7 +2,11 @@
 <configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="SeqyClean" root=".">
+      <df name="bin">
+      </df>
       <df name="man">
+      </df>
+      <df name="obj">
       </df>
       <df name="src">
         <in>Dictionary.cpp</in>
@@ -81,9 +85,21 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+          </cTool>
         </makeTool>
       </makefileType>
       <item path="src/Dictionary.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/Illumina.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
@@ -125,7 +141,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="src/abi.c" ex="false" tool="1" flavor="0">
+      <item path="src/Roche.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
@@ -133,6 +149,13 @@
         </ccTool>
       </item>
       <item path="src/ascii.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="src/dup.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
@@ -169,20 +192,6 @@
         </ccTool>
       </item>
       <item path="src/pairwise.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="src/poly.c" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="src/sff.c" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
