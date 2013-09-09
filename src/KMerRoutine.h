@@ -69,7 +69,7 @@ extern unsigned short pmax;
 
 int CheckVectorRight(Read &read);
 int CheckVectorLeft(Read &read);
-DistanceStruct CheckDistance(vector <HitData> matches, int dir);
+DistanceStruct CheckDistance(vector <HitData> matches/*, int dir*/);
 bool CheckContig(vector <HitData> matches);
 void GetRClip(HitData &hit_data, string sss, Read &read);
 void GetLClip(HitData &hit_data, string sss, Read &read);

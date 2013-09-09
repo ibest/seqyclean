@@ -1,7 +1,6 @@
 #include "util.h"
 
 
-
 int max4( int x, int y, int z, int k ) {
     int max = x;
     
@@ -22,15 +21,6 @@ int max3( int x, int y, int z ) {
     return max;
 }
 
-int min4( int x, int y, int z, int k ) {
-    int min = x;
-    
-    if( (y<min) && (y>0) ) min = y;
-    if( (z<min) && (z>0) ) min = z;
-    if( (k<min) && (k>0) ) min = k;
-    
-    return min;
-}
 
 int min3( int x, int y, int z ) {
     int min = x;

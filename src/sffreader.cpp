@@ -265,11 +265,11 @@ void process_fastq_to_sff(char *sff_file) {
         readHeader.name_len = strlen(reads[i]->readID);
         
         /*Working with clip points*/
-        readHeader.clip_qual_left = 0;//reads[i]->lclip;
-        readHeader.clip_qual_right = 0;//reads[i]->rclip;
+        readHeader.clip_qual_left = reads[i]->lclip;
+        readHeader.clip_qual_right = reads[i]->rclip;
             
-        readHeader.clip_adapter_left = reads[i]->lclip;
-        readHeader.clip_adapter_right = reads[i]->rclip;
+        readHeader.clip_adapter_left = 0;//reads[i]->lclip;
+        readHeader.clip_adapter_right = 0;//reads[i]->rclip;
             
         readHeader.header_len = sizeof(readHeader.header_len) 
                                     + sizeof(readHeader.name_len)

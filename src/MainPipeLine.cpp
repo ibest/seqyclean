@@ -1,45 +1,5 @@
 #include "MainPipeLine.h"
 
-void MainPipeLine() {
-    
-    /*Here we are making threads*/
-    /*========================================================================*/
-    pthread_t threads[NUM_THREADS];
-    
-    /*Remove Keys/Adaptors/Primers/Barcodes*/
-    unsigned int i=0;
-    for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
-        
-        for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
-        }
-    
-        for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_join(threads[t], NULL);
-        }
-        
-    }
-    
-    /*Processing the rest of the set of reads: */
-    for(unsigned int t=0; t< reads.size() - i; t++) {
-       pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
-       
-    }
-   
-    for(unsigned int t=0; t<reads.size() - i; t++) {
-       pthread_join(threads[t], NULL);
-    } 
-    
-    /*If vector file is set up, perform vector tails cleaning*/
-    if(vector_flag == true) {
-        cout << "Trimming small pieces of vector..." << endl;
-        cout << "Right ends..." << endl;
-        TrimRightEnds();
-        cout << "Left ends..." << endl;
-        TrimLeftEnds();
-    }
-}
-
 bool GetRochBAdapter(Read* read) {
     /*
         >Common_Adapter_A
@@ -163,47 +123,6 @@ bool GetRochBAdapter(Read* read) {
     return false;
 }
 
-void TrimRightEnds() {
-    pthread_t threads[NUM_THREADS];
-    
-    /*First stage: preprocess the read by using SSAHA: */
-    long lim = reads.size() - NUM_THREADS;
-    for(unsigned int i=0; i<reads.size(); i+=NUM_THREADS) {
-        
-        if(i > lim ) break;
-        
-        for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_create( &threads[t], NULL, &t_TrimRightEnds, (void *)(t+i) );//(void *)&t_args);
-        }
-    
-        for(int t=0; t<NUM_THREADS; t++) {
-           pthread_join(threads[t], NULL);
-        }
-    }
-    
-}
-
-/*Looks for the left position of the vector: */
-void TrimLeftEnds() {
-    pthread_t threads[NUM_THREADS];
-    
-    unsigned int lim = reads.size() - NUM_THREADS;
-    for(unsigned int i=0; i < reads.size(); i+=NUM_THREADS) {
-        
-        if(i > lim ) break;
-        
-       for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_create( &threads[t], NULL, &t_TrimLeftEnds, (void *)(t+i) );//(void *)&t_args);
-       }
-    
-        for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_join(threads[t], NULL);
-        
-        }
-    }
-  
-}
-
 /*Threaded method for Contaminants Dictionary*/
 static void *t_FindRLClip(void *targs) {
   /*Getting thread ID tid:*/
@@ -291,6 +210,7 @@ static void *t_FindRLClip(void *targs) {
                 //Normal
                 AlignResult al_res = izssaha->Find( ref_str , rlstr );
                 AlignScores scores;
+                scores.mismatches = 0;
                 if(al_res.found_flag == true) 
                 {
                         scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
@@ -429,7 +349,8 @@ static void *t_FindRLClip(void *targs) {
   line_counter++;
   if(line_counter%50000 == 0)
      cout << "Line No: " << line_counter << endl;
-         
+  
+  
   pthread_exit(NULL);
     
 }
@@ -595,6 +516,90 @@ static void *t_TrimLeftEnds(void *targs) {
     
     return 0;
 }
+
+
+void MainPipeLine() {
+    
+    /*Here we are making threads*/
+    /*========================================================================*/
+    pthread_t threads[NUM_THREADS];
+    
+    /*Remove Keys/Adaptors/Primers/Barcodes*/
+    unsigned int i=0;
+    for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
+        
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
+           pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
+        }
+    
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
+           pthread_join(threads[t], NULL);
+        }
+        
+    }
+    
+    /*Processing the rest of the set of reads: */
+    for(unsigned int t=0; t< reads.size() - i; t++) {
+       pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
+       
+    }
+   
+    for(unsigned int t=0; t<reads.size() - i; t++) {
+       pthread_join(threads[t], NULL);
+    } 
+    
+    /*If vector file is set up, perform vector tails cleaning*/
+    if(vector_flag == true) {
+        cout << "Trimming small pieces of vector..." << endl;
+        cout << "Right ends..." << endl;
+        TrimRightEnds();
+        cout << "Left ends..." << endl;
+        TrimLeftEnds();
+    }
+}
+
+
+void TrimRightEnds() {
+    pthread_t threads[NUM_THREADS];
+    
+    /*First stage: preprocess the read by using SSAHA: */
+    long lim = reads.size() - NUM_THREADS;
+    for(unsigned int i=0; i<reads.size(); i+=NUM_THREADS) {
+        
+        if(i > lim ) break;
+        
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
+           pthread_create( &threads[t], NULL, &t_TrimRightEnds, (void *)(t+i) );//(void *)&t_args);
+        }
+    
+        for(int t=0; t<NUM_THREADS; t++) {
+           pthread_join(threads[t], NULL);
+        }
+    }
+    
+}
+
+/*Looks for the left position of the vector: */
+void TrimLeftEnds() {
+    pthread_t threads[NUM_THREADS];
+    
+    unsigned int lim = reads.size() - NUM_THREADS;
+    for(unsigned int i=0; i < reads.size(); i+=NUM_THREADS) {
+        
+        if(i > lim ) break;
+        
+       for(unsigned short t=0; t<NUM_THREADS; t++) {
+           pthread_create( &threads[t], NULL, &t_TrimLeftEnds, (void *)(t+i) );//(void *)&t_args);
+       }
+    
+        for(unsigned short t=0; t<NUM_THREADS; t++) {
+           pthread_join(threads[t], NULL);
+        
+        }
+    }
+  
+}
+
 
 void GetLClip2(Read* read,bool pflag) {
     

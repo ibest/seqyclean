@@ -14,7 +14,7 @@
 
 using namespace std;
 
-extern int adapterlength;
+extern unsigned int adapterlength;
 extern double overlap_t;
 extern int minoverlap;
 extern bool overlap_flag;
