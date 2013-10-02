@@ -279,7 +279,7 @@ void IlluminaDynamic()
                                     
                                c->read = c_se;
                                c->illumina_quality_string = c_qual;
-                               cout << c->illumina_quality_string.length() << " " << c->read.length() << endl;
+                               //cout << c->illumina_quality_string.length() << " " << c->read.length() << endl;
                             }
                         }
                         
