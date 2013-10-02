@@ -134,9 +134,6 @@ public:
    int roche_right_clip;
    
    string illumina_quality_string;
-   
-   //For Illumina overlaps:
-   bool merge;
     
     
 private:

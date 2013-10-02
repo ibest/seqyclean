@@ -73,7 +73,6 @@ Read::Read()
     this->vector_found = 0;
     this->contam_found = 0;
     
-    this->merge = false;
 }
 
 Read::Read(const Read& orig) {

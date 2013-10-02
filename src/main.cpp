@@ -33,11 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-<<<<<<< HEAD
-string version = "1.9.0 (2013-09-09)";
-=======
 string version = "1.8.8 (2013-09-04)";
->>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
 
 /*Data structures*/
 vector<Read*> reads;

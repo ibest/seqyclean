@@ -71,10 +71,10 @@ Read *make_consensus(Read *seq1, Read *seq2) {
                 new_qual += seq1->illumina_quality_string[i];
             } else if(seq1->illumina_quality_string[i] > seq2->illumina_quality_string[i] ) {
                 new_seq += seq1->read[i];
-                new_qual += (char)( (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i]);
+                new_qual += (char)( 33 + (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i]);
             } else {
                 new_seq += seq2->read[i];
-                new_qual += (char)( (unsigned int)seq2->illumina_quality_string[i] - (unsigned int)seq1->illumina_quality_string[i]);
+                new_qual += (char)( 33 + (unsigned int)seq2->illumina_quality_string[i] - (unsigned int)seq1->illumina_quality_string[i]);
             }
         }
     }
