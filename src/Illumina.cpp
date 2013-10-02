@@ -272,7 +272,7 @@ void IlluminaDynamic()
                               int ov;
                               string tread = MakeRevComplement(s2->read);
                               ov = find_overlap_pos(s1->read, tread, adapterlength, true);
-                              
+                              //cout << ov << endl;
                               if(ov == 0) {
                                   perfect_ov_cnt += 1;
                                   //Perfect overlap, make consensus sequence:
@@ -312,18 +312,18 @@ void IlluminaDynamic()
                                 if(c->rclip <= c->lclip) {
                                     read1->discarded = 1;
                                     read2->discarded = 1;
+                                    partial_ov_cnt--;
                                     continue;
                                 }
                                 
                                 c->read = c->read.substr(0 , c->rclip );
-                                
+                                c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
                                 
                                 //cout << c->lclip << " " << ov << " " << c->rclip << " " <<  c->read.length() << endl;
-                                
-                                c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
                                 //cout << c->read << endl << c->illumina_quality_string << endl << c->lclip << endl << c->rclip << endl;
+                                
                                 c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
-                                //c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
+                                c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
                             
                                 vector<string> temp_id;
                                 split_str( read1->illumina_readID, temp_id, " " );

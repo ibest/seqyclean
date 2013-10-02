@@ -1,16 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="80">
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="bin">
+      </df>
+      <df name="man">
+      </df>
+      <df name="obj">
+      </df>
+      <df name="src">
+        <in>Dictionary.cpp</in>
+        <in>Dictionary.h</in>
+        <in>Illumina.cpp</in>
+        <in>Illumina.h</in>
+        <in>KMerRoutine.cpp</in>
+        <in>KMerRoutine.h</in>
+        <in>MainPipeLine.cpp</in>
+        <in>MainPipeLine.h</in>
+        <in>MakeDir.cpp</in>
+        <in>MakeDir.h</in>
+        <in>QualTrim.cpp</in>
+        <in>QualTrim.h</in>
+        <in>Read.cpp</in>
+        <in>Read.h</in>
+        <in>Report.cpp</in>
+        <in>Report.h</in>
+        <in>Roche.cpp</in>
+        <in>Roche.h</in>
+        <in>TrimLucy.cpp</in>
+        <in>TrimLucy.h</in>
+        <in>UnitTest.cpp</in>
+        <in>UnitTest.h</in>
+        <in>abi.c</in>
+        <in>abi.h</in>
+        <in>ascii.cpp</in>
+        <in>ascii.h</in>
+        <in>dup.cpp</in>
+        <in>dup.h</in>
+        <in>endian.h</in>
+        <in>flash.cpp</in>
+        <in>flash.h</in>
+        <in>gzstream.C</in>
+        <in>gzstream.h</in>
+        <in>iz_SSAHA.cpp</in>
+        <in>iz_SSAHA.h</in>
+        <in>main.cpp</in>
+        <in>pairwise.cpp</in>
+        <in>pairwise.h</in>
+        <in>poly.c</in>
+        <in>poly.h</in>
+        <in>rlmid.h</in>
+        <in>sff.c</in>
+        <in>sff.h</in>
+        <in>sffreader.cpp</in>
+        <in>sffreader.h</in>
+        <in>timer.h</in>
+        <in>util.cpp</in>
+        <in>util.h</in>
+      </df>
+      <df name="test">
+      </df>
+      <df name="test_data">
+      </df>
+    </df>
+  </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Default" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-<<<<<<< HEAD
-        <platform>4</platform>
-=======
         <platform>2</platform>
->>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
       </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
       <dbx_gdbdebugger version="1">
         <gdb_pathmaps>
         </gdb_pathmaps>
@@ -28,32 +100,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-<<<<<<< HEAD
-          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE1.fastq -2 ~/Dropbox/HTsequence_cleaning/ReadOverlap/PE2.fastq -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/test --overlap 50 --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow --debug</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow -d</runcommandpicklistitem>
-        </runcommandpicklist>
-        <runcommand>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow -d</runcommand>
-=======
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/poly --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/test_polAT --ow -qual 30 30</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/test_polAT --ow -qual 30 30 -polyat</runcommandpicklistitem>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o testt/test_polAT_IlluminaPE --ow -qual 30 30 -polyat</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -U test_data/R1.fastq -o testt/test_polAT_IlluminaSE --ow -qual 30 30 -polyat</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow1</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapters</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommandpicklistitem>
+          <runcommandpicklistitem>./seqyclean -1 ../test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 ../test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 ../test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 ../test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o test/test --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommand>
->>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
+        <runcommand>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o test/test --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
