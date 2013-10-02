@@ -67,8 +67,13 @@ void IlluminaDynamic()
     rep_file1.open(rep_file_name1.c_str(),ios::out);
     rep_file2.open(rep_file_name2.c_str(),ios::out);
     
+<<<<<<< HEAD
     //if(overlap_flag)
     //    overlap_file.open(overlap_file_name.c_str(),ios::out);
+=======
+    if(overlap_flag)
+        overlap_file.open(overlap_file_name.c_str(),ios::out);
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
     
     rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
     rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
@@ -191,8 +196,12 @@ void IlluminaDynamic()
                             sum_stat << "Warming: in PE1 file raw read length is less or equal then minimum_read_length\n" ; 
                         }
                         
+<<<<<<< HEAD
                         bool overlap_found = false;
                         Read *c = new Read();
+=======
+                        
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
           
                         Read *read2 = new Read();
                         read2->illumina_readID = record_block2[0];
@@ -259,6 +268,7 @@ void IlluminaDynamic()
                                //dovetails, remove adapters:
                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                                read1->tru_sec_pos = read1->initial_length + o - 1; read2->tru_sec_pos = read2->initial_length + o - 1;
+<<<<<<< HEAD
                                read1->merge = true; read2->merge = true;
                                
                                overlap_found = true;
@@ -280,12 +290,20 @@ void IlluminaDynamic()
                                c->read = c_se;
                                c->illumina_quality_string = c_qual;
                                //cout << c->illumina_quality_string.length() << " " << c->read.length() << endl;
+=======
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
                             }
                         }
                         
           
                         //Checking for overlap:
+<<<<<<< HEAD
                         if( overlap_flag && (read1->discarded == 0) && (read2->discarded == 0) && (read1->merge == false) && (read2->merge = false) ) {
+=======
+                        bool overlap_found = false;
+                        Read *c = new Read();
+                        if( overlap_flag && (read1->discarded == 0) && (read2->discarded == 0) ) {
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
                               Read *s1 = new Read(); s1->read = read1->read; s1->illumina_quality_string = read1->illumina_quality_string;
                               Read *s2 = new Read(); s2->read = read2->read; s2->illumina_quality_string = read2->illumina_quality_string;
                                         
@@ -318,6 +336,10 @@ void IlluminaDynamic()
                                   c->read = c_se;
                                   c->illumina_quality_string = c_qual;
                                   overlap_found = true;
+<<<<<<< HEAD
+=======
+                                    //cout << c->read << endl << c->illumina_quality_string << endl;
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
                               }
                         }
                         
@@ -339,8 +361,12 @@ void IlluminaDynamic()
                             vector<string> temp_id1;
                             split_str( temp_id[0], temp_id1, " " );
                             c->illumina_readID = temp_id1[0];
+<<<<<<< HEAD
                             //WriteSEOverlap(overlap_file, c);
                             WriteSEFile(se_file, c);
+=======
+                            WriteSEOverlap(overlap_file, c);
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
                             temp_id.clear();
                             temp_id1.clear();
                         } else {
@@ -979,6 +1005,17 @@ void MakeClipPointsIllumina(Read* read)
        {
           read->rclip = read->clear_length; read->right_trimmed_by_adapter = 0;
        }    
+<<<<<<< HEAD
+    }
+    else if((!qual_trim_flag) && (!vector_flag))
+    {
+       read->rclip = trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length();
+       if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
+          read->right_trimmed_by_adapter = 1;
+            
+       read->lclip = 0;
+=======
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
     }
     else if((!qual_trim_flag) && (!vector_flag))
     {
@@ -990,6 +1027,10 @@ void MakeClipPointsIllumina(Read* read)
     }
     
     
+<<<<<<< HEAD
+    
+=======
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
     if(polyat_flag) {
        if( (read->rclip > read->poly_A_clip) && (read->poly_A_clip > 0)) {
           if(read->rclip == read->tru_sec_pos) {
@@ -1413,9 +1454,15 @@ void IlluminaDynamicSE()
     se_output_file.close();
     
     rep_file.close();
+<<<<<<< HEAD
     
     
     
+=======
+    
+    
+    
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
    
     
 }
@@ -1531,6 +1578,7 @@ string PrintIlluminaStatisticsTSV(unsigned long cnt1, unsigned long cnt2,
                                     unsigned long left_trimmed_by_polyat2, unsigned long right_trimmed_by_polyat2,
                                     unsigned long duplicates
                                     )
+<<<<<<< HEAD
 {
     
         string filename_str;
@@ -1655,6 +1703,132 @@ string PrintIlluminaStatisticsSE(unsigned long cnt, unsigned long long se_bases_
                         ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n");// +
                        // ("Average read length: " + double2str(avg_len_se) + " bp\n");
     
+=======
+{
+    
+        string filename_str;
+    
+        for(int i=0; i<(int)pe1_names.size(); ++i)
+        {
+            filename_str += string(pe1_names[i]) + ", " + string(pe2_names[i]);
+        }
+        
+        string stat_str_tsv =   version + "\t" + 
+                                filename_str + "\t" +
+                                (trim_adapters_flag  ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? int2str(KMER_SIZE) : "NA") + "\t" +
+                                ( vector_flag ? int2str(DISTANCE) : "NA") +"\t" +
+                                ( contaminants_flag ? "YES" : "NO") +"\t" +
+                                ( contaminants_flag ? int2str(KMER_SIZE_CONT) : "NA") +"\t" +
+                                (qual_trim_flag ? "YES" : "NO") +"\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_a_error)) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_e_at_ends)) : "NA")+ "\t" +
+                                output_prefix +"\t" +
+                                rep_file_name1+ "\t" +
+                                rep_file_name2 +"\t" +
+                                ( !shuffle_flag ?  pe_output_filename1 : "NA" ) +"\t"+
+                                ( !shuffle_flag ?  pe_output_filename2 : "NA") +"\t"+
+                                ( shuffle_flag ? shuffle_filename : "NA" ) +"\t" +
+                                se_filename+ "\t" +
+                                int2str(max_al_mism) +"\t" +
+                                int2str(minimum_read_length)+ "\t" +
+                                ( new2old_illumina ? "YES" : "NO") + "\t"; 
+                   
+    
+    
+        stat_str_tsv += int2str(cnt1)   + "\t" +  int2str(pe1_bases_anal) + "\t"  +
+                       i2str(ts_adapters1,new char[15],10) + "\t" + double2str( (double)ts_adapters1/(double)cnt1*100.0) + "\t" + 
+                       ( vector_flag ? i2str(num_vectors1,new char[15],10) + "\t" + double2str( (double)num_vectors1/(double)cnt1*100.0) + "\t" : "NA\tNA\t" ) +
+                       ( contaminants_flag ? i2str(num_contaminants1,new char[15],10) + "\t" + double2str( (double)num_contaminants1/(double)cnt1*100.0) + "\t" : "NA\tNA\t" ) +
+                       ( qual_trim_flag ? i2str(left_trimmed_by_quality1,new char[15],10) + "\t" : "NA\t" ) +
+                       ( vector_flag ? i2str(left_trimmed_by_vector1,new char[15],10) + "\t" : "NA\t" ) +
+                       double2str(avg_left_trim_len_pe1) + "\t" +
+                       i2str(right_trimmed_by_adapter1,new char[15],10) + "\t" +
+                       ( qual_trim_flag ? i2str(right_trimmed_by_quality1,new char[15],10) + "\t" : "NA\t") +
+                       ( vector_flag ? i2str(right_trimmed_by_vector1,new char[15],10) + "\t" : "NA\t" ) +
+                       double2str(avg_right_trim_len_pe1) + "\t" +
+                       i2str(discarded1,new char[15],10) + "\t" +
+                       ( contaminants_flag ? i2str(discarded_by_contaminant1,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(discarded_by_read_length1,new char[15],10) + "\t" +
+                       i2str(cnt2,new char[15],10) + "\t" + i2str(pe2_bases_anal,new char[15],10) + "\t" +
+                       i2str(ts_adapters2,new char[15],10) + "\t" + double2str( (double)ts_adapters2/(double)cnt2*100.0) + "\t" +
+                       ( vector_flag ? (i2str(num_vectors2,new char[15],10) + "\t" + double2str( (double)num_vectors2/(double)cnt2*100.0) + "\t") : "NA\tNA\t") +
+                       ( contaminants_flag? i2str(num_contaminants2,new char[15],10) + "\t" + double2str( (double)num_contaminants2/(double)cnt2*100.0) + "\t" : "NA\tNA\t" ) +
+                       (qual_trim_flag ? i2str(left_trimmed_by_quality2,new char[15],10) + "\t" : "NA\t" ) +
+                       ( vector_flag ? i2str(left_trimmed_by_vector2,new char[15],10) + "\t" : "NA\t" ) +
+                       double2str(avg_left_trim_len_pe2) + "\t"  +
+                       ( qual_trim_flag ? i2str(right_trimmed_by_quality2,new char[15],10) + "\t" : "NA\t") +
+                       (vector_flag ? i2str(right_trimmed_by_vector2,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(right_trimmed_by_adapter2,new char[15],10) + "\t" +
+                       double2str(avg_right_trim_len_pe2) + "\t" +
+                       i2str(discarded2,new char[15],10) + "\t" +
+                       (contaminants_flag ? i2str(discarded_by_contaminant2,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(discarded_by_read_length2,new char[15],10) + "\t" + 
+                       (i2str(pe_accept_cnt,new char[15],10) + "\t" + double2str( (double)pe_accept_cnt/(double)cnt1*100.0) + "\t" + i2str(pe_bases_kept,new char[15],10) + "\t" + double2str( (double)pe_bases_kept/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "\t") +
+                       ( i2str(pe_discard_cnt,new char[15],10) + "\t" + double2str( (double)pe_discard_cnt/(double)cnt1*100.0) + "\t" + i2str(pe_bases_discarded,new char[15],10) + "\t" + double2str( (double)pe_bases_discarded/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "\t") +
+                       (i2str(se_pe1_accept_cnt,new char[15],10) + "\t" + i2str(se_pe1_bases_kept,new char[15],10) +"\t") +
+                       (i2str(se_pe2_accept_cnt,new char[15],10) + "\t" + i2str(se_pe2_bases_kept,new char[15],10) +"\t") +
+                       (double2str(avg_trim_len_pe1) + "\t") +
+                       double2str(avg_trim_len_pe2) +
+                       (rem_dup ? "\t" + int2str(duplicates) : "\tNA") + 
+                       ( overlap_flag ? "\t" + int2str(perfect_ov_cnt) + "\t" + int2str(partial_ov_cnt) : "\tNA\tNA") +
+                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat1) + "\t" + int2str(right_trimmed_by_polyat1) + "\t" + int2str(left_trimmed_by_polyat2) + "\t" + int2str(right_trimmed_by_polyat2) : "\tNA\tNA\tNA\tNA\tNA\tNA\tNA");
+                      
+    return stat_str_tsv;
+}
+
+string PrintIlluminaStatisticsSE(unsigned long cnt, unsigned long long se_bases_anal, 
+                                    unsigned long ts_adapters,
+                                    unsigned long num_vectors,
+                                    unsigned long num_contaminants, 
+                                    unsigned long left_trimmed_by_quality,
+                                    unsigned long left_trimmed_by_vector, 
+                                    double avg_left_trim_len_se,
+                                    unsigned long right_trimmed_by_adapter,
+                                    unsigned long right_trimmed_by_quality,
+                                    unsigned long right_trimmed_by_vector,
+                                    double avg_right_trim_len_se,
+                                    unsigned long discarded, 
+                                    unsigned long discarded_by_contaminant,
+                                    unsigned long discarded_by_read_length,
+                                    unsigned long se_accept_cnt, unsigned long long se_bases_kept, 
+                                    unsigned long se_discard_cnt,unsigned long long se_bases_discarded, 
+                                    double avg_trim_len_se,
+                                    double avg_len_se,
+                                    unsigned long left_trimmed_by_polyat, unsigned long right_trimmed_by_polyat,
+                                    unsigned long discarded_by_polyAT
+                                    )
+{
+    
+   
+    
+    string ans = "====================Summary Statistics====================\n" +
+                        ("SE reads analyzed: " +  i2str(cnt,new char[15],10)  + ", Bases:" +  i2str(se_bases_anal, new char[25],10)  + "\n") +
+                        "Found ->\n" +
+                        "Adapters: " + i2str(ts_adapters,new char[15],10) + ", " + double2str( (double)ts_adapters/(double)cnt*100.0) + "%\n" + 
+                        ( vector_flag ? "# of reads with vector: " + i2str(num_vectors,new char[15],10) + ", " + double2str( (double)num_vectors/(double)cnt*100.0) + "%\n" : "") +
+                        ( contaminants_flag ? "# of reads with contaminants: " + i2str(num_contaminants,new char[15],10) + ", " + double2str( (double)num_contaminants/(double)cnt*100.0) + "%\n" : "") +
+                        ( (qual_trim_flag || vector_flag) ? "Reads left trimmed ->\n" : "" ) +
+                        ( qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality,new char[15],10) + "\n" : "" ) +
+                        ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
+                        ( polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat) + "\n": "") +
+                        "Average left trim length: " + double2str(avg_left_trim_len_se) + " bp\n" +
+                        "Reads right trimmed ->\n" +
+                        "By adapter: " +  i2str(right_trimmed_by_adapter,new char[15],10) + "\n" +
+                        ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality,new char[15],10) + "\n" : "") +
+                        ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
+                        ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat) + "\n" : "") +
+                        "Average right trim length: " + double2str(avg_right_trim_len_se) + " bp\n" +
+                        "SE reads discarded: " + i2str(discarded,new char[15],10) + "\n" +
+                        ( contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant,new char[15],10) + "\n" : "" ) +
+                        "By read length: " +  i2str(discarded_by_read_length,new char[15],10) + "\n" +
+                        "----------------------Summary for SE----------------------\n" +
+                        ("Reads kept: " + i2str(se_accept_cnt,new char[15],10) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_kept,new char[15],10) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
+                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n");// +
+                       // ("Average read length: " + double2str(avg_len_se) + " bp\n");
+    
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
     return ans;
    
 }
@@ -1684,6 +1858,8 @@ string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
 {
     
         string filename_str;
+<<<<<<< HEAD
+=======
     
         for(int i=0; i<(int)pe1_names.size(); ++i)
         {
@@ -1736,8 +1912,64 @@ string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
             
     
      return stat_str_tsv;
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
+    
+        for(int i=0; i<(int)pe1_names.size(); ++i)
+        {
+            filename_str += string(se_names[i]);
+        }
+        
+        string stat_str_tsv =   version + "\t" + 
+                                filename_str + "\t" +
+                                (trim_adapters_flag  ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? "YES" : "NO") + "\t" +
+                                ( vector_flag ? int2str(KMER_SIZE) : "NA") + "\t" +
+                                ( vector_flag ? int2str(DISTANCE) : "NA") +"\t" +
+                                ( contaminants_flag ? "YES" : "NO") +"\t" +
+                                ( contaminants_flag ? int2str(KMER_SIZE_CONT) : "NA") +"\t" +
+                                (qual_trim_flag ? "YES" : "NO") +"\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_a_error)) : "NA")+ "\t" +
+                                (qual_trim_flag ? double2str(-10*log10(max_e_at_ends)) : "NA")+ "\t" +
+                                output_prefix +"\t" +
+                                rep_file_name1+ "\t" +
+                                ( !shuffle_flag ?  se_output_filename : "NA" ) +"\t"+
+                                int2str(max_al_mism) +"\t" +
+                                int2str(minimum_read_length)+ "\t" +
+                                ( new2old_illumina ? "YES" : "NO") + "\t"; 
+                   
+    
+<<<<<<< HEAD
+    
+        stat_str_tsv += int2str(cnt)   + "\t" + //reads analyzed
+                        int2str(se_bases_anal) + "\t"  + //bases
+                       i2str(ts_adapters,new char[15],10) + "\t" //adapters
+                        + double2str( (double)ts_adapters/(double)cnt*100.0) + "\t" + //perc adapters
+                       ( vector_flag ? i2str(num_vectors,new char[15],10) + "\t" + double2str( (double)num_vectors/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc vectors
+                       ( contaminants_flag ? i2str(num_contaminants,new char[15],10) + "\t" //cont
+                        + double2str( (double)num_contaminants/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc cont
+                       ( qual_trim_flag ? i2str(left_trimmed_by_quality,new char[15],10) + "\t" : "NA\t" ) +  //left trimmed qual
+                       ( vector_flag ? i2str(left_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) + //left trimmed vect
+                       double2str(avg_left_trim_len_se) + "\t" + //avg left trim len
+                       i2str(right_trimmed_by_adapter,new char[15],10) + "\t" + 
+                       ( qual_trim_flag ? i2str(right_trimmed_by_quality,new char[15],10) + "\t" : "NA\t") +
+                       ( vector_flag ? i2str(right_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) +
+                       double2str(avg_right_trim_len_se) + "\t" +
+                       i2str(discarded,new char[15],10) + "\t" + //discard
+                       ( contaminants_flag ? i2str(discarded_by_contaminant,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(discarded_by_read_length,new char[15],10) + "\t" +
+                       i2str(se_accept_cnt,new char[15],10) + "\t" + //se reads kept
+                        double2str( (double)se_accept_cnt/(double)cnt*100.0) + "\t" //perc kept
+                        + i2str(se_bases_kept,new char[15],10) + "\t" + //bases kept
+                        double2str( (double)se_bases_kept/(double)se_bases_anal*100.0) + "\t" + //%
+                       double2str(avg_trim_len_se) +
+                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat)  + "\n" : "");
+            
+    
+     return stat_str_tsv;
     
     
+=======
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
 }
 
 void RemoveContaminants(vector<Read*>& illumina_reads)

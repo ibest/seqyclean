@@ -2,8 +2,17 @@
 <configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="SeqyClean" root=".">
+<<<<<<< HEAD
       <df name="man">
       </df>
+=======
+      <df name="bin">
+      </df>
+      <df name="man">
+      </df>
+      <df name="obj">
+      </df>
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
       <df name="src">
         <in>Dictionary.cpp</in>
         <in>Dictionary.h</in>
@@ -81,6 +90,14 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
+<<<<<<< HEAD
+=======
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+          </cTool>
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         </makeTool>
       </makefileType>
       <item path="src/Dictionary.cpp" ex="false" tool="1" flavor="0">
@@ -90,99 +107,160 @@
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/KMerRoutine.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/Illumina.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/MainPipeLine.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/KMerRoutine.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/QualTrim.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/MainPipeLine.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/Read.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/QualTrim.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/Report.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/Read.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/abi.c" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/Report.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/ascii.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/Roche.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/flash.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/ascii.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/gzstream.C" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
             <pElem>src</pElem>
+=======
+      <item path="src/dup.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/iz_SSAHA.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/flash.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/main.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <incDir>
+=======
+      <item path="src/gzstream.C" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/pairwise.cpp" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/iz_SSAHA.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/poly.c" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/main.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </ccTool>
       </item>
+<<<<<<< HEAD
       <item path="src/sff.c" ex="false" tool="1" flavor="0">
+=======
+      <item path="src/pairwise.cpp" ex="false" tool="1" flavor="0">
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <ccTool>
           <incDir>
             <pElem>.</pElem>

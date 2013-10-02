@@ -5,7 +5,11 @@
     <conf name="Default" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
+<<<<<<< HEAD
         <platform>4</platform>
+=======
+        <platform>2</platform>
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
       </toolsSet>
       <dbx_gdbdebugger version="1">
         <gdb_pathmaps>
@@ -24,6 +28,7 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
+<<<<<<< HEAD
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/PE1.fastq -2 test_data/PE2.fastq -o test/test</runcommandpicklistitem>
@@ -35,6 +40,20 @@
           <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow -d</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>./bin/seqyclean -454 test_data/in.sff -qual 30 -o test/testsff --ow -d</runcommand>
+=======
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/poly --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff-o testt/test_polAT --ow -qual 30 30</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -454 test_data/in.sff -o testt/test_polAT --ow -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o testt/test_polAT_IlluminaPE --ow -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -U test_data/R1.fastq -o testt/test_polAT_IlluminaSE --ow -qual 30 30 -polyat</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/poly -polyat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow1</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapters</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommand>
+>>>>>>> d6cfe34c405498a590f6d7f243c05ee0d9771c97
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
