@@ -259,6 +259,190 @@ void IlluminaDynamic()
                                //dovetails, remove adapters:
                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                                read1->tru_sec_pos = read1->initial_length + o - 1; read2->tru_sec_pos = read2->initial_length + o - 1;
+                               
+                               MakeClipPointsIllumina(read1);
+                               MakeClipPointsIllumina(read2);
+                               
+                               if ((read1->discarded == 0) && (read2->discarded == 1)) 
+                               {
+                                    read1->read = read1->read.substr(0 , read1->rclip );
+                                    read1->illumina_quality_string = read1->illumina_quality_string.substr(0,read1->rclip) ; 
+                                    read1->read = read1->read.substr( read1->lclip, read1->rclip - read1->lclip );
+                                    read1->illumina_quality_string = read1->illumina_quality_string.substr( read1->lclip, read1->rclip - read1->lclip );
+                 
+                                    
+                                    if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
+                                                read1->illumina_readID = read1->illumina_readID.substr(0,read1->illumina_readID.length()-2);                                  
+                                    
+                                    WriteSEFile( se_file, read1 );
+                                    se_pe1_accept_cnt+=1;
+                                    se_pe1_bases_kept += read1->read.length();
+                                    continue;
+                               } else if( (read1->discarded == 1) && (read2->discarded == 0) )
+                               {
+                                    read2->read = read2->read.substr(0 , read2->rclip );
+                                    read2->illumina_quality_string = read2->illumina_quality_string.substr(0,read2->rclip) ; 
+                                    read2->read = read2->read.substr( read2->lclip, read2->read.length() - read2->lclip );
+                                    read2->illumina_quality_string = read2->illumina_quality_string.substr( read2->lclip, read2->illumina_quality_string.length() - read2->lclip );
+        	 
+                                    if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
+                                                read2->illumina_readID = read2->illumina_readID.substr(0,read2->illumina_readID.length()-3);                                  
+                                    
+                                    WriteSEFile( se_file, read2 );
+                                    se_pe2_accept_cnt +=1;
+                                    se_pe2_bases_kept += read2->read.length();
+                                    continue;
+                               }else if( (read1->discarded == 1) && (read2->discarded == 1) )
+                               {
+                                   pe_discard_cnt+=1;
+                                   pe_bases_discarded += read1->read.length();
+                                   pe_bases_discarded += read2->read.length();
+                                   continue;
+                                }
+                               
+                               //Overlap, make consensus sequence:
+                               o = -1*o;                               
+                               Read *c = new Read();
+                               Read *s1 = new Read(); s1->read = read1->read; s1->illumina_quality_string = read1->illumina_quality_string;
+                               Read *s2 = new Read(); s2->read = read2->read; s2->illumina_quality_string = read2->illumina_quality_string;
+                               s1->read = s1->read.substr(o, s1->read.length() - o);  // cut off left end
+                               s2->read = MakeRevComplement(s2->read.substr(0,s2->read.length() - o));  //cut off right end
+                                    
+                               c = make_consensus(s1, s2);
+                                    
+                               string c_se = read1->read.substr(0,o) + c->read + MakeRevComplement(read2->read.substr(read2->read.length() - o,o)); //MakeRevComplement(read2->read.substr(0,read2->read.length() - ov));
+                                                
+                               string c_qual = read2->illumina_quality_string.substr(read2->illumina_quality_string.length() - o,o); //read2->illumina_quality_string.substr(0,read2->illumina_quality_string.length() - ov);
+                               c_qual = read1->illumina_quality_string.substr(0,o) + c->illumina_quality_string + string ( c_qual.rbegin(), c_qual.rend() );
+                                    
+                               //cout << read1->read.substr(0,ov) << endl << read1->illumina_quality_string.substr(0,ov) << endl;
+                                    
+                               c->read = c_se;
+                               c->illumina_quality_string = c_qual;
+                               
+                               c->lclip = read1->lclip;
+                               c->rclip = c->read.length() - read2->lclip;
+                                
+                               if(c->rclip <= c->lclip) {
+                                   read1->discarded = 1;
+                                   read2->discarded = 1;
+                                   pe_discard_cnt+=1;
+                                   pe_bases_discarded += read1->read.length();
+                                   pe_bases_discarded += read2->read.length();
+                                   continue;
+                               }
+                                
+                               c->read = c->read.substr(0 , c->rclip );
+                                
+                               //cout << c->lclip << " " << ov << " " << c->rclip << " " <<  c->read.length() << endl;
+                               c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
+                               //cout << c->read << endl << c->illumina_quality_string << endl << c->lclip << endl << c->rclip << endl;
+                               c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
+                               c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
+                            
+                               vector<string> temp_id;
+                               split_str( read1->illumina_readID, temp_id, " " );
+                               vector<string> temp_id1;
+                               split_str( temp_id[0], temp_id1, " " );
+                               c->illumina_readID = temp_id1[0];
+                               //WriteSEOverlap(overlap_file, c);
+                               temp_id.clear();
+                               temp_id1.clear();
+                               
+                               //Increase counters:
+                               se_pe1_accept_cnt+=1; se_pe2_accept_cnt+=1; se_pe2_bases_kept += read1->read.length();
+                               se_pe1_bases_kept += read1->read.length();
+                               
+                               WriteSEFile(se_file, c);
+                               
+                               c->read.clear();
+                               c->illumina_quality_string.clear();
+                               delete c;
+                               s1->read.clear();
+                               s1->illumina_quality_string.clear();
+                               s2->read.clear();
+                               s2->illumina_quality_string.clear();
+                               delete s1;
+                               delete s2;
+                               
+                               if (read1->tru_sec_found == 1) ts_adapters1++;
+                               if (read1->vector_found == 1) num_vectors1++;
+                               if (read1->contam_found == 1) num_contaminants1++;
+                               if (read1->discarded == 0) accepted1++;
+                               if (read1->discarded == 1) discarded1++;
+                               if (read1->discarded_by_contaminant == 1) discarded_by_contaminant1++;
+                               if (read1->discarded_by_read_length == 1) discarded_by_read_length1++;
+                               if (read1->left_trimmed_by_quality == 1) left_trimmed_by_quality1++;
+                               if (read1->left_trimmed_by_vector == 1) left_trimmed_by_vector1++;
+                               if (read1->right_trimmed_by_quality == 1) right_trimmed_by_quality1++;
+                               if (read1->right_trimmed_by_adapter == 1) right_trimmed_by_adapter1++;
+                               if (read1->right_trimmed_by_vector == 1) right_trimmed_by_vector1++;
+                               if (read1->right_trimmed_by_polyat == 1) right_trimmed_by_polyat1++;
+                               if (read1->left_trimmed_by_polyat == 1) left_trimmed_by_polyat1++;
+          
+                               if (read2->tru_sec_found == 1) ts_adapters2++;
+                               if (read2->vector_found == 1) num_vectors2++;
+                               if (read2->contam_found == 1) num_contaminants2++;
+                               if (read2->discarded == 0) accepted2++;
+                               if (read2->discarded == 1) discarded2++;
+                               if (read2->discarded_by_contaminant == 1) discarded_by_contaminant2++;
+                               if (read2->discarded_by_read_length == 1) discarded_by_read_length2++;
+                               if (read2->left_trimmed_by_quality == 1) left_trimmed_by_quality2++;
+                               if (read2->left_trimmed_by_vector == 1) left_trimmed_by_vector2++;
+                               if (read2->right_trimmed_by_quality == 1) right_trimmed_by_quality2++;
+                               if (read2->right_trimmed_by_adapter == 1) right_trimmed_by_adapter2++;
+                               if (read2->right_trimmed_by_vector == 1) right_trimmed_by_vector2++;
+                               if (read2->right_trimmed_by_polyat == 1) right_trimmed_by_polyat2++;
+                               if (read2->left_trimmed_by_polyat == 1) left_trimmed_by_polyat2++;
+                               
+                               if( (cnt1 % 1000 ) == 0)
+                               {
+                                        st_str = PrintIlluminaStatistics(cnt1, cnt2, 
+                                                                pe1_bases_anal, pe2_bases_anal, 
+                                                                ts_adapters1, ts_adapters2, 
+                                                                num_vectors1, num_vectors2, 
+                                                                num_contaminants1, num_contaminants2, 
+                                                                left_trimmed_by_quality1, left_trimmed_by_quality2,
+                                                                left_trimmed_by_vector1, left_trimmed_by_vector2, 
+                                                                avg_left_trim_len_pe1, avg_left_trim_len_pe2, 
+                                                                right_trimmed_by_adapter1, right_trimmed_by_adapter2, 
+                                                                right_trimmed_by_quality1,right_trimmed_by_quality2,
+                                                                right_trimmed_by_vector1,right_trimmed_by_vector2,
+                                                                avg_right_trim_len_pe1,avg_right_trim_len_pe2,
+                                                                discarded1, discarded2,
+                                                                discarded_by_contaminant1, discarded_by_contaminant2,
+                                                                discarded_by_read_length1, discarded_by_read_length2,
+                                                                pe_accept_cnt, pe_bases_kept, 
+                                                                pe_discard_cnt,pe_bases_discarded, 
+                                                                se_pe1_accept_cnt, se_pe1_bases_kept,
+                                                                se_pe2_accept_cnt, se_pe2_bases_kept,
+                                                                avg_trim_len_pe1, avg_trim_len_pe2,
+                                                                avg_len_pe1, avg_len_pe2,
+                                                                perfect_ov_cnt, partial_ov_cnt,
+                                                                duplicates,
+                                                                left_trimmed_by_polyat1, right_trimmed_by_polyat1,
+                                                                right_trimmed_by_polyat2, right_trimmed_by_polyat2
+                                                                );
+                            
+                                        if (cnt1 > 1000)
+                                        {
+                                                vector<string> t;
+                                                split_str(st_str, t, "\n");
+                                                for(int kk=0; kk<(int)t.size(); ++kk)
+                                                {
+                                                        cout << "\033[A\033[2K";
+                                                }
+                                                t.clear();
+                                        }
+                            
+                                        cout << st_str;
+                            
+                                }
+                               
+                               rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                               rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+          
+                               continue;
                             }
                         }
                         
@@ -323,6 +507,9 @@ void IlluminaDynamic()
                                 if(c->rclip <= c->lclip) {
                                     read1->discarded = 1;
                                     read2->discarded = 1;
+                                    pe_discard_cnt+=1;
+                                    pe_bases_discarded += read1->read.length();
+                                    pe_bases_discarded += read2->read.length();
                                     continue;
                                 }
                                 
@@ -344,6 +531,10 @@ void IlluminaDynamic()
                                 //WriteSEOverlap(overlap_file, c);
                                 temp_id.clear();
                                 temp_id1.clear();
+                                
+                                rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                                rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+          
                               }
                         }
                         
