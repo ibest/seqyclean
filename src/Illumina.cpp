@@ -288,9 +288,9 @@ void IlluminaDynamic()
                                     
                                   c = make_consensus(s1, s2);
                                     
-                                  string c_se = read1->read.substr(0,ov) + c->read + MakeRevComplement(read2->read.substr(0,read2->read.length() - ov));
+                                  string c_se = read1->read.substr(0,ov) + c->read + MakeRevComplement(read2->read.substr(read2->read.length() - ov,ov)); //MakeRevComplement(read2->read.substr(0,read2->read.length() - ov));
                                                 
-                                  string c_qual = read2->illumina_quality_string.substr(0,read2->illumina_quality_string.length() - ov);
+                                  string c_qual = read2->illumina_quality_string.substr(read2->illumina_quality_string.length() - ov,ov); //read2->illumina_quality_string.substr(0,read2->illumina_quality_string.length() - ov);
                                   c_qual = read1->illumina_quality_string.substr(0,ov) + c->illumina_quality_string + string ( c_qual.rbegin(), c_qual.rend() );
                                     
                                   //cout << read1->read.substr(0,ov) << endl << read1->illumina_quality_string.substr(0,ov) << endl;
@@ -302,7 +302,17 @@ void IlluminaDynamic()
                               
                               if(overlap_found) {
                                 //Establis new clip points for SE overlap:
-                                //Establis new clip points for SE overlap:
+                                /*if(qual_trim_flag ) {
+                                    QualTrimIllumina( c, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
+                                    if (c->discarded_by_quality == 1)
+                                    {
+                                        c->discarded = 1;
+                                        read1->discarded = 1;
+                                        read2->discarded = 1;
+                                        continue;
+                                    }
+                                }*/
+                                  
                                 MakeClipPointsIllumina(read1);
                                 MakeClipPointsIllumina(read2);
                             
@@ -323,7 +333,7 @@ void IlluminaDynamic()
                                 c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
                                 //cout << c->read << endl << c->illumina_quality_string << endl << c->lclip << endl << c->rclip << endl;
                                 c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
-                                //c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
+                                c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
                             
                                 vector<string> temp_id;
                                 split_str( read1->illumina_readID, temp_id, " " );
