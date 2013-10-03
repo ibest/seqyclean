@@ -210,8 +210,8 @@ bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
 bool i64_flag = false;
 
-unsigned int adapterlength = 40;
-double overlap_t = 0.9;
+unsigned int adapterlength = 60;
+double overlap_t = 0.75;
 int minoverlap = 10;
 bool overlap_flag = false;
 
@@ -397,7 +397,7 @@ int main(int argc, char *argv[])
         }
         else if(string(argv[i]) == "-m" )
         {
-           if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
+           if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
              custom_rlmids_flag = true;
              rlmids_file = argv[++i]; /*Custom file with RL MIDS given*/
@@ -406,7 +406,7 @@ int main(int argc, char *argv[])
         }
         else if(string(argv[i]) == "-adapter_length" )
         {
-           if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
+           if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
              adapterlength = atoi(argv[++i]); 
            }
@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
         }
         else if(string(argv[i]) == "-ot" )
         {
-           if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
+           if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
              overlap_t = atof(argv[++i]);
            }

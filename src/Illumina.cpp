@@ -254,6 +254,7 @@ void IlluminaDynamic()
                         else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && trim_adapters_flag)
                         {
                             int o = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength, false);
+                            //cout << o << endl;
                             if( (o < 0) && (o != -10000)) {
                                //dovetails, remove adapters:
                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
