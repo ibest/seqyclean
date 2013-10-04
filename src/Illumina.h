@@ -113,6 +113,7 @@ string New2OldNbl(string header);
 void IlluminaDynamicSE();
 void MakeClipPointsIllumina(Read* read);
 void WriteSEOverlap(fstream &overlap_file, Read *read);
+int IlluminaDynRoutine_post(Read* read);
 
 
 string PrintIlluminaStatistics(unsigned long cnt1, unsigned long cnt2, 
