@@ -281,12 +281,10 @@ void IlluminaDynamic()
                                     se_pe1_accept_cnt+=1;
                                     se_pe1_bases_kept += read1->read.length();
                                     
-                                    record_block1.clear();
                                     read1->illumina_readID.clear(); 
                                     read1->illumina_quality_string.clear();
                                     read1->read.clear();
           
-                                    record_block2.clear();
                                     read2->illumina_readID.clear(); 
                                     read2->illumina_quality_string.clear();
                                     read2->read.clear();
@@ -309,12 +307,10 @@ void IlluminaDynamic()
                                     se_pe2_accept_cnt +=1;
                                     se_pe2_bases_kept += read2->read.length();
                                     
-                                    record_block1.clear();
                                     read1->illumina_readID.clear(); 
                                     read1->illumina_quality_string.clear();
                                     read1->read.clear();
           
-                                    record_block2.clear();
                                     read2->illumina_readID.clear(); 
                                     read2->illumina_quality_string.clear();
                                     read2->read.clear();
@@ -329,12 +325,10 @@ void IlluminaDynamic()
                                    pe_bases_discarded += read1->read.length();
                                    pe_bases_discarded += read2->read.length();
                                    
-                                   record_block1.clear();
                                    read1->illumina_readID.clear(); 
                                    read1->illumina_quality_string.clear();
                                    read1->read.clear();
           
-                                   record_block2.clear();
                                    read2->illumina_readID.clear(); 
                                    read2->illumina_quality_string.clear();
                                    read2->read.clear();
@@ -375,12 +369,10 @@ void IlluminaDynamic()
                                    pe_bases_discarded += read1->read.length();
                                    pe_bases_discarded += read2->read.length();
                                    
-                                   record_block1.clear();
                                    read1->illumina_readID.clear(); 
                                    read1->illumina_quality_string.clear();
                                    read1->read.clear();
           
-                                   record_block2.clear();
                                    read2->illumina_readID.clear(); 
                                    read2->illumina_quality_string.clear();
                                    read2->read.clear();
@@ -427,6 +419,36 @@ void IlluminaDynamic()
                                delete s2;
                                
                                partial_ov_cnt += 1;
+                               
+                               cnt_left_trim_pe1 += 1;
+                               avg_left_clip_1 += read1->lclip;
+                               avg_left_trim_len_pe1 = avg_left_clip_1/cnt_left_trim_pe1;
+                               
+                               cnt_left_trim_pe2 += 1;
+                               /////////////avg_left_trim_len_pe2 = GetAvg( avg_left_trim_len_pe2, cnt_left_trim_pe2, read2->lclip );
+                               avg_left_clip_2 += read2->lclip;
+                               avg_left_trim_len_pe2 = avg_left_clip_2/cnt_left_trim_pe2;
+                               
+                               cnt1_avg+=1;
+                                    ///////////avg_trim_len_pe1 = GetAvg( avg_trim_len_pe1, cnt1_avg,  read1->rclip - read1->lclip );//read1->initial_length - read1->read.length()
+                               avg_bases_pe1 += read1->initial_length - read1->lclip;
+                               avg_trim_len_pe1 = avg_bases_pe1/cnt1_avg;
+                                    
+                               cnt2_avg+=1;
+                               /////////////avg_trim_len_pe2 = GetAvg( avg_trim_len_pe2, cnt2_avg, read2->rclip - read2->lclip );//read2->initial_length - read2->read.length()*
+                               avg_bases_pe2 += read2->initial_length - read2->lclip;
+                               avg_trim_len_pe2 = avg_bases_pe2/cnt2_avg;
+                                    
+                               cnt_avg_len1 +=1; cnt_avg_len2 +=1;
+                 
+                                    ///////////avg_len_pe1 = GetAvg( avg_len_pe1, cnt_avg_len1, read1->read.length() );
+                                    /////////////avg_len_pe2 = GetAvg( avg_len_pe2, cnt_avg_len2, read2->read.length() );
+                
+                                        
+                                
+                               
+                               
+                               
                                
                                if (read1->tru_sec_found == 1) ts_adapters1++;
                                if (read1->vector_found == 1) num_vectors1++;
@@ -505,13 +527,10 @@ void IlluminaDynamic()
                                rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
                                rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
           
-                               
-                               record_block1.clear();
                                read1->illumina_readID.clear(); 
                                read1->illumina_quality_string.clear();
                                read1->read.clear();
           
-                               record_block2.clear();
                                read2->illumina_readID.clear(); 
                                read2->illumina_quality_string.clear();
                                read2->read.clear();
