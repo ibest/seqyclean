@@ -262,7 +262,7 @@ void IlluminaDynamic()
                                //dovetails, remove adapters:
                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                                read1->tru_sec_pos = read1->initial_length + o - 1; read2->tru_sec_pos = read2->initial_length + o - 1;
-                               
+                               /*
                                //Overlap, make consensus sequence:
                                o = -1*o;                               
                                Read *c = new Read();
@@ -443,6 +443,7 @@ void IlluminaDynamic()
                                delete read2;
                                
                                continue;
+                               */
                             }
                         }
                         
@@ -528,7 +529,7 @@ void IlluminaDynamic()
                               }
                         }
                         
-                        if(overlap_found) {
+                        if(overlap_found && overlap_flag) {
                             WriteSEFile(se_file, c);
                         } else {
                                         
