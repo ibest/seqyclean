@@ -226,6 +226,9 @@ void IlluminaDynamic()
                             read1->discarded = 1;
                         }
                         
+                        record_block1.clear();
+                        record_block2.clear();
+                        
                         //Establishing the most conservative adapters
                         if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 1))
                         {
@@ -277,6 +280,20 @@ void IlluminaDynamic()
                                     WriteSEFile( se_file, read1 );
                                     se_pe1_accept_cnt+=1;
                                     se_pe1_bases_kept += read1->read.length();
+                                    
+                                    record_block1.clear();
+                                    read1->illumina_readID.clear(); 
+                                    read1->illumina_quality_string.clear();
+                                    read1->read.clear();
+          
+                                    record_block2.clear();
+                                    read2->illumina_readID.clear(); 
+                                    read2->illumina_quality_string.clear();
+                                    read2->read.clear();
+          
+                                    delete read1;
+                                    delete read2;
+                                    
                                     continue;
                                } else if( (read1->discarded == 1) && (read2->discarded == 0) )
                                {
@@ -291,12 +308,40 @@ void IlluminaDynamic()
                                     WriteSEFile( se_file, read2 );
                                     se_pe2_accept_cnt +=1;
                                     se_pe2_bases_kept += read2->read.length();
+                                    
+                                    record_block1.clear();
+                                    read1->illumina_readID.clear(); 
+                                    read1->illumina_quality_string.clear();
+                                    read1->read.clear();
+          
+                                    record_block2.clear();
+                                    read2->illumina_readID.clear(); 
+                                    read2->illumina_quality_string.clear();
+                                    read2->read.clear();
+          
+                                    delete read1;
+                                    delete read2;
+                               
                                     continue;
                                }else if( (read1->discarded == 1) && (read2->discarded == 1) )
                                {
                                    pe_discard_cnt+=1;
                                    pe_bases_discarded += read1->read.length();
                                    pe_bases_discarded += read2->read.length();
+                                   
+                                   record_block1.clear();
+                                   read1->illumina_readID.clear(); 
+                                   read1->illumina_quality_string.clear();
+                                   read1->read.clear();
+          
+                                   record_block2.clear();
+                                   read2->illumina_readID.clear(); 
+                                   read2->illumina_quality_string.clear();
+                                   read2->read.clear();
+          
+                                   delete read1;
+                                   delete read2;
+                                   
                                    continue;
                                 }
                                
@@ -329,6 +374,20 @@ void IlluminaDynamic()
                                    pe_discard_cnt+=1;
                                    pe_bases_discarded += read1->read.length();
                                    pe_bases_discarded += read2->read.length();
+                                   
+                                   record_block1.clear();
+                                   read1->illumina_readID.clear(); 
+                                   read1->illumina_quality_string.clear();
+                                   read1->read.clear();
+          
+                                   record_block2.clear();
+                                   read2->illumina_readID.clear(); 
+                                   read2->illumina_quality_string.clear();
+                                   read2->read.clear();
+          
+                                   delete read1;
+                                   delete read2;
+                                   
                                    continue;
                                }
                                 
@@ -346,14 +405,16 @@ void IlluminaDynamic()
                                split_str( temp_id[0], temp_id1, " " );
                                c->illumina_readID = temp_id1[0];
                                //WriteSEOverlap(overlap_file, c);
-                               temp_id.clear();
-                               temp_id1.clear();
+                               
                                
                                //Increase counters:
                                se_pe1_accept_cnt+=1; se_pe2_accept_cnt+=1; se_pe2_bases_kept += read1->read.length();
                                se_pe1_bases_kept += read1->read.length();
                                
                                WriteSEFile(se_file, c);
+                               //cout << read1->illumina_readID << endl;
+                               temp_id.clear();
+                               temp_id1.clear();
                                
                                c->read.clear();
                                c->illumina_quality_string.clear();
@@ -364,6 +425,8 @@ void IlluminaDynamic()
                                s2->illumina_quality_string.clear();
                                delete s1;
                                delete s2;
+                               
+                               partial_ov_cnt += 1;
                                
                                if (read1->tru_sec_found == 1) ts_adapters1++;
                                if (read1->vector_found == 1) num_vectors1++;
@@ -442,6 +505,20 @@ void IlluminaDynamic()
                                rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
                                rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
           
+                               
+                               record_block1.clear();
+                               read1->illumina_readID.clear(); 
+                               read1->illumina_quality_string.clear();
+                               read1->read.clear();
+          
+                               record_block2.clear();
+                               read2->illumina_readID.clear(); 
+                               read2->illumina_quality_string.clear();
+                               read2->read.clear();
+          
+                               delete read1;
+                               delete read2;
+                               
                                continue;
                             }
                         }
