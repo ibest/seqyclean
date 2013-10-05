@@ -102,18 +102,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./bin/seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test111/test --ow --no_ts_adapter_trim</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -1 ../test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 ../test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 ../test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 ../test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o test/test --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --ow -adapter_length 60</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test -adapter_length 60 --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test -adapter_length 40 --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --overlap --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o test/test --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --overlap --ow</runcommand>
+        <runcommand>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o test/test --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

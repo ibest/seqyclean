@@ -243,25 +243,30 @@ void IlluminaDynamic()
                                 read1->tru_sec_pos = read2->tru_sec_pos;
                                 read1->tru_sec_found = 1;
                             }
+                            //cout << "k-search: " <<  read1->illumina_readID << endl;
                         }
                         else if( (read1->tru_sec_found == 1) && (read2->tru_sec_found == 0) )
                         {
                             read2->tru_sec_pos = read1->tru_sec_pos;
                             read2->tru_sec_found = 1;
+                            //cout << "k-search: " <<  read1->illumina_readID << endl;
                         }
                         else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 1) )
                         {
                             read1->tru_sec_pos = read2->tru_sec_pos;
                             read1->tru_sec_found = 1;
+                            //cout << "k-search: " <<  read1->illumina_readID << endl;
                         }
                         else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && trim_adapters_flag)
                         {
                             int o = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength, false);
-                            //cout << o << endl;
+                            
                             if( (o < 0) && (o != -10000)) {
+                               // cout << "dovetail: " << o << read1->illumina_readID << endl;
                                //dovetails, remove adapters:
                                read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                                read1->tru_sec_pos = read1->initial_length + o - 1; read2->tru_sec_pos = read2->initial_length + o - 1;
+                               //cout << read1->tru_sec_pos << endl;
                                /*
                                //Overlap, make consensus sequence:
                                o = -1*o;                               
@@ -1033,17 +1038,20 @@ void MakeClipPointsIllumina(Read* read)
         {
            if( read->v_start >= (int)(read->read.length() - read->v_end) ) //Vector is on the right side
            {
+               //Lucy clip points are zero-based!
+               
                read->lclip = read->lucy_lclip;
                
                if(read->lclip > 0)
                   read->left_trimmed_by_quality = 1;
                
                
-               read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), min(read->lucy_rclip, read->v_start) );
+               read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), min(read->lucy_rclip+1, read->v_start) );
                     
-               if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
+               if( (read->rclip == read->lucy_rclip+1) && (read->rclip+1 < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
+                 read->rclip = read->lucy_rclip;
                }
                else if((read->rclip == read->tru_sec_pos) && trim_adapters_flag)
                {
@@ -1057,21 +1065,25 @@ void MakeClipPointsIllumina(Read* read)
            }
            else //Vector is on the left side or the whole read is vector
            {
-               read->lclip = max(read->lucy_lclip,read->v_end);//max(read->lucy_lclip,max(1, read->v_end ) );
+               //Keep in mind that Lucy's clip points are zero-based!
+               
+               read->lclip = max(read->lucy_lclip+1,read->v_end);//max(read->lucy_lclip,max(1, read->v_end ) );
            
-               if( (read->lclip == read->lucy_lclip) && (read->lclip > 0) )//&& (read->lucy_lclip > 1)) 
+               if( (read->lclip == read->lucy_lclip+1) && (read->lclip > 0) )//&& (read->lucy_lclip > 1)) 
                {
                  read->left_trimmed_by_quality = 1;
+                 read->lclip = read->lucy_lclip;
                }
                if(read->lclip == read->v_end)
                {
                  read->left_trimmed_by_vector = 1;
                }
            
-               read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->lucy_rclip );
-               if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
+               read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->lucy_rclip+1 );
+               if( (read->rclip == read->lucy_rclip+1) && (read->rclip+1 < read->initial_length ) )
                {
                  read->right_trimmed_by_quality = 1;
+                 read->rclip = read->lucy_rclip;
                }
                else
                {
@@ -1083,14 +1095,17 @@ void MakeClipPointsIllumina(Read* read)
         } 
         else
         {
+            //Keep in mind that Lucy's clip points are zero-based!
+            
             read->lclip = read->lucy_lclip;//max(read->lucy_lclip, 1);
             if(read->lclip > 0)
                 read->left_trimmed_by_quality = 1;
             
-            read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->lucy_rclip );
-            if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
+            read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), read->lucy_rclip + 1 );
+            if( (read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length ) )
             {
               read->right_trimmed_by_quality = 1;
+              read->rclip = read->lucy_rclip;
             }
             else
             {
@@ -1101,21 +1116,23 @@ void MakeClipPointsIllumina(Read* read)
     }
     else if( (qual_trim_flag ) && (!vector_flag) )
     {
+        //Keep in mind that Lucy's clip points are zero-based!
+        
         read->lclip = read->lucy_lclip;//max(read->lucy_lclip,1);
         if(read->lclip > 0)
            read->left_trimmed_by_quality = 1;
         
-        read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(),read->lucy_rclip );
+        read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(),read->lucy_rclip + 1 );
         
-        if( (read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length ) )
+        if( (read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length ) )
         {
-           read->right_trimmed_by_quality = 1;
+            read->rclip = read->lucy_rclip;
+            read->right_trimmed_by_quality = 1;
         }
         else if( (read->rclip == read->tru_sec_pos) && trim_adapters_flag)
         {
-           
-            if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
-                        read->right_trimmed_by_adapter = 1;
+           if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
+               read->right_trimmed_by_adapter = 1;
         }
         
         
