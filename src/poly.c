@@ -14,23 +14,35 @@ void PolyAT_Trim(Read* read)
 {
     int left, right;
     left = right = 0;
-
-    left = poly_at_left( (char*)read->read.substr( read->lucy_lclip, read->read.length() - read->lucy_lclip ).c_str(), read->lucy_rclip - read->lucy_lclip + 1); 
     
-    if (left) 
-    {
-        read->poly_T_clip = left;
+    if(qual_trim_flag) {
+        left = poly_at_left( (char*)read->read.substr( read->lucy_lclip, read->read.length() - read->lucy_lclip ).c_str(), read->lucy_rclip - read->lucy_lclip); 
+        if (left) 
+        {
+                read->poly_T_clip = read->lucy_lclip + left;
+                read->poly_T_found = true;
+        }
+        right = poly_at_right((char*)read->read.substr( 0, read->lucy_rclip).c_str(), read->lucy_rclip - read->lucy_lclip);
+        if (right) 
+        {
+                read->poly_A_clip = read->lucy_rclip - right;
+                read->poly_A_found = true;
+        }
+    } else {
+        left = poly_at_left( (char*)read->read.c_str(), read->read.length()); 
+        if (left) 
+        {
+                read->poly_T_clip = left;
+                read->poly_T_found = true;
+        }
+        right = poly_at_right((char*)read->read.c_str(), read->read.length());
+        if (right) 
+        {
+                read->poly_A_clip = read->read.length()- right;
+                read->poly_A_found = true;
+        }
     }
-	
-    right = poly_at_right((char*)read->read.substr( 0, read->lucy_rclip).c_str(), read->lucy_rclip - read->lucy_lclip + 1);
-    
-    if (right) 
-    {
-        read->poly_A_clip = right;
-    }
-    
-    
-}
+ }
 
 
 int poly_at_left(char *seq, int len)
@@ -54,7 +66,7 @@ int poly_at_left(char *seq, int len)
     return i-ttt+1;
 
   /* extend span of poly-T within 'cerr' error tolerance */
-  for (i++, seq++, err=0; i<len; i++/*, seq++*/)
+  for (i++, /*seq++,*/ err=0; i<len; i++/*, seq++*/)
     if (/*abi_code(*seq)==T*/seq[i]=='T') {
       ttt++;
       if (ttt>=cdna)
@@ -75,6 +87,7 @@ int poly_at_right(char *seq, int len)
   aaa = 0;
   pos = 0;
   int seq_len = strlen(seq);
+  
   /* find the last 'cdna' number of connected A's in the last
      'crng' bases of the input sequence */
   for (i=0; i<crng && i<len; i++/*, seq--*/)
@@ -92,7 +105,7 @@ int poly_at_right(char *seq, int len)
     return i-aaa+1;
 
   /* extend span of poly-A within 'cerr' error tolerance */
-  for (i++/*, seq--*/, err=0; i<len; i++/*seq--*/)
+  for (i++,/* seq--,*/ err=0; i<len; i++/*, seq--*/) 
     if (/*abi_code(*seq)*/seq[seq_len-i]=='A') {
       aaa++; 
       if (aaa>=cdna)
@@ -104,5 +117,6 @@ int poly_at_right(char *seq, int len)
       if (err>c_err)
 	return pos;
     }
+
   return len;
 }

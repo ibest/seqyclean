@@ -563,7 +563,7 @@ void TrimRightEnds() {
     pthread_t threads[NUM_THREADS];
     
     /*First stage: preprocess the read by using SSAHA: */
-    long lim = reads.size() - NUM_THREADS;
+    unsigned long lim = reads.size() - NUM_THREADS;
     for(unsigned int i=0; i<reads.size(); i+=NUM_THREADS) {
         
         if(i > lim ) break;

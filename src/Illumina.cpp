@@ -759,7 +759,7 @@ void IlluminaDynamic()
                                     perfect_ov_cnt, partial_ov_cnt,
                                     duplicates,
                                     left_trimmed_by_polyat1, right_trimmed_by_polyat1,
-                                    right_trimmed_by_polyat2, right_trimmed_by_polyat2
+                                    left_trimmed_by_polyat2, right_trimmed_by_polyat2
                                    );
                             
                             if (cnt1 > 1000)
@@ -808,7 +808,7 @@ void IlluminaDynamic()
                             perfect_ov_cnt, partial_ov_cnt,
                             duplicates,
                             left_trimmed_by_polyat1, right_trimmed_by_polyat1,
-                            right_trimmed_by_polyat2, right_trimmed_by_polyat2
+                            left_trimmed_by_polyat2, right_trimmed_by_polyat2
                             );
     
     
@@ -884,10 +884,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
         return -1;
     }
     
-    if(polyat_flag) {
-       //If poly A/T flag is set:
-       PolyAT_Trim(read);
-    }
+    
     
     if(contaminants_flag )
     {
@@ -917,6 +914,11 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
            read->lclip = read->lucy_lclip;
            return 0;
        }
+    }
+    
+    if(polyat_flag) {
+       //If poly A/T flag is set:
+       PolyAT_Trim(read); 
     }
     
     if( vector_flag ) 
@@ -1135,15 +1137,10 @@ void MakeClipPointsIllumina(Read* read)
                read->right_trimmed_by_adapter = 1;
         }
         
-        
-                
         if(read->rclip >= read->clear_length)
         {
             read->rclip = read->clear_length; read->right_trimmed_by_adapter = 0;
         } 
-        
-        return;
-        
         
     }
     else if( (!qual_trim_flag) && (vector_flag ) )
@@ -1197,7 +1194,7 @@ void MakeClipPointsIllumina(Read* read)
     
     
     if(polyat_flag) {
-       if( (read->rclip > read->poly_A_clip) && (read->poly_A_clip > 0)) {
+       if( (read->rclip > read->poly_A_clip) && (read->poly_A_found)) {
           if(read->rclip == read->tru_sec_pos) {
              read ->right_trimmed_by_adapter = 0;
           } else if(read->rclip == read->lucy_rclip) {
@@ -1209,7 +1206,7 @@ void MakeClipPointsIllumina(Read* read)
           read->rclip = read->poly_A_clip;
           read->right_trimmed_by_polyat = 1;
         }
-        if( (read->lclip < read->poly_T_clip) && (read->poly_T_clip > 0)) {
+        if( (read->lclip < read->poly_T_clip) && (read->poly_T_found)) {
           if(read->lclip == read->lucy_lclip) {
                 read->left_trimmed_by_quality = 0;
           } else if(read->lclip == read->v_end) {
@@ -1221,7 +1218,6 @@ void MakeClipPointsIllumina(Read* read)
           }
    }
    
-   return;
     
 }
 
@@ -1582,7 +1578,7 @@ void IlluminaDynamicSE()
     split_str(st_str, t, "\n");
     for(int kk=0; kk<(int)t.size(); ++kk)
     {
-        cout << "\033[A\033[2K";
+       // cout << "\033[A\033[2K";
         //sum_stat << "\033[A\033[2K";
     }
     t.clear();

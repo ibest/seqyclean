@@ -63,6 +63,8 @@ Read::Read()
     
     this->poly_T_clip = 0;
     this->poly_A_clip = 0;
+    this->poly_A_found = false;
+    this->poly_T_found = false;
     
     this->roche_left_clip = 0;
     this->roche_right_clip = 0;

@@ -102,18 +102,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>./seqyclean -1 ../test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 ../test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 ../test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 ../test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o ../test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual --overlap -o test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --ow -adapter_length 60</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test -adapter_length 60 --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test -adapter_length 40 --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --overlap --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/L1I2_CGATGT_L001_R1_001.fastq.gz -2 test_data/L1I2_CGATGT_L001_R2_001.fastq.gz -qual -o test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 30 10 50 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 3 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 10 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 5 5 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 5 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe2.fastq -polyat 5 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe2.fastq -polyat 6 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 30 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/test_polyAT_se.fastq -polyat 10 -qual -o test/test_pat --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o test/test --ow</runcommand>
+        <runcommand>bin/./seqyclean -U test_data/test_polyAT_se.fastq -polyat 10 -qual -o test/test_pat --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

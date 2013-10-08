@@ -11,6 +11,7 @@
 
 
 extern unsigned short cdna, c_err, crng, keep;
+extern bool qual_trim_flag;
 
 void PolyAT_Trim(Read* read);
 int poly_at_left(char *seq, int len);

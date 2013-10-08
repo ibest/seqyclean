@@ -33,7 +33,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.8.9 (2013-10-04)";
+string version = "1.8.10 (2013-10-07)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -356,12 +356,6 @@ int main(int argc, char *argv[])
         else if( string(argv[i]) == "-polyat" ) 
         {
            polyat_flag = true;
-           //trim_adapters_flag = false; 
-           
-           if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
-           {
-                polyat_file_name = argv[++i];
-           }
            
            if ((i+1)<argc && isdigit(argv[i+1][0])) 
            {

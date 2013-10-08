@@ -90,19 +90,19 @@ void RocheRoutine()
        //reads_total += reads.size();
        cout << "Conversion finished. Total number of reads read from given file(s): " << reads.size() << endl;
        
-       if(polyat_flag) {
-           //If poly A/T flag is set:
-           for(unsigned long i=0; i< reads.size(); i++) {
-              PolyAT_Trim(reads[i]);
-           }
-       }
-       
        /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
        if( qual_trim_flag  ) 
        {
            for(unsigned long i=0; i< reads.size(); i++) 
            {
               QualTrim( reads[i], max_a_error, max_e_at_ends );/*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
+           }
+       }
+       
+       if(polyat_flag) {
+           //If poly A/T flag is set:
+           for(unsigned long i=0; i< reads.size(); i++) {
+              PolyAT_Trim(reads[i]);
            }
        }
     
@@ -384,7 +384,7 @@ void MakeClipPoints()
                reads[ff]->lclip = reads[ff]->rclip = 1;
            }
        }
-       else if( (vector_flag == false) && (qual_trim_flag == true) ) 
+       else if( vector_flag && qual_trim_flag ) 
        {
            if (reads[ff]->discarded == 0)
            {
@@ -461,7 +461,7 @@ void MakeClipPoints()
        
        if(polyat_flag) {
          if(reads[ff]->discarded == 0) {
-            if( (reads[ff]->rclip > reads[ff]->poly_A_clip) && (reads[ff]->poly_A_clip > 0)) {
+            if( (reads[ff]->rclip > reads[ff]->poly_A_clip) && reads[ff]->poly_A_found ) {
               if(reads[ff]->rclip == reads[ff]->b_adapter_pos) {
                   reads[ff] ->right_trimmed_by_adapter = 0;
               } else if(reads[ff]->rclip == reads[ff]->rlmid.rmid_start) {
@@ -475,7 +475,7 @@ void MakeClipPoints()
               reads[ff]->rclip = reads[ff]->poly_A_clip;
               reads[ff]->right_trimmed_by_polyat = 1;
             }
-         if( (reads[ff]->lclip < reads[ff]->poly_T_clip) && (reads[ff]->poly_T_clip > 0)) {
+         if( (reads[ff]->lclip < reads[ff]->poly_T_clip) && reads[ff]->poly_T_found ) {
              if(reads[ff]->lclip == reads[ff]->rlmid.lmid_end) {
                 reads[ff] ->left_trimmed_by_adapter = 0;
              } else if(reads[ff]->lclip == reads[ff]->lucy_lclip) {

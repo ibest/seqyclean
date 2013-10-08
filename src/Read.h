@@ -128,6 +128,8 @@ public:
    
    int poly_T_clip;
    int poly_A_clip;
+   bool poly_A_found;
+   bool poly_T_found;
    
    //Roche clip points
    int roche_left_clip;
