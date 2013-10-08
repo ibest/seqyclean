@@ -94,87 +94,27 @@ clean:
 test :  
 	@echo "Test 454..."
 	@bin/./seqyclean -454 test_data/in.sff -qual -o unit_test/test454 > /dev/null
-	@diff test_data/test454.sff unit_test/test454.sff; \
-	RETVAL=$$?; \
-	if [ $$RETVAL -eq 0 ]; then \
-            echo "Success!"; \
-	else \
-            echo "Test 454 failed"; exit 1; \
-	fi
-	@echo "Test Illumina PE..."
-	@bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual -o unit_test/testIlluminaPE > /dev/null
-	@diff test_data/testIlluminaPE_PE1.fastq unit_test/testIlluminaPE_PE1.fastq; \
-	RETVAL1=$$?; \
-	diff test_data/testIlluminaPE_PE2.fastq unit_test/testIlluminaPE_PE2.fastq; \
-	RETVAL2=$$?; \
-	diff test_data/testIlluminaPE_SE.fastq unit_test/testIlluminaPE_SE.fastq; \
-	RETVAL3=$$?; \
-	if [[ $$RETVAL1 -eq 0 && $$RETVAL2 -eq 0 && $$RETVAL3 -eq 0 ]]; then \
-            echo "Success!"; \
-	else \
-            echo "Test Ilumina PE failed"; exit 1; \
-	fi
-	@echo "Test Illumina SE..."
-	@bin/./seqyclean -U test_data/R1.fastq -qual -o unit_test/testIlluminaSE > /dev/null
-	@diff test_data/testIlluminaSE_SE.fastq unit_test/testIlluminaSE_SE.fastq; \
-	RETVAL=$$?; \
-	if [ $$RETVAL -eq 0 ]; then \
-            echo "Success!"; \
-	else \
-            echo "Test Ilumina SE failed"; exit 1; \
-	fi
-	@echo "Test Illumina overlap..."
-	@bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual -o unit_test/testIlluminaOLP --overlap > /dev/null
-	@diff test_data/testIlluminaOLP_SEOLP.fastq unit_test/testIlluminaOLP_SEOLP.fastq; \
-	RETVAL=$$?; \
-	if [ $$RETVAL -eq 0 ]; then \
-            echo "Success!"; \
-	else \
-            echo "Test Ilumina overlap failed"; exit 1; \
-	fi
+	@diff test_data/test454.sff unit_test/test454.sff > /dev/null || echo "Test 454 failed"
+	@echo "Test PE Illumina..."
+	@bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o unit_test/testIlluminaPE > /dev/null
+	@diff test_data/testIlluminaPE_PE1.fastq unit_test/testIlluminaPE_PE1.fastq > /dev/null || echo "Test PE Illumina failed"
+	@diff test_data/testIlluminaPE_PE2.fastq unit_test/testIlluminaPE_PE2.fastq > /dev/null || echo "Test PE Illumina failed"
+	@diff test_data/testIlluminaPE_SE.fastq unit_test/testIlluminaPE_SE.fastq > /dev/null || echo "Test PE Illumina failed"
+	@echo "Test SE Illumina..."
+	@bin/./seqyclean -U test_data/artif_pe1.fastq -qual -o unit_test/testIlluminaSE > /dev/null
+	@diff test_data/testIlluminaSE_SE.fastq unit_test/testIlluminaSE_SE.fastq > /dev/null || echo "Test SE Illumina failed" 
 	@echo "Test removing of duplicates..."
-	@./bin/seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup > /dev/null
-	@diff test_data/testIlluminaDup_PE1.fastq unit_test/testIlluminaDup_PE1.fastq; \
-	RETVAL1=$$?; \
-	diff test_data/testIlluminaDup_PE2.fastq unit_test/testIlluminaDup_PE2.fastq; \
-	RETVAL2=$$?; \
-	diff test_data/testIlluminaDup_SE.fastq unit_test/testIlluminaDup_SE.fastq; \
-	RETVAL3=$$?; \
-	if [[ $$RETVAL1 -eq 0 && $$RETVAL2 -eq 0 && $$RETVAL3 -eq 0 ]]; then \
-            echo "Success!"; \
-	else \
-            echo "Test removing of duplicates failed"; exit 1; \
-	fi
-	@echo "Test poly A/T 454..."
-	@bin/./seqyclean -454 test_data/in.sff -qual 30 30 -polyat -o unit_test/test_polAT > /dev/null
-	@diff test_data/test_polAT.sff unit_test/test_polAT.sff; \
-	RETVAL=$$?; \
-	if [ $$RETVAL -eq 0 ]; then \
-            echo "Success!"; \
-	else \
-            echo "Test 454 failed"; exit 1; \
-	fi
+	@bin/./seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup > /dev/null
+	@diff test_data/testIlluminaDup_PE1.fastq unit_test/testIlluminaDup_PE1.fastq > /dev/null || echo "Test removing of duplicates failed" 
+	@diff test_data/testIlluminaDup_PE2.fastq unit_test/testIlluminaDup_PE2.fastq > /dev/null || echo "Test removing of duplicates failed" 
+	@diff test_data/testIlluminaDup_SE.fastq unit_test/testIlluminaDup_SE.fastq > /dev/null || echo "Test removing of duplicates failed"
 	@echo "Test Illumina poly A/T PE..."
-	@bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual 30 30 -polyat -o unit_test/test_polAT_IlluminaPE > /dev/null
-	@diff test_data/test_polAT_IlluminaPE_PE1.fastq unit_test/test_polAT_IlluminaPE_PE1.fastq; \
-	RETVAL1=$$?; \
-	diff test_data/test_polAT_IlluminaPE_PE2.fastq unit_test/test_polAT_IlluminaPE_PE2.fastq; \
-	RETVAL2=$$?; \
-	diff test_data/test_polAT_IlluminaPE_SE.fastq unit_test/test_polAT_IlluminaPE_SE.fastq; \
-	RETVAL3=$$?; \
-	if [[ $$RETVAL1 -eq 0 && $$RETVAL2 -eq 0 && $$RETVAL3 -eq 0 ]]; then \
-            echo "Success!"; \
-	else \
-            echo "Test Ilumina poly A/T PE failed"; exit 1; \
-	fi
-	@echo "Test Illumina SE..."
-	@bin/./seqyclean -U test_data/R1.fastq -qual 30 30 -polyat -o unit_test/test_polAT_IlluminaSE > /dev/null
-	@diff test_data/test_polAT_IlluminaSE_SE.fastq unit_test/test_polAT_IlluminaSE_SE.fastq; \
-	RETVAL=$$?; \
-	if [ $$RETVAL -eq 0 ]; then \
-            echo "Success!"; \
-	else \
-            echo "Test Ilumina poly A/T SE failed"; exit 1; \
-	fi
-	@echo "All tests succeed"
+	@bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe2.fastq -qual -polyat -o unit_test/test_polAT_IlluminaPE > /dev/null
+	@diff test_data/test_polAT_IlluminaPE_PE1.fastq unit_test/test_polAT_IlluminaPE_PE1.fastq > /dev/null || echo "Test poly A/T Illumina PE failed"
+	@diff test_data/test_polAT_IlluminaPE_PE2.fastq unit_test/test_polAT_IlluminaPE_PE2.fastq > /dev/null || echo "Test poly A/T Illumina PE failed"
+	@diff test_data/test_polAT_IlluminaPE_SE.fastq unit_test/test_polAT_IlluminaPE_SE.fastq > /dev/null || echo "Test poly A/T Illumina PE failed"
+	@echo "Test Illumina poly A/T SE..."
+	@bin/./seqyclean -U test_data/artif_pat_pe1.fastq -qual -polyat -o unit_test/test_polAT_IlluminaSE > /dev/null
+	@diff test_data/test_polAT_IlluminaSE_SE.fastq unit_test/test_polAT_IlluminaSE_SE.fastq > /dev/null || echo "Test poly A/T Illumina SE failed"
+	@echo "Done."
 	@rm -r unit_test

@@ -243,18 +243,19 @@ void MakeClipPoints()
        
        //Clip points
        if( (vector_flag == true) && (qual_trim_flag == true) )
-       {
+       { //Keep in mind that Lucy's clip points are zero-based!
            if(reads[ff]->discarded == 0) 
            {
                 int a = reads[ff]->v_start;
                 int b = reads[ff]->read.length() - reads[ff]->v_end;
                 if( a >= b ) //Vector is on the right side
                 {
-                    reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip, reads[ff]->v_start) ) );
+                    reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip+1, reads[ff]->v_start) ) );
 
-                    if( reads[ff]->rclip == reads[ff]->lucy_rclip )
+                    if( reads[ff]->rclip == reads[ff]->lucy_rclip+1 )
                     {
                         reads[ff]->right_trimmed_by_quality = 1;
+                        reads[ff]->rclip = reads[ff]->lucy_rclip;
                     }
                     else if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                     {
@@ -282,11 +283,12 @@ void MakeClipPoints()
                 }
                 else //Vector is on the left side
                 {
-                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );
+                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip+1) );
 
-                        if( reads[ff]->rclip == reads[ff]->lucy_rclip )
+                        if( reads[ff]->rclip == reads[ff]->lucy_rclip +1)
                         {
                                 reads[ff]->right_trimmed_by_quality = 1;
+                                reads[ff]->rclip = reads[ff]->lucy_rclip;
                         }
                         else if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                         {
@@ -384,11 +386,12 @@ void MakeClipPoints()
                reads[ff]->lclip = reads[ff]->rclip = 1;
            }
        }
-       else if( vector_flag && qual_trim_flag ) 
+       else if( !vector_flag && qual_trim_flag ) 
        {
+           //Keep in mind that Lucy's clip points are zero-based!
            if (reads[ff]->discarded == 0)
            {
-                reads[ff]->rclip = min( reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length()  : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip) );                
+                reads[ff]->rclip = min( reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length()  : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip+1) );                
                 if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
                 {
                    reads[ff]->right_trimmed_by_adapter = 1;
@@ -400,8 +403,8 @@ void MakeClipPoints()
                 else
                 {
                     reads[ff]->right_trimmed_by_quality = 1;
+                    reads[ff]->rclip = reads[ff]->lucy_rclip;
                 }
-                    
                 
                 reads[ff]->lclip = max( reads[ff]->lucy_lclip,reads[ff]->rlmid.lmid_end );
                 if(reads[ff]->lclip == reads[ff]->lucy_lclip)

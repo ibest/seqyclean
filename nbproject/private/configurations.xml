@@ -58,8 +58,6 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
-      <df name="test">
-      </df>
       <df name="test_data">
       </df>
       <df name="unit_test">
@@ -102,18 +100,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 30 10 50 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 3 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 10 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 5 5 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 5 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe2.fastq -polyat 5 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe2.fastq -polyat 6 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -polyat 30 -qual -o test/test_pat --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/test_polyAT_se.fastq -polyat 10 -qual -o test/test_pat --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual -o unit_test/test454</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual -o unit_test/test454 --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe1.fastq -qual -o unit_test/testIlluminaPE</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe1.fastq -qual -o unit_test/testIlluminaPE --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pe1.fastq -qual -o unit_test/testIlluminaSE</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual 30 30 -polyat -o unit_test/test_polAT</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe1.fastq -qual -polyat -o unit_test/test_polAT_IlluminaPE</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -qual -polyat -o unit_test/test_polAT_IlluminaSE</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -U test_data/test_polyAT_se.fastq -polyat 10 -qual -o test/test_pat --ow</runcommand>
+        <runcommand>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -qual -polyat -o unit_test/test_polAT_IlluminaSE</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

@@ -46,15 +46,15 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
     char *key;
     int header_size;
 
-    fread(&(h->magic)          , sizeof(uint32_t), 1, fp);
-    fread(&(h->version)        , sizeof(char)    , 4, fp);
-    fread(&(h->index_offset)   , sizeof(uint64_t), 1, fp);
-    fread(&(h->index_len)      , sizeof(uint32_t), 1, fp);
-    fread(&(h->nreads)         , sizeof(uint32_t), 1, fp);
-    fread(&(h->header_len)     , sizeof(uint16_t), 1, fp);
-    fread(&(h->key_len)        , sizeof(uint16_t), 1, fp);
-    fread(&(h->flow_len)       , sizeof(uint16_t), 1, fp);
-    fread(&(h->flowgram_format), sizeof(uint8_t) , 1, fp);
+    size_t bytes = fread(&(h->magic)          , sizeof(uint32_t), 1, fp);
+    bytes = fread(&(h->version)        , sizeof(char)    , 4, fp);
+    bytes = fread(&(h->index_offset)   , sizeof(uint64_t), 1, fp);
+    bytes = fread(&(h->index_len)      , sizeof(uint32_t), 1, fp);
+    bytes = fread(&(h->nreads)         , sizeof(uint32_t), 1, fp);
+    bytes = fread(&(h->header_len)     , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(h->key_len)        , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(h->flow_len)       , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(h->flowgram_format), sizeof(uint8_t) , 1, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
     /* Linux: not in use any more
@@ -90,10 +90,10 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
         exit(1);
     }
 
-    fread(flow, sizeof(char), h->flow_len, fp);
+    bytes = fread(flow, sizeof(char), h->flow_len, fp);
     h->flow = flow;
 
-    fread(key , sizeof(char), h->key_len , fp);
+    bytes = fread(key , sizeof(char), h->key_len , fp);
     
     h->key = key;
     
@@ -233,7 +233,7 @@ void read_padding(FILE *fp, int header_size) {
     
     //printf("%d %d \n" ,header_size, remainder );
     
-    fread(padding, sizeof(uint8_t), remainder, fp);
+    size_t bytes = fread(padding, sizeof(uint8_t), remainder, fp);
 }
 
 void
@@ -281,13 +281,13 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
     char *name;
     int header_size;
 
-    fread(&(rh->header_len)        , sizeof(uint16_t), 1, fp);
-    fread(&(rh->name_len)          , sizeof(uint16_t), 1, fp);
-    fread(&(rh->nbases)            , sizeof(uint32_t), 1, fp);
-    fread(&(rh->clip_qual_left)    , sizeof(uint16_t), 1, fp);
-    fread(&(rh->clip_qual_right)   , sizeof(uint16_t), 1, fp);
-    fread(&(rh->clip_adapter_left) , sizeof(uint16_t), 1, fp);
-    fread(&(rh->clip_adapter_right), sizeof(uint16_t), 1, fp);
+    size_t bytes = fread(&(rh->header_len)        , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(rh->name_len)          , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(rh->nbases)            , sizeof(uint32_t), 1, fp);
+    bytes = fread(&(rh->clip_qual_left)    , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(rh->clip_qual_right)   , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(rh->clip_adapter_left) , sizeof(uint16_t), 1, fp);
+    bytes = fread(&(rh->clip_adapter_right), sizeof(uint16_t), 1, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
     /* Linux version, not in use any more
@@ -316,7 +316,7 @@ void read_sff_read_header(FILE *fp, sff_read_header *rh) {
         exit(1);
     }
 
-    fread(name, sizeof(char), rh->name_len, fp);
+    bytes = fread(name, sizeof(char), rh->name_len, fp);
     rh->name = name;
 
     /* the section should be a multiple of 8-bytes, if not,
@@ -382,7 +382,7 @@ void read_sff_read_data(FILE *fp,
     }
 
     /* read from the sff file and assign to sff_read_data */
-    fread(flowgram, sizeof(uint16_t), (size_t) nflows, fp);
+    size_t bytes = fread(flowgram, sizeof(uint16_t), (size_t) nflows, fp);
 
     /* sff files are in big endian notation so adjust appropriately */
     for (i = 0; i < nflows; i++) {
@@ -391,13 +391,13 @@ void read_sff_read_data(FILE *fp,
     }
     rd->flowgram = flowgram;
 
-    fread(flow_index, sizeof(uint8_t), (size_t) nbases, fp);
+    bytes = fread(flow_index, sizeof(uint8_t), (size_t) nbases, fp);
     rd->flow_index = flow_index;
 
-    fread(bases, sizeof(char), (size_t) nbases, fp);
+    bytes = fread(bases, sizeof(char), (size_t) nbases, fp);
     rd->bases = bases;
 
-    fread(quality, sizeof(uint8_t), (size_t) nbases, fp);
+    bytes = fread(quality, sizeof(uint8_t), (size_t) nbases, fp);
     rd->quality = quality;
     
     
@@ -512,7 +512,7 @@ void read_manifest(FILE *fp)
         exit(1);
     }
 
-   fread(manifest, sizeof(char), manifest_size, fp);
+   int i = fread(manifest, sizeof(char), manifest_size, fp);
    
 }
 
