@@ -108,7 +108,7 @@ string query_str1;
 string query_str2;
 
 
-/*Maximim number of mismatches allowed in alignment operation*/
+/*Maximum number of mismatches allowed in alignment operation*/
 int max_al_mism = 5; /*5 mismatches by default*/
 
 char *sffile_name;
@@ -1103,10 +1103,10 @@ int main(int argc, char *argv[])
                 {
                         cout << "Quality trimming: YES" << endl;
                         sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximim error: " << -10*log10(max_a_error) << endl;
-                        sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
-                        cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
-                        sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        cout << "Maximum error: " << -10*log10(max_a_error) << endl;
+                        sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
+                        cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
+                        sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
                 }
                 else
                 {
@@ -1212,10 +1212,10 @@ int main(int argc, char *argv[])
         {
            cout << "Quality trimming: YES" << endl;
            sum_stat << "Quality trimming: YES" << endl;
-           cout << "Maximim error: " << -10*log10(max_a_error) << endl;
-           sum_stat << "Maximim error: " << -10*log10(max_a_error) << endl;
-           cout << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
-           sum_stat << "Maximim error at ends: " << -10*log10(max_e_at_ends) << endl;
+           cout << "Maximum error: " << -10*log10(max_a_error) << endl;
+           sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
+           cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
+           sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
         }
         else
         {

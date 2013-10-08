@@ -60,8 +60,6 @@
       </df>
       <df name="test_data">
       </df>
-      <df name="unit_test">
-      </df>
     </df>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
