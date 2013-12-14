@@ -5,9 +5,12 @@
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
             <name>seqyclean</name>
             <c-extensions>c</c-extensions>
-            <cpp-extensions>C,cpp</cpp-extensions>
+            <cpp-extensions>cpp</cpp-extensions>
             <header-extensions>h</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>.</sourceRootElem>
@@ -18,9 +21,6 @@
                     <type>0</type>
                 </confElem>
             </confList>
-            <formatting>
-                <project-formatting-style>false</project-formatting-style>
-            </formatting>
         </data>
     </configuration>
 </project>
