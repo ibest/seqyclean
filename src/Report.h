@@ -79,8 +79,6 @@ void MakeRocheReport(char* file_name, char* roche_fname); /*ROCHE clip points ve
 
 
 /*Writung out files*/
-void WriteToFASTQ(string file_name);
-void WriteToSFF(string file_name);
 void WriteToFASTQIlluminaSE(char* file_name_1);
 void WriteToSFFIllumina(char* file_name);
 void CreateOutputFiles(string file_name);
