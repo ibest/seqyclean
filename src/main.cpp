@@ -16,11 +16,7 @@
 #include "Read.h"
 #include "Dictionary.h"
 #include "Report.h"
-//#include "MainPipeLine.h"
 #include "gzstream.h"
-//#include "QualTrim.h"
-#//include "flash.h"
-#//include "dup.h"
 #include "Roche.h"
 #include "rlmid.h"
 #include "Illumina.h"
@@ -33,7 +29,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.8.11 (2014-02-24)";
+string version = "1.8.11 (2014-02-25)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -728,7 +724,7 @@ int main(int argc, char *argv[])
                 getline(in,line);
                 vector <string> fields;
                 split_str( line, fields, ":" );
-                if (fields.size() == 5)
+                /*if (fields.size() == 5)
                 {
                     //Old headers == True
                     old_style_illumina_flag = true;
@@ -737,7 +733,7 @@ int main(int argc, char *argv[])
                 {
                     //Old headers == False
                     old_style_illumina_flag = false;
-                }
+                }*/
                 
             }
         } else 

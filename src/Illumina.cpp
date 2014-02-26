@@ -881,6 +881,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     }
     else
     {
+        //cout << read->read.length() << "\n";
         read->discarded = 1;
         read->discarded_by_read_length = 1;
         return -1;
@@ -1402,7 +1403,7 @@ void IlluminaDynamicSE()
                         read->read = record_block[1];
                         read->illumina_quality_string = line;
                         se_bases_anal += read->read.length();
-          
+                        //std::cout << read->illumina_quality_string << "\n";
                         //Serial realization - useful for debugging if something does not work as expected
           
                         IlluminaDynRoutine(read, adapter_found, query_string);
@@ -1418,45 +1419,38 @@ void IlluminaDynamicSE()
                         //Read ID
                         rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
                         
-                        
-                                if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
-                        //cout <<  read->lclip << " " << read->rclip << endl;
-                                if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
-                                if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
-                                if( (int)read->read.length() < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
-                                if( (read->rclip - read->lclip) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                        if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
+                        if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                        if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
+                        if( (int)read->read.length() < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                        if( (read->rclip - read->lclip) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
               
-                                if( read->discarded == 0 )
-                                {
-                                        
-                                    if(  read->rclip < read->initial_length  )
-                                    {
-                                        cnt_right_trim_se += 1;
-                                        avg_right_clip += read->initial_length - read->rclip;
-                                        avg_right_trim_len_se = avg_right_clip/cnt_right_trim_se;
-                                        //avg_right_trim_len_se = GetAvg( avg_right_trim_len_se, cnt_right_trim_se, read->initial_length - read->rclip );
-                                    }
-                                    if(read->lclip > 0)
-                                    {
-                                        cnt_left_trim_se += 1;
-                                        //avg_left_trim_len_se = GetAvg( avg_left_trim_len_se, cnt_left_trim_se, read->lclip );
-                                        avg_left_clip += read->lclip; 
-                                        avg_left_trim_len_se = avg_left_clip/cnt_left_trim_se;
-                                    }
-                                    
-                                    read->read = read->read.substr(0 , read->rclip );
-                                    read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
-                                    read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
-                                    read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
+                        if( read->discarded == 0 )
+                        {
+                          if(  read->rclip < read->initial_length  )
+                          {
+                             cnt_right_trim_se += 1;
+                             avg_right_clip += read->initial_length - read->rclip;
+                             avg_right_trim_len_se = avg_right_clip/cnt_right_trim_se;
+                          }
+                          if(read->lclip > 0)
+                          {
+                             cnt_left_trim_se += 1;
+                             avg_left_clip += read->lclip; 
+                             avg_left_trim_len_se = avg_left_clip/cnt_left_trim_se;
+                          }
+                          read->read = read->read.substr(0 , read->rclip );
+                          read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
+                          read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
+                          read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
                  
-                                    WriteSEFile(se_output_file, read);
-                                    se_accept_cnt+=1;
-                                    se_bases_kept += read->read.length();
+                          WriteSEFile(se_output_file, read);
+                          se_accept_cnt+=1;
+                          se_bases_kept += read->read.length();
                                     
-                                    //if( read->initial_length > (read->rclip - read->lclip) )
-                                    if( read->discarded == 0 )
-                                    {
-                                        cnt_avg+=1;
+                          if( read->discarded == 0 )
+                          {
+                            cnt_avg+=1;
                                         /*if (cnt_avg == 1) {
                                             first_avg = read->rclip - read->lclip;
                                             avg_trim_len_se = first_avg;
@@ -1464,16 +1458,14 @@ void IlluminaDynamicSE()
                                             avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, read->rclip - read->lclip, first_avg );
                                             cout << avg_trim_len_se << endl;
                                         }*/
-                                        avg_bases_se += read->rclip - read->lclip;
-                                        avg_trim_len_se = avg_bases_se/cnt_avg;
-                                        
-                                    }
-                 
-                                    cnt_avg_len+=1; 
+                            avg_bases_se += read->rclip - read->lclip;
+                            avg_trim_len_se = avg_bases_se/cnt_avg;
+                          }
+                          cnt_avg_len+=1; 
                                     //avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
                                     
                  
-                                } 
+                        } 
                                 
                          
                         
@@ -1578,11 +1570,11 @@ void IlluminaDynamicSE()
     
     vector<string> t;
     split_str(st_str, t, "\n");
-    for(int kk=0; kk<(int)t.size(); ++kk)
+    /*for(int kk=0; kk<(int)t.size(); ++kk)
     {
-       // cout << "\033[A\033[2K";
-        //sum_stat << "\033[A\033[2K";
-    }
+       cout << "\033[A\033[2K";
+       sum_stat << "\033[A\033[2K";
+    }*/
     t.clear();
     
     cout << st_str;

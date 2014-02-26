@@ -100,18 +100,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual 30 30 -polyat -o unit_test/test_polAT</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -qual -polyat -o unit_test/test_polAT_IlluminaSE</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pat_pe1.fastq -2 test_data/artif_pat_pe1.fastq -qual -polyat -o unit_test/test_polAT_IlluminaPE</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean --dup -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup --ow --new2old_illumina</runcommandpicklistitem>
           <runcommandpicklistitem>./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/test_data/ -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/test_data/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/analysis/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/analysis/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual -i64</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq -qual</runcommand>
+        <runcommand>bin/./seqyclean -U ~/bio/app/metamp/analysis/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual -i64</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
