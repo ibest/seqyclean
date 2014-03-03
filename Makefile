@@ -118,3 +118,6 @@ test :
 	@diff test_data/test_polAT_IlluminaSE_SE.fastq unit_test/test_polAT_IlluminaSE_SE.fastq > /dev/null || echo "Test poly A/T Illumina SE failed"
 	@echo "Done."
 	@rm -r unit_test
+	
+install :
+	cp bin/seqyclean /usr/local/bin
