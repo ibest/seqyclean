@@ -29,7 +29,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.8.11 (2014-02-25)";
+string version = "1.9.1 (2014-04-13)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -65,6 +65,8 @@ char* rlmids_file;// = "RL_MIDS.csv";
 /*PCR flags and file with prinmers*/
 bool pcr_flag = false;
 char *pcr_file_name;
+// Starting position and a window size for searching for duplicates:
+extern int start_dw = 10, size_dw = 15;
 
 /*ROCHE*/
 //char* roche_file_name;// = "";
@@ -318,6 +320,15 @@ int main(int argc, char *argv[])
         else if( string(argv[i]) == "--dup" ) 
         {
            rem_dup = true;
+           if( string(argv[i]) == "-start_dw" ) 
+           {
+               start_dw = atoi(argv[++i]);
+           }
+           if( string(argv[i]) == "-size_dw" ) 
+           {
+               size_dw = atoi(argv[++i]);
+           }
+           
            continue;
         }
         else if( string(argv[i]) == "--ow" ) 
@@ -1364,7 +1375,7 @@ void PrintHelp() {
                                                         "[-ot <value>]\n"
                                                         "[--overlap <minoverlap=value>]\n"
                                                         "[--ow]\n"
-                                                        "[--dup]\n" 
+                                                        "[--dup][-start_dw][-size_dw]\n" 
                                                         "[-polyat [cdna] [cerr] [crng] ]\n"
                                                         "[--no_ts_adapter_trim]\n"
                                                         "[--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n"

@@ -21,5 +21,8 @@ using namespace std;
 extern map<string, int> DupDict;
 void screen_duplicates(Read *read1, Read *read2, unsigned long &duplicates);
 
+// Starting position and a window size for searching for duplicates:
+extern int start_dw, size_dw;
+
 #endif	/* DUP_H */
 

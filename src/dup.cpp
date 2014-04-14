@@ -4,9 +4,9 @@
 void screen_duplicates(Read *seq1, Read *seq2, unsigned long &duplicates) {
     int c = 0;
     
-    if( (seq1->initial_length < 35) && (seq2->initial_length < 35) ) return;
+    if( (seq1->initial_length < start_dw+size_dw) && (seq2->initial_length < start_dw+size_dw) ) return;
     
-    string comb = seq1->read.substr(10,25) + seq2->read.substr(10,25);
+    string comb = seq1->read.substr(start_dw,size_dw) + seq2->read.substr(start_dw,size_dw);
     
     string rcomb = MakeRevComplement(comb);
     map<string, int>::iterator it_DupDict;
