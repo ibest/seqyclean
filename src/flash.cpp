@@ -9,7 +9,7 @@ int strdist(string s1, string s2) {
         }
     } else {
         cout << "ERROR lengths of barcodes and index read do not match!" << endl;
-        cout << "Target " << s1 << endl;
+        cout << "Target: " << s1 << endl;
         cout << "Index read: " << s2 << endl;
         sum = -1;
     }

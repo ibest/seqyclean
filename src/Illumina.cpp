@@ -259,7 +259,7 @@ void IlluminaDynamic()
                             read1->tru_sec_found = 1;
                             //cout << "k-search: " <<  read1->illumina_readID << endl;
                         }
-                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && trim_adapters_flag)
+                        else if( (read1->tru_sec_found == 0) && (read2->tru_sec_found == 0) && trim_adapters_flag && (read1->discarded != 0) && (read2->discarded != 0))
                         {
                             int o = find_overlap_pos(read1->read, MakeRevComplement(read2->read), adapterlength, false);
                             
