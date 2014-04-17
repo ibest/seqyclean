@@ -210,7 +210,7 @@ bool i64_flag = false;
 
 unsigned int adapterlength = 60;
 double overlap_t = 0.75;
-int minoverlap = 10;
+int minoverlap = 16;
 bool overlap_flag = false;
 
 bool overwrite_flag = false;

@@ -30,7 +30,7 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     if((int)s2.length() < adapterlength) return -10000;
     
     if(!flag) {
-        for(unsigned int i = rlen; i >= 1; i--) {
+        for(unsigned int i = rlen; i >= minoverlap; i--) {
             if((double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) >= overlap_t ) {
                 //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
                 return i;
