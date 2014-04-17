@@ -59,8 +59,6 @@
         <in>util.h</in>
       </df>
       <df name="test_data">
-        <df name="test">
-        </df>
       </df>
     </df>
   </logicalFolder>
@@ -100,18 +98,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o unit_test/testIlluminaDup --ow --new2old_illumina</runcommandpicklistitem>
-          <runcommandpicklistitem>./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 ~/bio/app/MetaAmplicon_project/MetAmp_test/raw_data/v35_art.fq -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq -qual</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/test_data/ -o ~/bio/app/MetaAmplicon_project/MetAmp_test/clean_data/test --fastq -qual</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/test_data/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/analysis/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U ~/bio/app/metamp/analysis/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual -i64</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina -1 test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina -1 test_data/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina -1 test_data/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5 --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -U ~/bio/app/metamp/analysis/test.extendedFrags.fastq -o ~/bio/app/metamp/analysis/test -qual -i64</runcommand>
+        <runcommand>bin/./seqyclean --new2old_illumina -1 test_data/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5 --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

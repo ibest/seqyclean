@@ -182,6 +182,7 @@ string MakeRevComplement(string init_str) {
             continue;
         }
         
+        
     }
     
     return init_str;

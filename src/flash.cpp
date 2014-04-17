@@ -30,13 +30,14 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     if((int)s2.length() < adapterlength) return -10000;
     
     if(!flag) {
-        //print "checking dovetail"
-        for(int i = adapterlength; i>=0; i--) {
-            if((double)((rlen - i) - strdist(s1.substr(0,rlen-i),s2.substr(i,rlen-i)))/(double)(rlen-i) >= overlap_t ) {
-               //found dovetail overlap
-               return -i;
+        for(unsigned int i = rlen; i >= 1; i--) {
+            if((double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) >= overlap_t ) {
+                //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
+                return i;
             }
+            //std::cout << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) << '\n';
         }
+        
     }
     if(flag) {
         //Next check for perfect overlap
@@ -49,7 +50,6 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
             if((double)( (rlen-i) - strdist(s1.substr(i,rlen-i), s2.substr(0,rlen-i)))/(double)(rlen-i) >= overlap_t ) {
                 return i;
             }
-            
         }
     }
     
