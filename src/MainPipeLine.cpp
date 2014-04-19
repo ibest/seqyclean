@@ -523,7 +523,7 @@ void MainPipeLine() {
     /*Here we are making threads*/
     /*========================================================================*/
     pthread_t threads[NUM_THREADS];
-    
+    //cout << reads[0]->readID << endl;
     /*Remove Keys/Adaptors/Primers/Barcodes*/
     unsigned int i=0;
     for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {

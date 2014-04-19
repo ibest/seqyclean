@@ -112,7 +112,7 @@ void RocheRoutine()
         
        //reads_total += reads.size();
        cout << "Conversion finished. Total number of reads read from given file(s): " << reads.size() << endl;
-       
+       //cout << reads[10]->readID << endl;
        /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
        if( qual_trim_flag  ) 
        {
@@ -186,7 +186,7 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads)
                 
        if(ii==1) record_block.push_back(line); /*actual data*/
                 
-       if(ii==2) record_block.push_back(line);/*a symbol "+"*/
+       if(ii==2) record_block.push_back(line);/*a symbol "+", etc */
                 
        if(ii==3) 
        {
@@ -194,7 +194,8 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads)
            
            Read* read = new Read();
            read->readID = (char *) malloc( record_block[0].length() * sizeof(char) ); //(char*)record_block[0].c_str();
-           memcpy( read->readID, (char*)record_block[0].c_str(), (size_t) record_block[0].length() );
+           strcpy(read->readID, (char*)record_block[0].c_str());//
+           //memcpy( read->readID, (char*)record_block[0].c_str(), (size_t) record_block[0].length() );
            read->initial_length = record_block[1].length();
            read->read = record_block[1];
            read->quality = (uint8_t*)malloc(sizeof(uint8_t)*record_block[3].length());
@@ -203,11 +204,16 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads)
            {
                read->quality[jj] = record_block[3][jj];
            }
-                        
+           //std::cout << read->readID << "   " << (char*)record_block[0].c_str() <<'\n';
+           /*
+           read->readID = (char*)record_block[0].c_str();
+           read->read = record_block[1];
+           read->quality = (uint8_t*)record_block[2].c_str();
+           */
            counter++;
            
            reads.push_back(read);
-           
+           //cout << read->readID << endl;
        }
         
        ii++;
@@ -220,7 +226,7 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads)
     
    in.close();
    
-   
+   //cout << reads[10]->readID << endl;
      
 }
 
@@ -816,6 +822,7 @@ string PrintRocheStatisticsTSV(unsigned long cnt,
 }
 
 void WriteToFASTQ(string file_name) {
+    /*
     FILE* output_file;
     
     output_file = fopen( file_name.c_str(), "w");
@@ -850,6 +857,7 @@ void WriteToFASTQ(string file_name) {
             if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
             fputs( read_id_to_write.c_str(), output_file );
+            std::cout << read_id_to_write.c_str() << '\n';
             fputc( '\n', output_file );
             fputs( reads[i]->read.c_str(), output_file );
             fputc( '\n', output_file );
@@ -860,7 +868,55 @@ void WriteToFASTQ(string file_name) {
         } 
     }
     
+    
+    
     fclose(output_file);
+    
+    */
+    
+    fstream output_file;
+    output_file.open( file_name.c_str(), ios::out );
+    
+    for (unsigned int i=0; i<reads.size(); i++) {
+        
+        if (reads[i]->discarded)
+            continue;
+        
+        if(reads[i]->lclip >= (int)reads[i]->read.length()) {
+           reads[i]->discarded = 1;
+           reads[i]->discarded_by_read_length = 1;
+           reads[i]->lclip = reads[i]->rclip = 1;
+           continue;
+        } else if(reads[i]->lclip >= reads[i]->rclip) {
+           reads[i]->discarded = 1;
+           reads[i]->discarded_by_read_length = 1;
+           reads[i]->lclip = reads[i]->rclip = 1;
+           continue;
+        }
+        
+        //cout << reads[i]->readID << endl;
+        string read_id_to_write = string(reads[i]->readID);
+        if(read_id_to_write[0] != '@')
+                read_id_to_write = "@" + read_id_to_write;
+            
+        reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
+        string quality = string((char*)reads[i]->quality); 
+        quality = quality.substr(0,reads[i]->rclip) ; 
+        reads[i]->read = reads[i]->read.substr( reads[i]->lclip, reads[i]->read.length() - reads[i]->lclip );
+        quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
+            
+        if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
+            
+        
+        output_file << read_id_to_write << endl;
+        output_file << reads[i]->read << endl;
+        output_file << '+' << endl;
+        output_file << quality << endl;
+    
+    }
+    
+    output_file.close();
+    
 }
 
 void WriteToSFF(string file_name) {
