@@ -214,7 +214,7 @@ string PrintIlluminaStatisticsTSVSE(unsigned long cnt,
 
 
 
-void TrimIlluminaAdapter(Read* read, bool& adapter_found, string &query_str);
+void TrimAdapterSE(Read* read, bool& adapter_found, string &query_str);
 
 
 #endif	/* ILLUMINA_H */

@@ -894,7 +894,6 @@ void WriteToFASTQ(string file_name) {
            continue;
         }
         
-        //cout << reads[i]->readID << endl;
         string read_id_to_write = string(reads[i]->readID);
         if(read_id_to_write[0] != '@')
                 read_id_to_write = "@" + read_id_to_write;

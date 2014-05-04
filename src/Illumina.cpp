@@ -422,6 +422,19 @@ void IlluminaDynamic()
                                
                                continue;
                                */
+                        } else {
+                            // Trim adapters for single-mode:
+                            TrimAdapterSE(read1, adapter_found1, query_string1);
+                            if (read1->tru_sec_found) {
+                                read2->tru_sec_found = 1;
+                                read2->tru_sec_pos = read1->tru_sec_pos;
+                            } else {
+                                TrimAdapterSE(read2, adapter_found2, query_string2);
+                                if (read2->tru_sec_found) {
+                                    read1->tru_sec_found = 1;
+                                    read1->tru_sec_pos = read2->tru_sec_pos;
+                                }
+                            }
                         }
                     }
                         
@@ -1995,87 +2008,85 @@ int IlluminaDynRoutine_post(Read* read)
     return 0;
 }
 
-void TrimIlluminaAdapter(Read* read, bool& adapter_found, string &query_str) {
-//Run the main routine: Adapter + Vector/Contaminants trimming or only Adaptors
-    //First 15 bases of i5 adapter forward
+
+void TrimAdapterSE(Read* read, bool& adapter_found, string &query_str) {
     size_t found;
-    if (!adapter_found)
-    {
+    if (!adapter_found){
         string ts_adapter = tmpl_i5_1.substr(0,15);
         found = read->read.find( ts_adapter );
-        if (found != string::npos){
-             cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-             sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-             adapter_found = true;
-             query_str = ts_adapter;
-             read->tru_sec_pos = found;
-             read->tru_sec_found = 1;
-        }else{
-             //First 20 bases of i5 adapter in reverse complement
-             ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
-             found = read->read.find( ts_adapter );
-             if (found != string::npos) {
-                 cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                 sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                 adapter_found = true;
-                 query_str = ts_adapter;
-                 read->tru_sec_pos = found;
-                 read->tru_sec_found = 1;
-             }else{
-                 //First 20 bases of i7 adapter forward
-                 ts_adapter = tmpl_i7_1.substr(0,15);
-                 found = read->read.find( ts_adapter );
-                 if (found != string::npos) { 
-                      cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                      sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                      adapter_found = true;
-                      query_str = ts_adapter;
-                      read->tru_sec_pos = found;
-                      read->tru_sec_found = 1;
-                 }else{
-                      //First 20 bases of i5 adapter in reverse complement
-                      ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
-                      found = read->read.find( ts_adapter );
-                      if (found != string::npos){
-                           cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                           sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                           adapter_found = true;
-                           query_str = ts_adapter;
-                           read->tru_sec_pos = found;
-                           read->tru_sec_found = 1;
-                      }else{
-                           read->tru_sec_pos = -1;
-                           read->tru_sec_found = 0;
-                      }
-                 }
-            }
-          }
-     }else{
+        if( found != string::npos ) {
+            cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+            sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+            adapter_found = true;
+            query_str = ts_adapter;
+            read->tru_sec_pos = found;
+            read->tru_sec_found = 1;
+        } else {
+            //First 20 bases of i5 adapter in reverse complement
+            ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
+            found = read->read.find( ts_adapter );
+            if( found != string::npos ) {
+               cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+               sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+               adapter_found = true;
+               query_str = ts_adapter;
+               read->tru_sec_pos = found;
+               read->tru_sec_found = 1;
+            } else {
+               //First 20 bases of i7 adapter forward
+               ts_adapter = tmpl_i7_1.substr(0,15);
+               found = read->read.find( ts_adapter );
+               if( found != string::npos ) {
+                  cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                  sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                  adapter_found = true;
+                  query_str = ts_adapter;
+                  read->tru_sec_pos = found;
+                  read->tru_sec_found = 1;
+               } else {
+                  //First 20 bases of i5 adapter in reverse complement
+                  ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
+                  found = read->read.find( ts_adapter );
+                  if( found != string::npos ) {
+                    cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    adapter_found = true;
+                    query_str = ts_adapter;
+                    read->tru_sec_pos = found;
+                    read->tru_sec_found = 1;
+                  } else {
+                    read->tru_sec_pos = -1;
+                    read->tru_sec_found = 0;
+                  }
+               }
+             }
+           }
+        } else {
            bool adp_found = false;
            found = read->read.rfind( query_str );
-           if (found != string::npos){
+           if( found != string::npos ) {
               adp_found = true;
               read->tru_sec_pos = found;
               read->tru_sec_found = 1;
-           }else{
+           } else {
               //SSAHA job starts here
               iz_SSAHA *izssaha = new iz_SSAHA();
               AlignResult al_res = izssaha->Find( read->read , query_str );
               AlignScores scores;
-              if (al_res.found_flag) {
-                  scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-                  if (scores.mismatches <= max_al_mism){
-                      adp_found = true;
-                      read->tru_sec_pos = al_res.pos;
-                      read->tru_sec_found = 1;
-                  }
+              if( al_res.found_flag  ) {
+                 scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
+                 if(scores.mismatches <= max_al_mism  ) {
+                    adp_found = true;
+                    read->tru_sec_pos = al_res.pos;
+                    read->tru_sec_found = 1;
+                 }
               }
               delete izssaha;
            }
-        
-           if (!adp_found) {
-               read->tru_sec_pos = -1;
-               read->tru_sec_found = 0;
+           
+           if(!adp_found) {
+              read->tru_sec_pos = -1;
+              read->tru_sec_found = 0;
            }
-       }
+     }
 }

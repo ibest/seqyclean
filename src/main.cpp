@@ -236,18 +236,14 @@ int main(int argc, char *argv[])
         return 0;
     }
         
-    for (int i=1; i<argc; i++) 
-    {
-        if( string(argv[i]) == "--version" ) 
-        {
+    for (int i=1; i<argc; i++) {
+        if( string(argv[i]) == "--version" ) {
            cout << "Version: " << version << endl;
            exit(1);
         }
-        else if( string(argv[i]) == "-qual" ) 
-        {
+        else if( string(argv[i]) == "-qual" ) {
            qual_trim_flag = true;
-           if ((i+1)<argc && isdigit(argv[i+1][0])) 
-           {
+           if ((i+1)<argc && isdigit(argv[i+1][0])) {
                max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );//atof(argv[++i]);
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
@@ -476,16 +472,6 @@ int main(int argc, char *argv[])
            
            continue;
         }
-        else if(string(argv[i]) == "--serial" )
-        {
-           serial_flag = true;
-           continue;
-        }
-        else if(string(argv[i]) == "-d" )
-        {
-           debug_flag = true;
-           continue;
-        }
         else if(string(argv[i]) == "--new2old_illumina" )
         {
            new2old_illumina = true;
@@ -599,24 +585,18 @@ int main(int argc, char *argv[])
            PrintHelp();
            exit(1);
         }
-        else if( string(argv[i]) == "-1" )
-        {
-           if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
-           {
+        else if( string(argv[i]) == "-1" ) {
+           if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) {
               illumina_flag = true;
               illumina_file_name_R1 = argv[++i];
               pe1_names.push_back(illumina_file_name_R1);
               
               int jj=0;
-              while( ( (i+1+jj)<argc ) && (argv[i+1+jj][0] != '-') )
-              {
+              while( ( (i+1+jj)<argc ) && (argv[i+1+jj][0] != '-') ) {
                   pe1_names.push_back(argv[i+jj+1]);
-                  //printf("%s\n", argv[i+jj+1]);
                   jj+=1;
               }
-              
            }
-           
            continue;
         }
         else if( string(argv[i]) == "-2" )
@@ -631,7 +611,6 @@ int main(int argc, char *argv[])
               while( ( (i+1+jj)<argc ) && (argv[i+1+jj][0] != '-') )
               {
                   pe2_names.push_back(argv[i+1+jj]);
-                  //printf("%s\n", argv[i+1+jj]);
                   jj+=1;
               }
               
@@ -652,7 +631,6 @@ int main(int argc, char *argv[])
               while( ( (i+1+jj)<argc ) && (argv[i+1+jj][0] != '-') )
               {
                   se_names.push_back(argv[i+1+jj]);
-                  //printf("%s\n", argv[i+1+jj]);
                   jj+=1;
               }
            }
