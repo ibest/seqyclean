@@ -236,8 +236,8 @@ void IlluminaDynamic()
                             // cout << "dovetail: " << o << read1->illumina_readID << endl;
                             //dovetails, remove adapters:
                             read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-                            read1->tru_sec_pos = o;//o - 1; 
-                            read2->tru_sec_pos = o;//o - 1;
+                            read1->tru_sec_pos = o-1;//o; 
+                            read2->tru_sec_pos = o-1;//o;
                             
                             //cout << read1->tru_sec_pos << endl;
                                /*
