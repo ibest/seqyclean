@@ -826,7 +826,7 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
         else 
         {
             left == 0 ? read->lucy_lclip = 0 : read->lucy_lclip = left;
-            right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right;
+            right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right+1;
         }
 	
 
@@ -885,7 +885,7 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         else 
         {
             left == 0 ? read->lucy_lclip = 0 : read->lucy_lclip = left;
-            right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right;
+            right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right+1;
         }
 	
 
