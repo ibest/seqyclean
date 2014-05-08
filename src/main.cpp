@@ -29,7 +29,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.9.1 (2014-04-13)";
+string version = "1.9.1 (2014-05-7)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -66,7 +66,7 @@ char* rlmids_file;// = "RL_MIDS.csv";
 bool pcr_flag = false;
 char *pcr_file_name;
 // Starting position and a window size for searching for duplicates:
-extern int start_dw = 10, size_dw = 15;
+int start_dw = 10, size_dw = 15;
 
 /*ROCHE*/
 //char* roche_file_name;// = "";
@@ -132,6 +132,9 @@ bool lucy_only_flag = false;
 /*-----LUCY parameters------*/
 float max_a_error = 0.01;
 float max_e_at_ends = 0.01;
+/* number of windows for window trimming */
+int num_windows = 3;
+double bracket_error = 0.02;
 
 unsigned short minimum_read_length = 50;
 
@@ -201,8 +204,8 @@ vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
 string stat_str, tsv_stat_str;
 
-int window0 = 50;
-int window1 = 10;
+int window0 = 30;
+int window1 = 20;
 
 bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
@@ -216,6 +219,9 @@ bool overlap_flag = false;
 bool overwrite_flag = false;
 
 bool rem_dup = false;
+
+string adapter_file;
+bool custom_adapters = false;
 
 int main(int argc, char *argv[]) 
 {
@@ -240,6 +246,30 @@ int main(int argc, char *argv[])
         if( string(argv[i]) == "--version" ) {
            cout << "Version: " << version << endl;
            exit(1);
+        }
+        else if (string(argv[i]) == "-adapters") {  
+           if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
+           {
+             adapter_file = argv[++i]; /*Vector file given*/
+             if (!exists( (char*)adapter_file.c_str() ) )
+             {
+                cout<< "Warning: adapter file " <<  adapter_file << " not found. Default adapters will be used for trimming.\n";
+             } else {
+                 custom_adapters = true;
+             }
+           }
+           continue;
+        } 
+        else if (string(argv[i]) == "-num_windows") {  
+            if ((i+1)<argc && isdigit(argv[i+1][0])) {
+               num_windows = atoi(argv[++i]);
+            }
+            continue;
+        } 
+        else if (string(argv[i]) == "-be") {  
+            if ((i+1)<argc && isdigit(argv[i+1][0])) {
+               bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
+            }
         }
         else if( string(argv[i]) == "-qual" ) {
            qual_trim_flag = true;
@@ -343,7 +373,7 @@ int main(int argc, char *argv[])
         }
         else if( string(argv[i]) == "-max_al_mism" ) 
         {
-           max_al_mism = atoi(argv[i]);
+           max_al_mism = atoi(argv[++i]);
            continue;
         }
         else if( string(argv[i]) == "--keep_fastq_orig" ) 

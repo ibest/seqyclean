@@ -64,8 +64,8 @@
 /* corresponding probability of error */
 #define MAX_QUALITY 99
 
-/* Note: the max number of windows is 20 */
-#define MAX_NUMBER_OF_WINDOWS 20
+/* Note: the max number of windows is 50 */
+#define MAX_NUMBER_OF_WINDOWS 50
 
 /* default for maximum average probability of error */
 #define DEFAULT_ERROR_THRESHOLD 0.025

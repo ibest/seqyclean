@@ -1,0 +1,63 @@
+====================Parameters========================
+Version: 1.9.1 (2014-05-5)
+--------------------Basic parameters--------------------
+Provided data files : 
+PE1: test_data/test_1.fastq, PE2: test_data/test_2.fastq
+Adapters trimming: YES. 
+Vector screening: NO
+Contaminants screening: NO
+Quality trimming: YES
+Maximum error: 1
+Maximum error at ends: 1
+Poly A/T trimming: NO
+--------------------Output files--------------------
+Output prefix: test_data/test
+Report files: test_data/test_PE1_Report.tsv, test_data/test_PE2_Report.tsv
+PE1 file: test_data/test_PE1.fastq
+PE2 file: test_data/test_PE2.fastq
+Single-end reads: test_data/test_SE.fastq
+--------------------Other parameters--------------------
+Maximum number of mismatches allowed in alignment: 5
+Minimum read length to accept: 50
+New to old-style Illumina headers: NO
+Old-style Illumina: NO
+Q-value: 33
+====================Starting the process====================
+Running the Illumina cleaning process...
+Processing files: test_data/test_1.fastq, test_data/test_2.fastq
+====================Summary Statistics====================
+PE1 reads analyzed: 3, Bases:753
+Found ->
+Adapters: 0, 0%
+Reads left trimmed ->
+By quality: 0
+Average left trim length: 0 bp
+Reads right trimmed ->
+By adapter: 0
+By quality: 0
+Average right trim length: 0 bp
+PE1 reads discarded: 0
+By read length: 0
+-----------------------------------------------------------
+PE2 reads analyzed: 3, Bases:753
+Found ->
+Adapters: 0, 0%
+Reads left trimmed ->
+By quality: 0
+Average left trim length: 0 bp
+Reads right trimmed ->
+By quality: 0
+By adapter: 0
+Average right trim length: 0 bp
+PE2 reads discarded:0
+By read length: 0
+----------------------Summary for PE & SE----------------------
+Pairs kept: 3, 100%, Bases: 1506, 100%
+Pairs discarded: 0, 0%, Bases: 0, 0%
+Single Reads PE1 kept: 0, Bases: 0
+Single Reads PE2 kept: 0, Bases: 0
+Average trimmed length PE1: 251 bp
+Average trimmed length PE2: 251 bp
+====================Done cleaning====================
+Program finished.
+Elapsed time = 0.0209062 seconds.

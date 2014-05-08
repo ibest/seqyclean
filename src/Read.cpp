@@ -69,7 +69,7 @@ Read::Read()
     this->roche_left_clip = 0;
     this->roche_right_clip = 0;
     
-    this->tru_sec_pos = 0;
+    this->tru_sec_pos = -1;
     this->tru_sec_found = 0;
     
     this->vector_found = 0;

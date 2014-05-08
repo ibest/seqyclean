@@ -98,9 +98,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina -1 test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/Sample_JKC10-sRNA/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean --new2old_illumina -1 test_data/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean --new2old_illumina -1 test_data/JKC10-sRNA_TGTTGA_L001_R1_001.fastq.gz -2 test_data/JKC10-sRNA_TGTTGA_L001_R2_001.fastq.gz -o JKC10-smRNA -minimum_read_length 5 --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 /Users/ilya/bio/app/metamp/test_data/HMC/SRX021555/SRR053818_V3_V5/SRR053818_3.fastq -o /Users/ilya/bio/app/metamp/test_data/HMC/SRX021555/SRR053818_V3_V5/SRR053818_3_cleaned</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 Test_GATCAG_L001_R1_001.fastq -2 Test_GATCAG_L001_R1_001.fastq -o test_data/Test_GATCAG</runcommandpicklistitem>
@@ -108,8 +105,11 @@
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/Test_GATCAG_L001_R1_001.fastq -2 test_data/Test_GATCAG_L001_R1_001.fastq -o test_data/Test_GATCAG -ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/Test_GATCAG_L001_R1_001.fastq -2 test_data/Test_GATCAG_L001_R1_001.fastq -o test_data/Test_GATCAG --ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/Test_GATCAG_L001_R1_001.fastq -2 test_data/Test_GATCAG_L001_R1_001.fastq -o test_data/Test_GATCAG --ow -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual minimum_read_length 0</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual -minimum_read_length 0</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/Test_GATCAG_L001_R1_001.fastq -2 test_data/Test_GATCAG_L001_R1_001.fastq -o test_data/Test_GATCAG --ow -qual</runcommand>
+        <runcommand>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual -minimum_read_length 0</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

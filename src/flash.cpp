@@ -35,7 +35,7 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
                 //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
                 return i;
             }
-            //std::cout << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) << '\n';
+            //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
         }
         
     }

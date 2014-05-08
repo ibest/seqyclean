@@ -120,7 +120,7 @@ double perr[] =
 };
 
 /* number of windows for window trimming */
-int num_windows = 3;
+extern int num_windows;
 
 /* the window sizes, and max allowed average probability of error in window */
 /* Note: the max number of windows is 20 */
@@ -136,7 +136,7 @@ double end_limit = DEFAULT_END_LIMIT;
 
 /* the terminal window size and allowable error used to do an initial */
 /* trim of low-quality base calls from each end of sequence */
-double bracket_error = DEFAULT_BRACKET_ERROR;
+extern double bracket_error;//DEFAULT_BRACKET_ERROR;
 int bracket_window = DEFAULT_BRACKET_WINDOW;
 
 /* these globals are necessary so that my "grim" function can */
@@ -170,10 +170,12 @@ void window_trim(
 
 	/* calculate max allowable cumulative error for window */
 	win_limit = err_limit * (double)window;
-
+        //cout << err_limit << endl;
 	/* calculate cumulative error for first window */
-	for (i = 0, win_err = 0.0; i < window; i++)
+	for (i = 0, win_err = 0.0; i < window; i++) {
 		win_err += prob_err[i];
+                //cout << win_err << " " << prob_err[i] << endl;
+        }
 
 	/* initialize index to storage of candidate clean ranges */
 	range_idx = 0;
@@ -457,17 +459,6 @@ void multi_window_trim(
 			}
 		}
 
-#ifdef TEST_THIS_CODE
-		if (num_windows == 1)
-		{
-			for (i = 0; i < num_ranges; i++)
-				if (range_end[i] > 0)
-					fprintf(stderr, "%d  ", range_end[i] - range_start[i] + 1);
-		}
-		else if (num_windows == 3)
-			fprintf(stderr, "\n");
-#endif
-
 		/* find the largest clean range */
 		max_clean = -1;
 		for (i = 0; i < num_ranges; i++)
@@ -543,13 +534,13 @@ void bracket_clean_range(
 
 	/* calculate cumulative allowable error in window */
 	max_cum_error = (double)window_len * max_err;
-
+        //cout << max_cum_error << " " << window_len << " " << max_err << endl;
 	/* calculate cumulative error in first window */
 	for (i = 0, cum_error = 0.0; i < window_len; i++)
 	{
 		cum_error += prob_err[i];
 	}
-
+        //cout << cum_error << endl;
 	/* test first window */
 	if (cum_error <= max_cum_error)
 	{
@@ -664,7 +655,7 @@ void quality_trim(
 		bracket_window, bracket_error,
 		min_frag_length,
 		&min_left, &max_right);
-
+        //cout << length << endl;
 	if (max_right > 0)
 	{
 		/* find largest sequence that matches all our window criteria */
@@ -673,7 +664,7 @@ void quality_trim(
 			num_windows, windows, err_limits,
 			min_frag_length,
 			&left, &right);
-
+                //cout << length << endl;
 		if (right > 0)
 		{
 			left = left + min_left;
@@ -740,8 +731,8 @@ void default_windows(void)
 	err_limits[2] = (1.0 + 4.0 * max_avg_error) / 5.0;
 	*/
 
-	err_limits[0] = 0.08;
-	err_limits[1] = 0.3;
+	err_limits[0] = max_avg_error;//0.08;
+	err_limits[1] = end_limit;//0.3;
 
 }  /* default_windows() */
 
@@ -795,6 +786,7 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
         end_limit = end_lim;
         
         i=0;
+        
         for( i=0; i< read->read.length(); i++ ) 
         {
             quality[i] = GetNum(read->quality[i]) - 33;
@@ -860,32 +852,24 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         }
         
         qual_count = i;
-        
+        //cout << qual_count << endl;
         /* trim for quality */
 	conf_val_raw = quality;
 	grim(qual_count, &left, &right);
-        /*
-        if (right > 0)
-	{
-           left++; //Lucy always clips one base.
-	   right++;
-	}**/
-
-	/* display seq name and clean range */
-	if (right - left < /*99*/minimum_read_length)
-		left = right = 0;
         
-        if(left == 0 && right == 0) 
-        {
-            read->discarded = 1;
-            read->discarded_by_read_length = 1;
-            read->lucy_lclip = 1;
-            read->lucy_rclip = 1;
+	/* display seq name and clean range */
+	if (right - left < minimum_read_length) {
+		left = right = 0;
+                read->discarded = 1;
+                read->discarded_by_quality = 1;
+                read->discarded_by_read_length = 1;
+                read->lucy_lclip = 1;
+                read->lucy_rclip = 1;
         } 
         else 
         {
-            left == 0 ? read->lucy_lclip = 0 : read->lucy_lclip = left;
-            right == 0 ? read->lucy_rclip = 1 : read->lucy_rclip = right+1;
+            read->lucy_lclip = left;
+            read->lucy_rclip = right+1;
         }
 	
 
