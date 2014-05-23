@@ -23,6 +23,9 @@
 #include <map>
 #include <math.h>
 
+//#define min(a,b) (((a)<(b))?(a):(b))
+//#define max(a,b) (((a)>(b))?(a):(b))
+
 using namespace std;
 //using namespace boost;
 

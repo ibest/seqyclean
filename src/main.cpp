@@ -29,7 +29,7 @@ short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
 
-string version = "1.9.1 (2014-05-07)";
+string version = "1.9.1 (2014-05-22)";
 
 /*Data structures*/
 vector<Read*> reads;
@@ -204,8 +204,8 @@ vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
 string stat_str, tsv_stat_str;
 
-int window0 = 30;
-int window1 = 20;
+int window0 = 50;//30;
+int window1 = 10;//20;
 
 bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)

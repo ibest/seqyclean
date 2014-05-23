@@ -21,6 +21,7 @@
 #include "dup.h"
 #include "Dictionary.h"
 #include "poly.h"
+#include <algorithm>
 
 using namespace std;
 
