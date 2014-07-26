@@ -29,6 +29,7 @@
 //#include <endian.h>
 #include <zlib.h>
 #include <arpa/inet.h> // htons(), htonl()
+#include "util.h"
 
 
 #if defined __GENOME__
@@ -88,8 +89,8 @@
 #define SFF_VERSION_LENGTH 4
 #define PADDING_SIZE 8
 
-#define min(a,b) ( (a) < (b) ? (a) : (b) )
-#define max(a,b) ( (a) > (b) ? (a) : (b) )
+//#define min(a,b) ( (a) < (b) ? (a) : (b) )
+///#define max(a,b) ( (a) > (b) ? (a) : (b) )
 
 /* This is the overall sff header file */
     

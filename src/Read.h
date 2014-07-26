@@ -98,9 +98,9 @@ public:
    
    
    /*Illumina parameters*/
-   short tru_sec_pos; /*Coordinates of TruSec adapter*/
-   short index_i5; /*index of TrueSec adapter i5*/
-   short index_i7; /*index of TrueSex adapter i7*/
+   int tru_sec_pos; /*Coordinates of TruSec adapter*/
+   int index_i5; /*index of TrueSec adapter i5*/
+   int index_i7; /*index of TrueSex adapter i7*/
    bool fwd_adapter; /*does the read contain a forward or reverse complement of the adapter*/
    bool partial_adapter; /*does read contain partial or full TrueSec adaptor*/
    

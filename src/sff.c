@@ -262,10 +262,10 @@ void  verify_sff_common_header(sff_common_header *h) {
         for (i=0; i < SFF_VERSION_LENGTH; i++) {
             printf("0x%02x ", sff_header_version[i]);
         }
-        printf("\n");
-        fprintf(stderr,
-                "[err] : ", 
-                "only knows how to deal an SFF header version: ");
+        //printf("\n");
+        //fprintf(stderr,
+        //        "[err] : ", 
+        //        "only knows how to deal an SFF header version: ");
         //char valid_header_version[/*SFF_VERSION_LENGTH*/4] = "0001";//\0\0\0\1";/*SFF_VERSION*/;
         char* valid_header_version = (char*)SFF_VERSION;
         for (i=0; i < SFF_VERSION_LENGTH; i++) {

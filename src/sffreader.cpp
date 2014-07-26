@@ -183,7 +183,7 @@ void construct_fastq_entry(FILE *fp,
     uint8_t quality_char;
 
     /* print out the name/sequence blocks */
-    fprintf(fp, "@%s\n%s\n+\n", name, bases, name);
+    //fprintf(fp, "@%s\n%s\n+\n", name, bases, name);
 
     /* print out quality values (as characters)
      * formula taken from http://maq.sourceforge.net/fastq.shtml

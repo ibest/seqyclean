@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <iostream>
 #include "Read.h"
-#include "util.h"
 #include "Dictionary.h"
 #include "Report.h"
 #include "MainPipeLine.h"
@@ -22,6 +21,7 @@
 #include "Dictionary.h"
 #include "poly.h"
 #include <algorithm>
+#include "util.h"
 
 using namespace std;
 

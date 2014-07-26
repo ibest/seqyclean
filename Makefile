@@ -28,7 +28,7 @@ Illumina.o :
 	$(CXX) -Wall -g -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
 
 MainPipeLine.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
+	$(CXX) -Wall -g -Wno-int-to-void-pointer-cast -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	
 KMerRoutine.o :
 	$(CXX) -Wall -g -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
@@ -59,7 +59,7 @@ ascii.o :
 	$(CXX) -Wall -g -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
 	
 sffreader.o: $(SRC)sffreader.cpp $(SRC)sff.h
-	g++ -g -I $(SRC) -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
+	g++ -g -I $(SRC) -Wno-deprecated-declarations -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
 	
 sff.o: 
 	g++ -g -O3 -c -o $(OBJ)sff.o $(SRC)sff.c

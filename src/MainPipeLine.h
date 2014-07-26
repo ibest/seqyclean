@@ -25,7 +25,6 @@
 #include "pairwise.h"
 #include <pthread.h>
 #include <dirent.h>
-#include <list>
 #include "iz_SSAHA.h"
 #include "Read.h"
 #include "KMerRoutine.h"
