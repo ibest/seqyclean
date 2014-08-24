@@ -12,6 +12,11 @@ extern bool custom_adapters;
 vector<string> adapters;
 
 // Статистика:
+unsigned long long se_bases_kept, se_bases_discarded;
+unsigned long se_discard_cnt = 0;
+unsigned long long se_bases_anal = 0;        
+unsigned long avg_trim_len_se;
+
 unsigned long long pe1_bases_anal, pe2_bases_anal, pe_bases_kept, pe_bases_discarded, se_pe1_bases_kept, se_pe2_bases_kept;
 unsigned long pe_discard_cnt;
 double avg_trim_len_pe1, avg_trim_len_pe2;
@@ -50,7 +55,8 @@ unsigned long left_trimmed_by_polyat1, left_trimmed_by_polyat2;
             
 unsigned long duplicates = 0;
         
-    
+std::string stat_str, tsv_stat_str;
+   
 
 //Dynamic Illumina: does not need space to store reads:
 void IlluminaDynamic()

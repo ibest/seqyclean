@@ -33,9 +33,6 @@ extern string output_prefix;
 extern bool debug_flag;
 extern bool custom_rlmids_flag;
 extern char* rlmids_file;
-extern long discard_counter;
-extern long accept_counter;
-extern long trim_counter;
 extern float max_a_error;
 extern float max_e_at_ends;
 extern bool sff_file_flag;
@@ -43,6 +40,7 @@ extern bool fastq_file_flag;
 extern fstream sum_stat, sum_stat_tsv;
 extern bool lucy_only_flag;
 extern unsigned short cdna, c_err, crng;
+extern bool fasta_output;
 
 void RocheRoutine();
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads);

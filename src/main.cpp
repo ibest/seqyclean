@@ -21,60 +21,13 @@
 #include "rlmid.h"
 #include "Illumina.h"
 
-
 using namespace std;
 
-/*Computational parameters (default)*/
+/*Common parameters (default)*/
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-
-string version = "1.9.1 (2014-05-22)";
-
-/*Data structures*/
-vector<Read*> reads;
-/*Left and right midtags*/
-vector<RL_MID> rlmids;
-/*Dictionaries*/
-/*Vectors*/
-map<string, vector<k_mer_struct> > VectorDict;
-map<int, string > vector_names;
-/*Contaminants*/
-map<string, vector<k_mer_struct> > ContDict;
-map<string, vector<k_mer_struct> >::iterator it_ContDict;
-/*Map that holds a whole vector genomes :*/
-map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
-
-
-vector<Read*> reads_1;
-vector<Read*> reads_2;
-
-//For removal of duplicates
-map<string, int > DupDict;
-
-/*----------End of data structure definition------------------*/
-
-
-/*----------Input data------------------------------------*/
-string input_file_list;
-/*Vectors : */
-char *vector_file;
-/*Contaminations : */
-char *cont_file;
-char* rlmids_file;// = "RL_MIDS.csv";
-/*PCR flags and file with prinmers*/
-bool pcr_flag = false;
-char *pcr_file_name;
-// Starting position and a window size for searching for duplicates:
-int start_dw = 10, size_dw = 15;
-
-/*ROCHE*/
-//char* roche_file_name;// = "";
-
-/*LUCY flags and filename*/
-//bool trim_lucy_flag = false;
-//char *lucy_file_name;
-/*Other parameters*/
+string version = "1.9.3 (2014-08-24)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool amplicon_flag = false;
@@ -93,10 +46,47 @@ bool illumina_pe_flag = false;
 bool illumina_se_flag = false;
 bool polyat_flag = false;
 bool trim_adapters_flag = true;
-
-/*Illumina*/
 bool illumina_flag = false;
 bool illumina_flag_se = false;
+int max_al_mism = 5; /*Maximum number of mismatches allowed in alignment operation*/
+bool overwrite_flag = false;
+bool rem_dup = false;
+/*-----Quality trimming parameters------*/
+extern float max_a_error;
+extern float max_e_at_ends;
+extern int num_windows; /* number of windows for window trimming */
+extern double bracket_error;
+extern int window0;
+extern int window1;
+
+
+/*Data structures*/
+vector<Read*> reads;
+/*Left and right midtags*/
+vector<RL_MID> rlmids;
+/*------------Dictionaries----------------*/
+/*Vector dictionary*/
+map<string, vector<k_mer_struct> > VectorDict;
+map<int, string > vector_names;
+/*Contaminant dictionary*/
+map<string, vector<k_mer_struct> > ContDict;
+map<string, vector<k_mer_struct> >::iterator it_ContDict;
+/*Map that holds a whole vector genomes :*/
+map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
+/*----------End of data structure definition------------------*/
+
+/*----------Input data------------------------------------*/
+//string input_file_list;
+/*Vectors : */
+char *vector_file;
+/*Contaminations : */
+char *cont_file;
+char* rlmids_file;
+// Starting position and a window size for searching for duplicates:
+int start_dw = 10, size_dw = 15;
+
+/*Other parameters*/
+/*Illumina*/
 char* illumina_file_name_R1;
 char* illumina_file_name_R2;
 char* illumina_file_name_se;
@@ -105,36 +95,15 @@ string adapter_type_R2;
 string query_str1;
 string query_str2;
 
-
-/*Maximum number of mismatches allowed in alignment operation*/
-int max_al_mism = 5; /*5 mismatches by default*/
-
-char *sffile_name;
-/*----------End of input data definition------------------*/
-
 /*Output data and parameters to observe the computational process*/
-long line_counter = 0;
-long counter = 0;
-long discard_counter = 0;
-long accept_counter = 0;
-long trim_counter = 0;
-long middle_nns_counter = 0;
-long illumina_pe_counter = 0;
-
 bool output_sfffile_flag = false;
 bool output_fastqfile_flag = false;
 char *output_file_name = (char*)"NA";
-char* custom_output_filename;// = "";
+char* custom_output_filename;
 bool keep_fastq_orig = false;
 bool lucy_only_flag = false;
 /*----------End of output data definition------------------*/
 
-/*-----LUCY parameters------*/
-float max_a_error = 0.01;
-float max_e_at_ends = 0.01;
-/* number of windows for window trimming */
-int num_windows = 3;
-double bracket_error = 0.02;
 
 unsigned short minimum_read_length = 50;
 
@@ -144,11 +113,11 @@ unsigned short c_err = 3;
 unsigned short crng=50;
 unsigned short keep;
 
-/*Vector trimming*/
+/*Vector trimming parameters*/
 unsigned short L_limit = 1;
 unsigned short R_limit = 1;
-unsigned short vmr = 0;//15;
-unsigned short vml = 0;//15;
+unsigned short vmr = 0;
+unsigned short vml = 0;
 unsigned short allowable_distance = 3;
 unsigned short KMER_SIZE_CONT = 15;
 unsigned short pmax = 2;
@@ -157,16 +126,8 @@ unsigned short pmax = 2;
 std::ifstream read_file;
 
 void PrintHelp();
-void ParseFastqFileIllumina(char* fastq_file, vector<Read*> &reads );
-void ClearNNs( vector<Read*>& reads );
-void IlluminaRoutine();
-void RemoveContaminants(vector<Read*>& illumina_reads);
 
 /*-------------------------------------*/
-
-bool dynflag = false;
-
-vector<string> file_list;
 
 fstream sum_stat, sum_stat_tsv;
 
@@ -184,7 +145,11 @@ volatile int shared_var = 0;
 bool shuffle_flag = false;
 
 /*Report files*/
-string rep_file_name1, rep_file_name2, pe_output_filename1, pe_output_filename2, shuffle_filename, se_filename, se_output_filename, overlap_file_name;
+string rep_file_name1, rep_file_name2, // For pair one and two
+        pe_output_filename1, pe_output_filename2, // For pair one and two
+        shuffle_filename, 
+        se_filename, se_output_filename, 
+        overlap_file_name;
 
 
 
@@ -193,32 +158,21 @@ string roche_rep_file_name = "";
 char* polyat_file_name; 
 string polyat_output_file_name;
 
-unsigned long long se_bases_kept, se_bases_discarded;
-unsigned long se_discard_cnt = 0;
-unsigned long long se_bases_anal = 0;        
-unsigned long avg_trim_len_se;
-
-bool wildcart_search_flag = false;
-
 vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
-string stat_str, tsv_stat_str;
-
-int window0 = 50;//30;
-int window1 = 10;//20;
-
+/*File format parameters*/
 bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
 bool i64_flag = false;
+bool fasta_output = false;
 
+/*Overlap*/
 unsigned int adapterlength = 60;
 double overlap_t = 0.75;
 int minoverlap = 16;
 bool overlap_flag = false;
 
-bool overwrite_flag = false;
 
-bool rem_dup = false;
 
 string adapter_file;
 bool custom_adapters = false;
@@ -227,8 +181,7 @@ int main(int argc, char *argv[])
 {
     double start, finish, elapsed;
     GET_TIME(start);
-    
-    
+
     /*******************************************/
     /* Parse command line arguments */
     /*******************************************/
@@ -270,6 +223,10 @@ int main(int argc, char *argv[])
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
             }
+        }
+        else if (string(argv[i]) == "--fasta_output") {  
+            fasta_output = true;
+            output_fastqfile_flag = false;
         }
         else if( string(argv[i]) == "-qual" ) {
            qual_trim_flag = true;
@@ -487,15 +444,6 @@ int main(int argc, char *argv[])
            }
            continue;
         }
-        else if(string(argv[i]) == "-p" )
-        {
-           if ( (i+1)<argc && !(isdigit(argv[i+1][0])) ) 
-           {
-              pcr_flag = true;
-              pcr_file_name = argv[++i]; 
-           }
-           continue;
-        }
         else if(string(argv[i]) == "-i64" )
         {
            i64_flag = true;
@@ -603,6 +551,7 @@ int main(int argc, char *argv[])
         else if( string(argv[i]) == "--fastq" ) 
         {
            output_fastqfile_flag = true; //output file with cleaned reads in FASTQ format, for 454 mode only
+           fasta_output = false;
            continue;
         }
         else if(string(argv[i]) == "-?" )
@@ -743,16 +692,6 @@ int main(int argc, char *argv[])
                 getline(in,line);
                 vector <string> fields;
                 split_str( line, fields, ":" );
-                /*if (fields.size() == 5)
-                {
-                    //Old headers == True
-                    old_style_illumina_flag = true;
-                    
-                } else //if (fields.size() == 7)
-                {
-                    //Old headers == False
-                    old_style_illumina_flag = false;
-                }*/
                 
             }
         } else 
@@ -1021,10 +960,10 @@ int main(int argc, char *argv[])
         
                 rep_file_name1 = output_prefix + "_PE1_Report.tsv";
                 rep_file_name2 = output_prefix + "_PE2_Report.tsv";
-                pe_output_filename1 =  output_prefix + "_PE1.fastq" ;
-                pe_output_filename2 =  output_prefix + "_PE2.fastq" ;
-                shuffle_filename = output_prefix + "_shuffled.fastq";
-                se_filename = output_prefix + "_SE.fastq";
+                pe_output_filename1 =  output_prefix + ((fasta_output) ? "_PE1.fasta" : "_PE1.fastq") ;
+                pe_output_filename2 =  output_prefix + ((fasta_output) ? "_PE2.fasta" : "_PE2.fastq")  ;
+                shuffle_filename = output_prefix + ((fasta_output) ? "_shuffled.fasta" : "_shuffled.fastq") ;
+                se_filename = output_prefix + ((fasta_output) ? "_SE.fasta" : "_SE.fastq") ;
                 
                 
         
@@ -1047,7 +986,7 @@ int main(int argc, char *argv[])
                 sum_stat << "Single-end reads: "<< se_filename << endl;
                 
                 if(overlap_flag) {
-                    overlap_file_name = output_prefix + "_SEOLP.fastq";
+                    overlap_file_name = output_prefix + ((fasta_output) ? "_SEOLP.fasta" : "_SEOLP.fastq");
                     sum_stat << "Single-end overlapped reads: "<< overlap_file_name << endl;
                 }
         
@@ -1144,7 +1083,7 @@ int main(int argc, char *argv[])
                 sum_stat << "Output prefix: " << output_prefix << endl;
         
                 rep_file_name1 = output_prefix + "_SE_Report.tsv";
-                se_output_filename =  output_prefix + "_SE.fastq" ;
+                se_output_filename =  output_prefix + ((fasta_output) ? "_SE.fasta" : "_SE.fastq") ;
                 
                 cout << "Report file: " << rep_file_name1 << endl;
                 sum_stat << "Report file: " << rep_file_name1<< endl;
@@ -1253,14 +1192,14 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        roche_output_file_name = output_prefix + ".sff";// + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : "" );
+        roche_output_file_name = output_prefix + (output_fastqfile_flag ? ".fastq" : (fasta_output ? ".fasta" : "") );
         roche_rep_file_name = output_prefix + "_Report.tsv" ;
         
         cout << "Report file: " << roche_rep_file_name << "\n";
         sum_stat << "Report file: " << roche_rep_file_name << "\n";
         
-        cout << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : "" ) ) << "\n";
-        sum_stat << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : "" ) ) << "\n";
+        cout << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : ((fasta_output) ? ".fasta" : "" ) ) ) << "\n";
+        sum_stat << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : ((fasta_output) ? ".fasta" : ""  ) ) ) << "\n";
         
         
         cout << "--------------------Other parameters--------------------\n";
@@ -1293,12 +1232,6 @@ int main(int argc, char *argv[])
     if(vector_flag ) 
     {
         BuildVectorDictionary(vector_file);
-    }
-    
-    if(pcr_flag ) 
-    {
-        /*Building dictionary for PCR :*/
-        BuildVectorDictionary(pcr_file_name);
     }
     
     if(contaminants_flag ) 

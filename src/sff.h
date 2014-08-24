@@ -139,7 +139,7 @@ typedef struct {
 /* function to read the sff file */
 void read_sff_common_header(FILE *fp, sff_common_header *h);
 void free_sff_common_header(sff_common_header *h);
-void verify_sff_common_header(sff_common_header *h);
+short verify_sff_common_header(sff_common_header *h);
 void read_padding(FILE *fp, int header_size);
 void read_sff_read_header(FILE *fp, sff_read_header *rh);
 void read_sff_read_data(FILE *fp, 

@@ -112,9 +112,6 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
                   + (sizeof(char) * h->flow_len)
                   + (sizeof(char) * h->key_len);
 
-    //printf("%d\n" , header_size - sizeof(h->flow_len) - sizeof(h->flow_len) - 31 );
-    //printf("%d %d\n" , header_size, sizeof(h->header_len) );
-    
     if ( !( (header_size  % PADDING_SIZE) == 0) ) {
         read_padding(fp, header_size);
     }
@@ -124,7 +121,6 @@ void  read_sff_common_header(FILE *fp, sff_common_header *h) {
 
 void write_sff_common_header(FILE *fp, sff_common_header *ch) {
     
-    /*size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );*/
     fwrite(&(ch->magic)          , sizeof(uint32_t), 1, fp);
     fwrite(&(ch->version)        , sizeof(char) , 4, fp);
     fwrite(&(ch->index_offset)   , sizeof(uint64_t), 1, fp);
@@ -194,7 +190,6 @@ void write_sff_read_data(FILE *fp,  sff_read_data *rd, uint16_t nflows, uint32_t
     
     /* sff files are in big endian notation so adjust appropriately */
     for (int i = 0; i < nflows; i++) {
-        //flowgram[i] = htobe16(flowgram[i]);
         rd->flowgram[i] = ntohs(rd->flowgram[i]);
     }
     
@@ -230,9 +225,6 @@ void write_padding(FILE *fp, int header_size) {
 void read_padding(FILE *fp, int header_size) {
     int remainder = PADDING_SIZE - (header_size % PADDING_SIZE);
     uint8_t padding[remainder];
-    
-    //printf("%d %d \n" ,header_size, remainder );
-    
     size_t bytes = fread(padding, sizeof(uint8_t), remainder, fp);
 }
 
@@ -242,16 +234,17 @@ free_sff_common_header(sff_common_header *h) {
     free(h->key);
 }
 
-void  verify_sff_common_header(sff_common_header *h) {
+short  verify_sff_common_header(sff_common_header *h) {
 
     /* ensure that the magic file type is valid */
     if (h->magic != SFF_MAGIC) {
         fprintf(stderr, "The SFF header has magic value '%d' \n", h->magic);
         fprintf(stderr,
-                "[err] : '%d' \n SeqyClean only knows how to deal an SFF magic value of type",
+                "[err] : '%d' \n Program only knows how to deal an SFF magic value of type",
                 SFF_MAGIC);
         free_sff_common_header(h);
-        exit(2);
+        return -1;
+        //exit(2);
     }
 
     /* ensure that the version header is valid */
@@ -273,8 +266,10 @@ void  verify_sff_common_header(sff_common_header *h) {
             //printf("0x%02x ", valid_header[i]);
         }
         free_sff_common_header(h);
-        exit(2);
+        return -1;//exit(2);
     }
+    
+    return 0;
 }
 
 void read_sff_read_header(FILE *fp, sff_read_header *rh) {
@@ -386,7 +381,6 @@ void read_sff_read_data(FILE *fp,
 
     /* sff files are in big endian notation so adjust appropriately */
     for (i = 0; i < nflows; i++) {
-        //flowgram[i] = htobe16(flowgram[i]);
         flowgram[i] = htons(flowgram[i]);
     }
     rd->flowgram = flowgram;

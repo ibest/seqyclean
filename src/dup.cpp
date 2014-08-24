@@ -1,5 +1,7 @@
 #include "dup.h"
 
+map<string, int > DupDict;
+
 //Version with strings & substrings. Not computationally efficient.
 void screen_duplicates(Read *seq1, Read *seq2, unsigned long &duplicates) {
     int c = 0;

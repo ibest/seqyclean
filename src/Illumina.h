@@ -86,16 +86,9 @@ extern bool shuffle_flag;
 /*Report files*/
 extern string rep_file_name1, rep_file_name2, pe_output_filename1, pe_output_filename2, shuffle_filename, se_filename, se_output_filename, overlap_file_name;
 
-extern  unsigned long long se_bases_kept, se_bases_discarded;
-extern  unsigned long se_discard_cnt;
-extern  unsigned long long se_bases_anal;        
-extern  unsigned long avg_trim_len_se;
-
 extern  bool wildcart_search_flag;
 
 extern  vector<char*> pe1_names, pe2_names, roche_names, se_names;
-
-extern string stat_str, tsv_stat_str;
 
 extern int window0;
 extern int window1;

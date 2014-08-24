@@ -1,5 +1,12 @@
 #include "Roche.h"
 
+long discard_counter;
+long accept_counter;
+long trim_counter;
+long line_counter = 0;
+long counter = 0;
+
+
 void RocheRoutine()
 {
     if( !trim_adapters_flag ) 
@@ -54,18 +61,6 @@ void RocheRoutine()
     } 
     else 
     {
-       //DEBUG - для тестирования SFF конвертации 
-       /*for(int i=0; i<(int)roche_names.size(); ++i)
-       {
-        if(debug_flag ) 
-        {
-          process_sff_to_fastq(roche_names[i], 0);
-          process_fastq_to_sff((char*)"out.sff"); 
-          process_sff_to_fastq((char*)"out.sff",  0);
-          return;
-        }
-       }*/
-        
        //Building dictionary for RL MIDS : 
        if(custom_rlmids_flag ) 
        {
@@ -86,26 +81,18 @@ void RocheRoutine()
             {
                cout << "File is in SFF format, starting conversion...\n" ;
                process_sff_to_fastq( roche_names[i], 0 );
-               if(output_fastqfile_flag == false)
-               {
-                 output_sfffile_flag = true;
-               }
             } 
             else if(string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq") 
             {
                //FASTQ file given. Process it.
                cout << "File is in FASTQ format, starting conversion...\n" ;
                ParseFastqFile(roche_names[i], reads);
-               output_fastqfile_flag = true;
-               output_sfffile_flag = false;
             }
             else if(string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq") 
             {
                //FASTQ file given. Process it.
                cout << "File is in FASTQ format, starting conversion...\n" ;
                ParseFastqFile(roche_names[i], reads);
-               output_fastqfile_flag = true;
-               output_sfffile_flag = false;
             }
             
        }
@@ -144,10 +131,10 @@ void RocheRoutine()
        
        if (output_sfffile_flag) {
            WriteToSFF( roche_output_file_name );
-       }
-        
-       if( output_fastqfile_flag ) {
+       } else if ( output_fastqfile_flag ) {
            WriteToFASTQ( output_prefix + ".fastq" );
+       } else if (fasta_output) {
+           WriteToFASTQ( output_prefix + ".fasta" );
        }
        
        
@@ -822,58 +809,6 @@ string PrintRocheStatisticsTSV(unsigned long cnt,
 }
 
 void WriteToFASTQ(string file_name) {
-    /*
-    FILE* output_file;
-    
-    output_file = fopen( file_name.c_str(), "w");
-    
-    for(int i=0; i<(int)reads.size(); i++) 
-    {
-        if( reads[i]->discarded == 0 ) 
-        {
-            if(reads[i]->lclip >= (int)reads[i]->read.length()) 
-            {
-                reads[i]->discarded = 1;
-                reads[i]->discarded_by_read_length = 1;
-                reads[i]->lclip = reads[i]->rclip = 1;
-                continue;
-            } else if(reads[i]->lclip >= reads[i]->rclip) {
-                reads[i]->discarded = 1;
-                reads[i]->discarded_by_read_length = 1;
-                reads[i]->lclip = reads[i]->rclip = 1;
-                continue;
-            }
-            
-            string read_id_to_write = string(reads[i]->readID);
-            if(read_id_to_write[0] != '@')
-                read_id_to_write = "@" + read_id_to_write;
-            
-            reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
-            string quality = string((char*)reads[i]->quality); 
-            quality = quality.substr(0,reads[i]->rclip) ; 
-            reads[i]->read = reads[i]->read.substr( reads[i]->lclip, reads[i]->read.length() - reads[i]->lclip );
-            quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
-            
-            if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
-            
-            fputs( read_id_to_write.c_str(), output_file );
-            std::cout << read_id_to_write.c_str() << '\n';
-            fputc( '\n', output_file );
-            fputs( reads[i]->read.c_str(), output_file );
-            fputc( '\n', output_file );
-            fputc( '+', output_file );
-            fputc( '\n', output_file );
-            fputs( quality.c_str(), output_file );
-            fputc( '\n', output_file );
-        } 
-    }
-    
-    
-    
-    fclose(output_file);
-    
-    */
-    
     fstream output_file;
     output_file.open( file_name.c_str(), ios::out );
     
@@ -899,18 +834,25 @@ void WriteToFASTQ(string file_name) {
                 read_id_to_write = "@" + read_id_to_write;
             
         reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
-        string quality = string((char*)reads[i]->quality); 
-        quality = quality.substr(0,reads[i]->rclip) ; 
         reads[i]->read = reads[i]->read.substr( reads[i]->lclip, reads[i]->read.length() - reads[i]->lclip );
-        quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
+        
+        string quality = string((char*)reads[i]->quality); 
+            
+        if (!fasta_output) {
+            quality = quality.substr(0,reads[i]->rclip) ; 
+            quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
+        
+        }
             
         if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
             
-        
-        output_file << read_id_to_write << endl;
+        output_file << '>' << read_id_to_write << endl;
         output_file << reads[i]->read << endl;
-        output_file << '+' << endl;
-        output_file << quality << endl;
+        
+        if (!fasta_output) {
+            output_file << '+' << endl;
+            output_file << quality << endl;
+        }
     
     }
     
