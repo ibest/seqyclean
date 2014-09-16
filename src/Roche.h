@@ -42,7 +42,7 @@ extern bool lucy_only_flag;
 extern unsigned short cdna, c_err, crng;
 extern bool fasta_output;
 
-void RocheRoutine();
+int RocheRoutine();
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads);
 void QualityTrimming( vector<Read*>& reads );
 void RemoveContaminants454(vector<Read*>& reads454);
