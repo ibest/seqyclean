@@ -1,8 +1,14 @@
-Program SeqyClean
-Version: 1.9.1 (2014-04-13)
+# Description
+
+Program ```SeqyClean```
+Version: ```1.9.1 (2014-04-13)```
+
 Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
-Usage:  
-Roche 454:
+
+# Usage  
+## Roche 454
+
+```
 ./seqyclean -454 input_file_name -o output_prefix [-v vector_file]
 						  [-c file_of_contaminants]
 						  [-m file_of_RL_MIDS]
@@ -17,7 +23,12 @@ Roche 454:
                                                   [--ow]
 						  [-minimum_read_length <value>]
 						  [-polyat [cdna] [cerr] [crng] ]
-For Illumina:
+```
+
+## Illumina
+
+### Paired-end
+```
 ./seqyclean -1 input_file_name_1 -2 input_file_name_2 -o output_prefix [-v vector_file]
                                                                        [-c file_of_contaminants]
                                                                        [-k k_mer_size]
@@ -34,8 +45,11 @@ For Illumina:
                                                                        [-polyat [cdna] [cerr] [crng] ]
                                                                        [--no_ts_adapter_trim ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+```
 
-For Illumina single-end:
+### Single-end
+
+```
 ./seqyclean -U input_file_name -o output_prefix [-v vector_file]
                                                                        [-c file_of_contaminants]
                                                                        [-k k_mer_size]
@@ -47,16 +61,24 @@ For Illumina single-end:
                                                                        [-polyat [cdna] [cerr] [crng] ]
                                                                        [--no_ts_adapter_trim ]
                                                                        [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+```
 
-Example:
-Roche:
+
+# Examples
+
+## Roche 454
+```
 ./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta
+```
 
-Illumina:
+## Illumina
+```
 ./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina
-    
+```    
 
-Supported RL MIDS:
+# Supported RL MIDS (for Roche 454 only)
+
+```
 RL1,ACACGACGACT,RL1,AGTCGTGGTGT
 RL2,ACACGTAGTAT,RL2,ATACTAGGTGT
 RL3,ACACTACTCGT,RL3,ACGAGTGGTGT
@@ -93,7 +115,10 @@ RL33,ACAGAGACTCT,RL33,AGAGTCTGTGT
 RL34,ACAGCTCGTGT,RL34,ACACGAGGTGT
 RL35,ACAGTGTCGAT,RL35,ATCGACAGTGT
 RL36,ACGAGCGCGCT,RL36,AGCGCGCGCGT
-Please ask zhba3458@vandals.uidaho.edu in case of any questions.
-=======
-# This is README
+```
+
+# Contact
+
+Please ask Ilya (zhba3458@vandals.uidaho.edu) in case of any questions.
+
 

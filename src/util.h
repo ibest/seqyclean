@@ -83,5 +83,6 @@ short  check_sff_common_header(sff_c_header *h);
 void free_sff_c_header(sff_c_header *h);
 uint64_t BE64toNE(uint64_t bigEndian);
 
+
 #endif	/* UTIL_H */
 

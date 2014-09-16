@@ -128,19 +128,11 @@ std::ifstream read_file;
 void PrintHelp();
 
 /*-------------------------------------*/
-
 fstream sum_stat, sum_stat_tsv;
-
 string output_prefix;
 
 bool VectorOnlyFlag = false;
 bool new2old_illumina = false;
-
-
-
-bool serial_flag = false;
-
-volatile int shared_var = 0;
 
 bool shuffle_flag = false;
 
@@ -151,29 +143,26 @@ string rep_file_name1, rep_file_name2, // For pair one and two
         se_filename, se_output_filename, 
         overlap_file_name;
 
-
-
+/*Output filenames*/
 string roche_output_file_name = "";
 string roche_rep_file_name = "";
 char* polyat_file_name; 
 string polyat_output_file_name;
-
 vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
-/*File format parameters*/
+/*Input format parameters*/
 bool old_style_illumina_flag = false;
 int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
 bool i64_flag = false;
 bool fasta_output = false;
 
-/*Overlap*/
+/*Overlap parameters*/
 unsigned int adapterlength = 60;
 double overlap_t = 0.75;
 int minoverlap = 16;
 bool overlap_flag = false;
 
-
-
+/*Adapter parameters*/
 string adapter_file;
 bool custom_adapters = false;
 
@@ -185,35 +174,37 @@ int main(int argc, char *argv[])
     /*******************************************/
     /* Parse command line arguments */
     /*******************************************/
-    if(argv[1] == NULL) {
-        PrintHelp();
+    if(argv[1] == NULL) { // Print help and return
+        PrintHelp(); 
         return 0;
     }
     
     if( (string(argv[1]) == "-help") || (string(argv[1]) == "--help") || (string(argv[1]) == "-?") ) {
-        PrintHelp();
+        PrintHelp(); // Print heplp and return
         return 0;
     }
-        
+    
+    /*Parsing command line arguments*/
     for (int i=1; i<argc; i++) {
         if( string(argv[i]) == "--version" ) {
-           cout << "Version: " << version << endl;
-           exit(1);
+           cout << "Version: " << version << endl; // Print version and return
+           return 1;
         }
-        else if (string(argv[i]) == "-adapters") {  
+        else if (string(argv[i]) == "-adapters") {  // Load custom Illumina adapters
            if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
-             adapter_file = argv[++i]; /*Vector file given*/
+             adapter_file = argv[++i];
              if (!exists( (char*)adapter_file.c_str() ) )
              {
+                // File not found, use default adapters:
                 cout<< "Warning: adapter file " <<  adapter_file << " not found. Default adapters will be used for trimming.\n";
              } else {
-                 custom_adapters = true;
+                 custom_adapters = true; // Here we will use given custom adapters
              }
            }
            continue;
         } 
-        else if (string(argv[i]) == "-num_windows") {  
+        else if (string(argv[i]) == "-num_windows") {  // Numer of windows for quality trimming
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                num_windows = atoi(argv[++i]);
             }
@@ -224,31 +215,31 @@ int main(int argc, char *argv[])
                bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
             }
         }
-        else if (string(argv[i]) == "--fasta_output") {  
+        else if (string(argv[i]) == "--fasta_output") {  // Output in Fasta format
             fasta_output = true;
             output_fastqfile_flag = false;
         }
-        else if( string(argv[i]) == "-qual" ) {
+        else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) {
-               max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );//atof(argv[++i]);
+               max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
-                  max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );//atof(argv[++i]);
-                  if((i+1)<argc && (string(argv[i+1]) == "-w0") )
+                  max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
+                  if((i+1)<argc && (string(argv[i+1]) == "-w0") ) // Length w0 in nucteotide bases
                   {
                         ++i;
                         if ((i+1)<argc && isdigit(argv[i+1][0])) 
                         {
                                 window0 = atoi(argv[++i]);
-                                if((i+1)<argc && (string(argv[i+1]) == "-w1") )
+                                if((i+1)<argc && (string(argv[i+1]) == "-w1") ) // Length w1 in nucleotide bases
                                 {
                                         ++i;
                                         window1 = atoi(argv[++i]);
                                 }
                         } else {
                             cout << "Error: parameter w0 has empty value.\n";
-                            PrintHelp();
+                            PrintHelp(); // Print help and exit
                             return 0;
                         }
                   }
@@ -270,11 +261,11 @@ int main(int argc, char *argv[])
                ++i;
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
-                   window0 = atoi(argv[++i]);
+                   window0 = atoi(argv[++i]); // Set length of w0
                    if((i+1)<argc && (string(argv[i+1]) == "-w1") )
                    {
                        ++i;
-                       window1 = atoi(argv[++i]);
+                       window1 = atoi(argv[++i]); // Set length of w1
                    } else {
                        cout << "Error: parameter w1 has empty value.\n";
                        PrintHelp();
@@ -667,11 +658,10 @@ int main(int argc, char *argv[])
     
     if(output_prefix == "")
     {
-        cout << "No output prefix found.\n";
+        cout << "No output prefix found.\n"; // Print help and exit
         PrintHelp();
         return 0;
     }
-    
     
     //Check if input files exist
     if (illumina_flag)
@@ -704,11 +694,10 @@ int main(int argc, char *argv[])
                 {
                         for(int i=0; i<(int)pe1_names.size(); ++i)
                         {
-        
-                                if ( !exists( pe1_names[i] ) )
+                               if ( !exists( pe1_names[i] ) )
                                 {
-                                        cout<< "Error: file " <<  pe1_names[i] << " does not exist\n";
-                                        return 0;
+                                     cout<< "Error: file " <<  pe1_names[i] << " does not exist\n";
+                                     return 0;
                                 }
                                 if (!exists( pe2_names[i] ) )
                                 {

@@ -7,119 +7,64 @@ long line_counter = 0;
 long counter = 0;
 
 
-void RocheRoutine()
+int RocheRoutine()
 {
-    if( !trim_adapters_flag ) 
-    {
-           
-        for(int i=0; i<(int)roche_names.size(); ++i)
-        {
-           if( string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" ) 
-           { /*FASTQ file given. Process it.*/
-              ParseFastqFile(roche_names[i], reads);
-              output_fastqfile_flag = true;
-              output_sfffile_flag = false;
-           } 
-           else if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) 
-           {
-              process_sff_to_fastq( roche_names[i], 0 );
-              output_fastqfile_flag = false;
-              output_sfffile_flag = true;
-           }
-           else if(string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq") 
-           {
-              //FASTQ file given. Process it.
-              cout << "File is in FASTQ format, starting conversion...\n" ;
-              ParseFastqFile(roche_names[i], reads);
-              
-              output_fastqfile_flag = true;
-              output_sfffile_flag = false;
-            }
-           else
-           {
-               cout << "Unknown file format\n";
-               return;
+    if( !trim_adapters_flag ) { // No adapter trimming
+        for(int i=0; i<(int)roche_names.size(); ++i) {
+           if( string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" || string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq" ) { /*FASTQ file given. Process it.*/
+              ParseFastqFile(roche_names[i], reads); output_fastqfile_flag = true; output_sfffile_flag = false;
+           } else if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) { // Sff file given
+              process_sff_to_fastq( roche_names[i], 0 ); output_fastqfile_flag = false; output_sfffile_flag = true;
+           } else {
+              cout << "Unknown file format\n";
+              return -1;
            }
         }
             
-        if( qual_trim_flag  )
-        {
-           cout << "Only LUCY clipping.\n";
-           QualityTrimming(reads);
+        if( qual_trim_flag  ) // Quality trimming enabled
+          cout << "Quality trimming\n"; QualityTrimming(reads);
            
-        }
-           
-        cout << "Making cleaned output data file...\n";
+        cout << "Making output files...\n";
         MakeLucyFastq( output_prefix + "_qual.fastq" );
-           
         string report_filename =  output_prefix + "_qual_Report.tsv"; 
         MakeLucyReport2( (char*)report_filename.c_str(), reads );
-        cout << "Done Lucy ONLY quality trimming.\n";
+        cout << "Done!\n";
            
-        return;
-        
-    } 
-    else 
-    {
+        return 0;
+    } else {
        //Building dictionary for RL MIDS : 
-       if(custom_rlmids_flag ) 
-       {
+       if(custom_rlmids_flag ) {
           Build_RLMIDS_Dictionary(rlmids_file);
-       } 
-       else 
-       {
+       } else {
           Build_RLMIDS_Dictionary();
        }
         
-       for(int i=0; i<(int)roche_names.size(); ++i)
-       {
+       for(int i=0; i<(int)roche_names.size(); ++i) {
             cout << "Parsing file: " << roche_names[i] << "..." << endl;
-        
             //If SFF format is given -> process it
-            //std::cout << roche_names[i] << " " << string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) << "\n";
-            if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) 
-            {
-               cout << "File is in SFF format, starting conversion...\n" ;
-               process_sff_to_fastq( roche_names[i], 0 );
+            if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) {
+               cout << "File is in SFF format, starting conversion...\n" ; process_sff_to_fastq( roche_names[i], 0 );
             } 
-            else if(string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq") 
-            {
+            else if(string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" || string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq") {
                //FASTQ file given. Process it.
                cout << "File is in FASTQ format, starting conversion...\n" ;
                ParseFastqFile(roche_names[i], reads);
-            }
-            else if(string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq") 
-            {
-               //FASTQ file given. Process it.
-               cout << "File is in FASTQ format, starting conversion...\n" ;
-               ParseFastqFile(roche_names[i], reads);
-            }
-            
+            }            
        }
         
-       //reads_total += reads.size();
        cout << "Conversion finished. Total number of reads read from given file(s): " << reads.size() << endl;
-       //cout << reads[10]->readID << endl;
-       /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
-       if( qual_trim_flag  ) 
-       {
-           for(unsigned long i=0; i< reads.size(); i++) 
-           {
-              QualTrim( reads[i], max_a_error, max_e_at_ends );/*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
-           }
-       }
        
-       if(polyat_flag) {
-           //If poly A/T flag is set:
-           for(unsigned long i=0; i< reads.size(); i++) {
+       /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
+       if( qual_trim_flag  )
+           for(unsigned long i=0; i< reads.size(); i++) 
+              QualTrim( reads[i], max_a_error, max_e_at_ends ); /*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
+           
+       if(polyat_flag) //If poly A/T flag is set:
+           for(unsigned long i=0; i< reads.size(); i++)
               PolyAT_Trim(reads[i]);
-           }
-       }
-    
+       
        if(contaminants_flag )
-       {
            RemoveContaminants454(reads);
-       }
            
        /*Run the main routine: Adaptor + Vector/Contaminants trimming or only Adaptors*/
        cout << "Running the main pipeline..." << endl;
@@ -137,112 +82,74 @@ void RocheRoutine()
            WriteToFASTQ( output_prefix + ".fasta" );
        }
        
-       
        cout << "Making a report..." << endl;
        MakeReport( roche_rep_file_name );
-       
-       //---End of making statistics----
        MakeFinalStatistics(sum_stat);
-        
+       
+       // Cleaning up..
        reads.clear();
-        
        /*Reset counters*/
        accept_counter = 0;
        discard_counter = 0;
        trim_counter = counter = 0;
     }        
-       
+    // Cleaning up..   
     reads.clear();
-    
 }
 
-void ParseFastqFile(char* fastq_file, vector<Read*> &reads) 
-{
+void ParseFastqFile(char* fastq_file, vector<Read*> &reads) {
    std::string line;
-    
    printf("Parsing .fastq file...\n");
-    
    vector<string> record_block;
    int ii = 0;
-        
    igzstream in(fastq_file);
         
    while ( getline(in,line) ) 
    {
        if(ii==0) record_block.push_back(line); /*Read ID*/
-                
        if(ii==1) record_block.push_back(line); /*actual data*/
-                
        if(ii==2) record_block.push_back(line);/*a symbol "+", etc */
-                
-       if(ii==3) 
-       {
+       if(ii==3) {
            record_block.push_back(line); /*Quality scores*/
-           
            Read* read = new Read();
            read->readID = (char *) malloc( record_block[0].length() * sizeof(char) ); //(char*)record_block[0].c_str();
            strcpy(read->readID, (char*)record_block[0].c_str());//
-           //memcpy( read->readID, (char*)record_block[0].c_str(), (size_t) record_block[0].length() );
            read->initial_length = record_block[1].length();
            read->read = record_block[1];
            read->quality = (uint8_t*)malloc(sizeof(uint8_t)*record_block[3].length());
            
-           for(unsigned int jj=0; jj<record_block[3].length();++jj)
-           {
+           for(unsigned int jj=0; jj<record_block[3].length();++jj) {
                read->quality[jj] = record_block[3][jj];
            }
-           //std::cout << read->readID << "   " << (char*)record_block[0].c_str() <<'\n';
-           /*
-           read->readID = (char*)record_block[0].c_str();
-           read->read = record_block[1];
-           read->quality = (uint8_t*)record_block[2].c_str();
-           */
            counter++;
-           
            reads.push_back(read);
-           //cout << read->readID << endl;
        }
         
        ii++;
-       if(ii == 4) 
-       {
+       if(ii == 4) {
           ii = 0;
           record_block.clear();
        }
    }
-    
    in.close();
-   
-   //cout << reads[10]->readID << endl;
-     
 }
 
-void QualityTrimming( vector<Read*>& reads ) 
-{
-    for(unsigned int ii=0; ii< reads.size(); ii++) 
-    {
+void QualityTrimming( vector<Read*>& reads ) {
+    for(unsigned int ii=0; ii< reads.size(); ii++) {
         if(reads[ii]->discarded == 0)
-        {
            QualTrim( reads[ii], max_a_error, max_e_at_ends );/*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
-        }
         
-        if( lucy_only_flag  ) 
-        {
+        if( lucy_only_flag  ) {
            reads[ii]->lclip = reads[ii]->lucy_lclip;
            reads[ii]->rclip = reads[ii]->lucy_rclip;
-           
         }
     }
-          
 }
 
-void RemoveContaminants454(vector<Read*>& reads454)
-{
-    for(unsigned int index = 0; index < (unsigned int)reads454.size(); index++)
-    {
+void RemoveContaminants454(vector<Read*>& reads454) {
+    for(unsigned int index = 0; index < (unsigned int)reads454.size(); index++) {
         
-        if(CheckContaminants(reads454[index]->read) == 0) 
-        {
+        if(CheckContaminants(reads454[index]->read) == 0) {
            reads454[index]->discarded = 1;
            reads454[index]->discarded_by_contaminant = 1;
            reads454[index]->contaminants = 1;
@@ -252,151 +159,95 @@ void RemoveContaminants454(vector<Read*>& reads454)
 }
 
 
-void MakeClipPoints()
-{
-    for(unsigned int ff = 0; ff < reads.size(); ff++)
-    {
-       //cout << "badp: " << reads[ff]->b_adapter_pos << endl;
-  
+void MakeClipPoints() {
+    for(unsigned int ff = 0; ff < reads.size(); ff++) {
        //Read ID
        if( reads[ff]->rlmid.rmid_name.length() == 0 ) reads[ff]->rlmid.rmid_start = 0;
-       //if( reads[ff]->b_adapter.length() == 0 ) reads[ff]->b_adapter_pos = 0;
        
        //Clip points
-       if( (vector_flag == true) && (qual_trim_flag == true) )
-       { //Keep in mind that Lucy's clip points are zero-based!
-           if(reads[ff]->discarded == 0) 
-           {
+       if( (vector_flag == true) && (qual_trim_flag == true) ) { //Keep in mind that Lucy's clip points are zero-based!
+           if(reads[ff]->discarded == 0) {
                 int a = reads[ff]->v_start;
                 int b = reads[ff]->read.length() - reads[ff]->v_end;
-                if( a >= b ) //Vector is on the right side
-                {
-                    reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip+1, reads[ff]->v_start) ) );
-
-                    if( reads[ff]->rclip == reads[ff]->lucy_rclip+1 )
-                    {
-                        reads[ff]->right_trimmed_by_quality = 1;
-                        reads[ff]->rclip = reads[ff]->lucy_rclip;
-                    }
-                    else if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
-                    {
-                        reads[ff]->right_trimmed_by_adapter = 1;
-                    }
-                    else if(reads[ff]->rclip == reads[ff]->v_start)
-                    {
-                        reads[ff]->right_trimmed_by_vector = 1;
-                    }
-                    else if(reads[ff]->rclip == reads[ff]->b_adapter_pos)
-                    {
-                        reads[ff]->right_trimmed_by_adapter = 1;
-                    }
+                if( a >= b ) { //Vector is on the right side
+                   reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, min(reads[ff]->lucy_rclip+1, reads[ff]->v_start) ) );
+                   if( reads[ff]->rclip == reads[ff]->lucy_rclip+1 ) {
+                      reads[ff]->right_trimmed_by_quality = 1;
+                      reads[ff]->rclip = reads[ff]->lucy_rclip;
+                   } else if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start ) {
+                      reads[ff]->right_trimmed_by_adapter = 1;
+                   } else if(reads[ff]->rclip == reads[ff]->v_start) {
+                      reads[ff]->right_trimmed_by_vector = 1;
+                   } else if(reads[ff]->rclip == reads[ff]->b_adapter_pos) {
+                      reads[ff]->right_trimmed_by_adapter = 1;
+                   }
                    
-                    reads[ff]->lclip = max(reads[ff]->lucy_lclip,reads[ff]->rlmid.lmid_end );
+                   reads[ff]->lclip = max(reads[ff]->lucy_lclip,reads[ff]->rlmid.lmid_end );
                     
-                    if(reads[ff]->lclip == reads[ff]->lucy_lclip)
-                    {
-                        reads[ff]->left_trimmed_by_quality = 1;
-                    }
-                    if(reads[ff]->lclip == reads[ff]->rlmid.lmid_end)
-                    {
-                        reads[ff]->left_trimmed_by_adapter = 1;
-                    }
+                   if(reads[ff]->lclip == reads[ff]->lucy_lclip)
+                      reads[ff]->left_trimmed_by_quality = 1;
+                   if(reads[ff]->lclip == reads[ff]->rlmid.lmid_end)
+                      reads[ff]->left_trimmed_by_adapter = 1;
                 }
-                else //Vector is on the left side
-                {
-                        reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip+1) );
+                else { //Vector is on the left side
+                   reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->lucy_rclip+1) );
 
-                        if( reads[ff]->rclip == reads[ff]->lucy_rclip +1)
-                        {
-                                reads[ff]->right_trimmed_by_quality = 1;
-                                reads[ff]->rclip = reads[ff]->lucy_rclip;
-                        }
-                        else if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
-                        {
-                                reads[ff]->right_trimmed_by_adapter = 1;
-                        }
-                        else if(reads[ff]->rclip == reads[ff]->b_adapter_pos)
-                        {
-                                reads[ff]->right_trimmed_by_adapter = 1;
-                        }  
+                   if( reads[ff]->rclip == reads[ff]->lucy_rclip +1) {
+                       reads[ff]->right_trimmed_by_quality = 1;
+                       reads[ff]->rclip = reads[ff]->lucy_rclip;
+                   } else if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start ) {
+                       reads[ff]->right_trimmed_by_adapter = 1;
+                   } else if(reads[ff]->rclip == reads[ff]->b_adapter_pos) {
+                       reads[ff]->right_trimmed_by_adapter = 1;
+                   }  
                 
-                        reads[ff]->lclip = max(reads[ff]->lucy_lclip,max(reads[ff]->rlmid.lmid_end, reads[ff]->v_end ) );
+                   reads[ff]->lclip = max(reads[ff]->lucy_lclip,max(reads[ff]->rlmid.lmid_end, reads[ff]->v_end ) );
 
-                        if(reads[ff]->lclip == reads[ff]->lucy_lclip)
-                        {
-                                reads[ff]->left_trimmed_by_quality = 1;
-                        }
-                        if(reads[ff]->lclip == reads[ff]->v_end)
-                        {
-                                reads[ff]->left_trimmed_by_vector = 1;
-                        }
-                        if(reads[ff]->lclip == reads[ff]->rlmid.lmid_end)
-                        {
-                                reads[ff]->left_trimmed_by_adapter = 1;
-                        }
+                   if(reads[ff]->lclip == reads[ff]->lucy_lclip)
+                      reads[ff]->left_trimmed_by_quality = 1;
+                   if(reads[ff]->lclip == reads[ff]->v_end)
+                      reads[ff]->left_trimmed_by_vector = 1;
+                   if(reads[ff]->lclip == reads[ff]->rlmid.lmid_end)
+                      reads[ff]->left_trimmed_by_adapter = 1;
                 }
                         
                                 
                 if(reads[ff]->rclip <= 1) reads[ff]->discarded = 1; 
-                                
-           } 
-           else
-           {
-               reads[ff]->lclip = reads[ff]->rclip = 1;
+           } else {
+              reads[ff]->lclip = reads[ff]->rclip = 1;
            }
-       }
-       else if( (vector_flag == true) && (qual_trim_flag == false) ) 
-       {
-           if ( reads[ff]->discarded == 0 )
-           {
+       } else if( (vector_flag == true) && (qual_trim_flag == false) ) {
+           if ( reads[ff]->discarded == 0 ) {
                 int a = reads[ff]->v_start;
                 int b = reads[ff]->read.length() - reads[ff]->v_end;
                     
-                if( a >= b ) //Vector is on the right side
-                {
+                if( a >= b ) { //Vector is on the right side
                     reads[ff]->rclip = min(reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start, min(reads[ff]->b_adapter_pos == 0 ? (int)reads[ff]->read.length() : reads[ff]->b_adapter_pos, reads[ff]->v_start) );
 
-                    if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
-                    {
+                    if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start ) {
                         reads[ff]->right_trimmed_by_adapter = 1;
-                    }
-                    else if(reads[ff]->rclip == reads[ff]->v_start)
-                    {
+                    } else if(reads[ff]->rclip == reads[ff]->v_start) {
                         reads[ff]->right_trimmed_by_vector = 1;
-                    }
-                    else if(reads[ff]->rclip == reads[ff]->b_adapter_pos)
-                    {
+                    } else if(reads[ff]->rclip == reads[ff]->b_adapter_pos) {
                         reads[ff]->right_trimmed_by_adapter = 1;
                     }
-                    
                     reads[ff]->lclip = reads[ff]->rlmid.lmid_end;
                     reads[ff]->lclip > 0 ? reads[ff]->left_trimmed_by_adapter = 1 : reads[ff]->left_trimmed_by_adapter = 0;
-                    
-                }
-                else //Vector is on the left side
-                {
+                } else { //Vector is on the left side
                     reads[ff]->rclip = min( (int)reads[ff]->read.length(), min( reads[ff]->rlmid.rmid_start == 0 ? (int)reads[ff]->read.length() : reads[ff]->rlmid.rmid_start ,reads[ff]->b_adapter_pos == 0 ? reads[ff]->rlmid.rmid_start : reads[ff]->b_adapter_pos ) );
 
-                    if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start )
-                    {
+                    if( reads[ff]->rclip == reads[ff]->rlmid.rmid_start ) {
                         reads[ff]->right_trimmed_by_adapter = 1;
-                    }
-                    else if(reads[ff]->rclip == reads[ff]->b_adapter_pos)
-                    {
+                    } else if(reads[ff]->rclip == reads[ff]->b_adapter_pos) {
                         reads[ff]->right_trimmed_by_adapter = 1;
                     }        
-                    
                     
                     reads[ff]->lclip = max(reads[ff]->rlmid.lmid_end, reads[ff]->v_end );
 
                     if(reads[ff]->lclip == reads[ff]->v_end)
-                    {
                        reads[ff]->left_trimmed_by_vector = 1;
-                    }
                     if(reads[ff]->lclip == reads[ff]->rlmid.lmid_end)
-                    {
                        reads[ff]->left_trimmed_by_adapter = 1;
-                    }
                 }
                         
                 if(reads[ff]->rclip <= 1) reads[ff]->discarded = 1; 
