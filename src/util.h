@@ -9,6 +9,8 @@
 #define	UTIL_H
 
 #include <stdio.h>
+#include <stdint.h>
+#include <arpa/inet.h> // htons(), htonl()
 #include <iostream>
 #include <string>
 #include <fstream>
