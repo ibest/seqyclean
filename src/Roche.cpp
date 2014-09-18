@@ -80,6 +80,8 @@ int RocheRoutine()
            WriteToFASTQ( output_prefix + ".fastq" );
        } else if (fasta_output) {
            WriteToFASTQ( output_prefix + ".fasta" );
+       } else {
+           WriteToFASTQ( output_prefix + ".fastq" );  
        }
        
        cout << "Making a report..." << endl;
@@ -112,7 +114,7 @@ void ParseFastqFile(char* fastq_file, vector<Read*> &reads) {
        if(ii==3) {
            record_block.push_back(line); /*Quality scores*/
            Read* read = new Read();
-           read->readID = (char *) malloc( record_block[0].length() * sizeof(char) ); //(char*)record_block[0].c_str();
+           read->readID = (char *) malloc( 512 * sizeof(char) ); //(char*)record_block[0].c_str();
            strcpy(read->readID, (char*)record_block[0].c_str());//
            read->initial_length = record_block[1].length();
            read->read = record_block[1];
@@ -681,7 +683,7 @@ void WriteToFASTQ(string file_name) {
         }
         
         string read_id_to_write = string(reads[i]->readID);
-        if(read_id_to_write[0] != '@')
+        if(read_id_to_write[0] != '@' && !fasta_output)
                 read_id_to_write = "@" + read_id_to_write;
             
         reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
@@ -696,13 +698,15 @@ void WriteToFASTQ(string file_name) {
         }
             
         if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
-            
-        output_file << '>' << read_id_to_write << endl;
-        output_file << reads[i]->read << endl;
-        
-        if (!fasta_output) {
+         
+        if (fasta_output) {
+            output_file << '>' << read_id_to_write << endl; // Read ID
+            output_file << reads[i]->read << endl; // Bases
+        } else {
+            output_file << read_id_to_write << endl; // Read ID
+            output_file << reads[i]->read << endl; // Bases
             output_file << '+' << endl;
-            output_file << quality << endl;
+            output_file << quality << endl; // Quality
         }
     
     }
