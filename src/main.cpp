@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.3 (2014-08-24)";
+string version = "1.9.4 (2014-10-16)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool amplicon_flag = false;
@@ -96,7 +96,7 @@ string query_str1;
 string query_str2;
 
 /*Output data and parameters to observe the computational process*/
-bool output_sfffile_flag = false;
+bool output_sfffile_flag = true;
 bool output_fastqfile_flag = false;
 char *output_file_name = (char*)"NA";
 char* custom_output_filename;
@@ -1181,7 +1181,14 @@ int main(int argc, char *argv[])
         cout << "Output prefix: " << output_prefix << endl;
         sum_stat << "Output prefix: " << output_prefix << endl;
         
-        roche_output_file_name = output_prefix + (output_fastqfile_flag ? ".fastq" : (fasta_output ? ".fasta" : "") );
+        if (output_sfffile_flag) {
+            roche_output_file_name = output_prefix + ".sff";
+        } else if(output_fastqfile_flag) {
+            roche_output_file_name = output_prefix + ".fastq";
+        } else if (fasta_output) {
+            roche_output_file_name = output_prefix + ".fasta";
+        }
+        
         roche_rep_file_name = output_prefix + "_Report.tsv" ;
         
         cout << "Report file: " << roche_rep_file_name << "\n";
