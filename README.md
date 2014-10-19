@@ -1,66 +1,85 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.9.1 (2014-04-13)```
+Version: ```1.9.3 (2014-10-17)```
 
-Main purpose of this software is to clean reads. It provide adapter/key/primers searching and quality trimming (LUCY).
+Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
+
+SeqyClean offers:
+
+* Adapter/key/primers filtering
+* Vector and contaminants filtering.
+* Quality trimming.
+* Poly A/T trimming.
+* Overlapping paired reads.
+
+It handles SFF and FASTQ file formats.
 
 # Usage  
 ## Roche 454
 
 ```
-./seqyclean -454 input_file_name -o output_prefix [-v vector_file]
-						  [-c file_of_contaminants]
-						  [-m file_of_RL_MIDS]
-						  [-k k_mer_size]
-						  [-kc k_mer_size]
-						  [-f overlap ]
-						  [-t number_of_threads]
-						  [-qual max_avg_error max_error_at_ends]
-						  [--qual_only]
-						  [--fastq]
-						  [--keep_fastq_orig]
-                                                  [--ow]
-						  [-minimum_read_length <value>]
-						  [-polyat [cdna] [cerr] [crng] ]
+./seqyclean -454 input_file_name -o output_prefix [options]
+
+options:
+-v vector_file
+-c file_of_contaminants
+-m file_of_RL_MIDS
+-k k_mer_size
+-kc k_mer_size
+-f overlap
+-t number_of_threads
+-qual max_avg_error max_error_at_ends
+--qual_only
+--fastq
+--keep_fastq_orig
+--ow
+-minimum_read_length <value>
+-polyat [cdna] [cerr] [crng]
 ```
 
 ## Illumina
 
 ### Paired-end
 ```
-./seqyclean -1 input_file_name_1 -2 input_file_name_2 -o output_prefix [-v vector_file]
-                                                                       [-c file_of_contaminants]
-                                                                       [-k k_mer_size]
-                                                                       [-kc k_mer_size]
-                                                                       [-qual max_avg_error max_error_at_ends]
-                                                                       [--qual_only]
-                                                                       [-minimum_read_length <value>]
-                                                                       [-i64]
-                                                                       [-adapter_length <value>]
-                                                                       [-ot <value>]
-                                                                       [--overlap <minoverlap=value>]
-                                                                       [--ow]
-                                                                       [--dup][-start_dw][-size_dw]
-                                                                       [-polyat [cdna] [cerr] [crng] ]
-                                                                       [--no_ts_adapter_trim ]
-                                                                       [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+./seqyclean -1 input_file_name_1 -2 input_file_name_2 -o output_prefix [options]
+
+options:
+-v vector_file
+-c file_of_contaminants
+-k k_mer_size
+-kc k_mer_size
+-qual max_avg_error max_error_at_ends
+--qual_only
+-minimum_read_length <value>
+-i64
+-adapter_length <value>
+-ot <value>
+--overlap <minoverlap=value>
+--ow
+--dup][-start_dw][-size_dw]
+-polyat [cdna] [cerr] [crng]
+--no_ts_adapter_trim
+--new2old_illumina - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 ```
 
 ### Single-end
 
 ```
-./seqyclean -U input_file_name -o output_prefix [-v vector_file]
-                                                                       [-c file_of_contaminants]
-                                                                       [-k k_mer_size]
-                                                                       [-kc k_mer_size]
-                                                                       [-qual max_avg_error max_error_at_ends]
-                                                                       [--qual_only]
-                                                                       [-minimum_read_length <value>]
-                                                                       [--ow]
-                                                                       [-polyat [cdna] [cerr] [crng] ]
-                                                                       [--no_ts_adapter_trim ]
-                                                                       [--new2old_illumina] - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+./seqyclean -U input_file_name -o output_prefix [options]
+                                
+options:
+-v vector_file                                
+-c file_of_contaminants
+-k k_mer_size
+-kc k_mer_size
+-qual max_avg_error max_error_at_ends
+--qual_only
+-minimum_read_length <value>
+--ow
+-polyat [cdna] [cerr] [crng]
+--no_ts_adapter_trim
+--new2old_illumina - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 ```
 
 
