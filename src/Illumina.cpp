@@ -91,15 +91,16 @@ void IlluminaDynamic()
     left_trimmed_by_polyat1 = left_trimmed_by_polyat2 = 0;
     
     fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file, overlap_file;
-    rep_file1.open(rep_file_name1.c_str(),ios::out);
-    rep_file2.open(rep_file_name2.c_str(),ios::out);
-    
+    if (detailed_report) {
+        rep_file1.open(rep_file_name1.c_str(),ios::out);
+        rep_file2.open(rep_file_name2.c_str(),ios::out);
+    }
     //if(overlap_flag)
     //    overlap_file.open(overlap_file_name.c_str(),ios::out);
-    
-    rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
-    rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
-    
+    if (detailed_report) {
+        rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
+        rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
+    }
     cout << "Running the Illumina cleaning process..." << endl;
     sum_stat << "Running the Illumina cleaning process..." << endl;
     
@@ -288,10 +289,11 @@ void IlluminaDynamic()
                                 
                             temp_id.clear();
                             temp_id1.clear();
-                                
-                            rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
-                            rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
-          
+                            
+                            if (detailed_report) {
+                                rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                                rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+                            }
                          }
                       }
                         
@@ -346,9 +348,10 @@ void IlluminaDynamic()
                            }
                         }
                         
-                        rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
-                        rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
-          
+                        if (detailed_report) {
+                            rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                            rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+                        }
           
                         if (read1->tru_sec_found == 1) ts_adapters1++;
                         if (read1->vector_found == 1) num_vectors1++;
@@ -393,7 +396,7 @@ void IlluminaDynamic()
                         delete read1;
                         delete read2;
                         
-                        if( (cnt1 % 1000 ) == 0)
+                        if( ((cnt1 % 1000 ) == 0) && verbose)
                         {
                             st_str = PrintIlluminaStatistics(cnt1, cnt2, 
                                     pe1_bases_anal, pe2_bases_anal, 
@@ -476,17 +479,18 @@ void IlluminaDynamic()
                             );
     
     
-    
-    vector<string> t;
-    split_str(st_str, t, "\n");
-    for(int kk=0; kk<(int)t.size()+1; ++kk)
-    {
-       cout << "\033[A\033[2K";
-       
+    if (verbose) {
+        vector<string> t;
+        split_str(st_str, t, "\n");
+        for(int kk=0; kk<(int)t.size()+1; ++kk)
+        {
+            cout << "\033[A\033[2K";
+        }
+        t.clear();
     }
-    t.clear();
     
     cout << st_str;
+    
     sum_stat << st_str;
     
     
@@ -527,8 +531,10 @@ void IlluminaDynamic()
     se_file.close();
     shuffle_file.close();
     
-    rep_file1.close();
-    rep_file2.close();
+    if (detailed_report) {
+        rep_file1.close();
+        rep_file2.close();
+    }
     
 }
 
@@ -996,9 +1002,10 @@ void IlluminaDynamicSE()
     unsigned long discarded_by_polyAT = 0;
     
     fstream rep_file, se_output_file;
-    rep_file.open(rep_file_name1.c_str(),ios::out);
-    rep_file << "ReadID\tlclip\trclip\tTruSeq_pos\tTruSeq_type\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVectorID\tVecStart\tVecEnd\tVecLen\n";
-    
+    if (detailed_report) {
+        rep_file.open(rep_file_name1.c_str(),ios::out);
+        rep_file << "ReadID\tlclip\trclip\tTruSeq_pos\tTruSeq_type\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVectorID\tVecStart\tVecEnd\tVecLen\n";
+    }
     cout << "Running the Illumina cleaning process..." << endl;
     sum_stat << "Running the Illumina cleaning process..." << endl;
     
@@ -1087,9 +1094,10 @@ void IlluminaDynamicSE()
                         cnt+=1;
           
                         //Report
-                        //Read ID
-                        rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
-                        
+                        if (detailed_report) {
+                            rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
+                        }
+
                         if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
                         if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
                         if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
@@ -1166,7 +1174,7 @@ void IlluminaDynamicSE()
                         delete read;
                         
                         
-                        if( (cnt % 1000 ) == 0)
+                        if( ((cnt % 1000 ) == 0) && verbose)
                         {
                             st_str = PrintIlluminaStatisticsSE(cnt, 
                                     se_bases_anal, 
@@ -1239,14 +1247,16 @@ void IlluminaDynamicSE()
                                     discarded_by_polyAT
                                    );
     
-    vector<string> t;
-    split_str(st_str, t, "\n");
-    /*for(int kk=0; kk<(int)t.size(); ++kk)
-    {
-       cout << "\033[A\033[2K";
-       sum_stat << "\033[A\033[2K";
-    }*/
-    t.clear();
+    if (verbose) {
+        vector<string> t;
+        split_str(st_str, t, "\n");
+        /*for(int kk=0; kk<(int)t.size(); ++kk)
+        {
+            cout << "\033[A\033[2K";
+            sum_stat << "\033[A\033[2K";
+        }*/
+        t.clear();
+    }
     
     cout << st_str;
     sum_stat << st_str;
@@ -1279,7 +1289,8 @@ void IlluminaDynamicSE()
     
     se_output_file.close();
     
-    rep_file.close();
+    if (detailed_report)
+        rep_file.close();
     
     
     
@@ -1967,7 +1978,7 @@ bool TrimAdapterPE(Read *read1, Read *read2) {
     string revcomp = MakeRevComplement(read2->read);
     int o = find_overlap_pos(read1->read, revcomp, adapterlength, false);
     if( (o > 0) && (o != -10000)) {
-       // cout << o << '\n';
+       //cout << o << '\n';
        read1->tru_sec_found = 1; read2->tru_sec_found = 1;
        read1->tru_sec_pos = o-1;//o; 
        read2->tru_sec_pos = o-1;//o;
@@ -1982,7 +1993,38 @@ bool TrimAdapterPE(Read *read1, Read *read2) {
        read2->lclip = 0; read2->rclip = read2->tru_sec_pos;
        
        return true;
-    }
+    } /*else { // Try another direction
+        string revcomp1 = MakeRevComplement(read1->read);
+        //string revcomp2 = MakeRevComplement(read2->read);
+        int o = find_overlap_pos(revcomp1, read2->read, adapterlength, false);
+        if( (o > 0) && (o != -10000)) {
+            //cout << o << '\n';
+            int rlen = read1->read.length();
+            read1->tru_sec_found = 1; read2->tru_sec_found = 1;
+            read1->tru_sec_pos = o-1;//o; 
+            read2->tru_sec_pos = o-1;//o;
+       
+            //read1->read = read1->read.substr(read1->tru_sec_pos, rlen-read1->tru_sec_pos);
+            //read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->tru_sec_pos, rlen-read1->tru_sec_pos);
+            //
+            //read2->read = read2->read.substr(0, read2->tru_sec_pos);
+            //read2->illumina_quality_string = read2->illumina_quality_string.substr(0, read2->tru_sec_pos);
+       
+            read1->read = read1->read.substr(read1->tru_sec_pos,rlen-read1->tru_sec_pos);
+            read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->tru_sec_pos,rlen-read1->tru_sec_pos);
+       
+            read2->read = read2->read.substr(read2->tru_sec_pos,rlen-read2->tru_sec_pos);
+            read2->illumina_quality_string = read2->illumina_quality_string.substr(read2->tru_sec_pos,rlen-read2->tru_sec_pos);
+       
+            
+
+
+            read1->lclip = 0; read1->rclip = read1->tru_sec_pos;
+            read2->lclip = 0; read2->rclip = read2->tru_sec_pos;
+       
+            return true;
+        }
+    }*/
     
     return false;
 }

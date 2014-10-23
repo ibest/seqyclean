@@ -102,6 +102,8 @@ char *output_file_name = (char*)"NA";
 char* custom_output_filename;
 bool keep_fastq_orig = false;
 bool lucy_only_flag = false;
+bool verbose = false;
+bool detailed_report = false;
 /*----------End of output data definition------------------*/
 
 
@@ -280,6 +282,11 @@ int main(int argc, char *argv[])
            
            continue;
         }
+        else if( string(argv[i]) == "--verbose" ) 
+        {
+           verbose = true;
+           continue;
+        }
         else if( string(argv[i]) == "--qual_only" ) 
         {
            lucy_only_flag = true;
@@ -433,6 +440,12 @@ int main(int argc, char *argv[])
                PrintHelp();
                return 0;
            }
+           continue;
+        }
+        else if(string(argv[i]) == "--detailed_report" )
+        {
+           detailed_report = true;
+           
            continue;
         }
         else if(string(argv[i]) == "-i64" )

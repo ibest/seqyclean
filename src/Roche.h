@@ -41,6 +41,7 @@ extern fstream sum_stat, sum_stat_tsv;
 extern bool lucy_only_flag;
 extern unsigned short cdna, c_err, crng;
 extern bool fasta_output;
+extern bool detailed_report;
 
 int RocheRoutine();
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads);

@@ -35,6 +35,8 @@ extern string adapter_type_R2;
 extern string query_str1;
 extern string query_str2;
 extern bool polyat_flag;
+extern bool verbose;
+extern bool detailed_report;
 /*Illumina data structures*/
 
 

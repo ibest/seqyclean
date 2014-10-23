@@ -84,8 +84,11 @@ int RocheRoutine()
            WriteToFASTQ( output_prefix + ".fastq" );  
        }
        
-       cout << "Making a report..." << endl;
-       MakeReport( roche_rep_file_name );
+       if (detailed_report) {
+        cout << "Making a report..." << endl;
+        MakeReport( roche_rep_file_name );
+       }
+
        MakeFinalStatistics(sum_stat);
        
        // Cleaning up..
