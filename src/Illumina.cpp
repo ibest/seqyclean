@@ -313,13 +313,13 @@ void IlluminaDynamic()
                                  WritePEFile(pe_output_file1, read1);
                                  WritePEFile(pe_output_file2, read2);
                                  pe_accept_cnt+=1;
-                                 pe_bases_kept += read1->read.length();
-                                 pe_bases_kept += read2->read.length();
+                                 pe_bases_kept += (unsigned long long)read1->read.length();
+                                 pe_bases_kept += (unsigned long long)read2->read.length();
                              } else {
                                  WriteShuffleFile( shuffle_file, read1, read2 );
                                  pe_accept_cnt+=1;
-                                 pe_bases_kept += read1->read.length();
-                                 pe_bases_kept += read2->read.length();
+                                 pe_bases_kept += (unsigned long long)read1->read.length();
+                                 pe_bases_kept += (unsigned long long)read2->read.length();
                              }
                                
                              cnt1_avg+=1;
@@ -1373,8 +1373,8 @@ string PrintIlluminaStatistics(unsigned long long cnt1, unsigned long long cnt2,
                         (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant2,new char[15],10) + "\n" : "" ) +
                         "By read length: " +  i2str(discarded_by_read_length2,new char[15],10) + "\n" + 
                         "----------------------Summary for PE & SE----------------------\n" +
-                        ("Pairs kept: " + i2str(pe_accept_cnt,new char[15],10) + ", " + double2str( (double)pe_accept_cnt/(double)cnt1*100.0) + "%, Bases: " + i2str(pe_bases_kept,new char[15],10) + ", " + double2str( (double)pe_bases_kept/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
-                        ("Pairs discarded: " + i2str(pe_discard_cnt,new char[15],10) + ", " + double2str( (double)pe_discard_cnt/(double)cnt1*100.0) + "%, Bases: " + i2str(pe_bases_discarded,new char[15],10) + ", " + double2str( (double)pe_bases_discarded/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
+                        ("Pairs kept: " + i2str(pe_accept_cnt,new char[15],10) + ", " + double2str( (double)pe_accept_cnt/(double)cnt1*100.0) + "%, Bases: " + i2str(pe_bases_kept,new char[32],10) + ", " + double2str( (double)pe_bases_kept/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
+                        ("Pairs discarded: " + i2str(pe_discard_cnt,new char[15],10) + ", " + double2str( (double)pe_discard_cnt/(double)cnt1*100.0) + "%, Bases: " + i2str(pe_bases_discarded,new char[32],10) + ", " + double2str( (double)pe_bases_discarded/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
                         ("Single Reads PE1 kept: " + i2str(se_pe1_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe1_bases_kept,new char[15],10) +"\n") +
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +

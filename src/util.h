@@ -76,7 +76,7 @@ double GetAvg( double past_avg, long n, int cur_diff, int first_avg );
 int MakeDirectory(string path_to_create);
 void GetDirectories(std::vector<string> &out, char *directory);
 vector< vector<string> > GetPEfilenames(string prefix1, string prefix2, char *directory);
-string i2str(int value, char* result, int base);
+string i2str(unsigned long long value, char* result, int base);
 string double2str(double num);
 string int2str(int num);
 short GetFormat(char* filename);
