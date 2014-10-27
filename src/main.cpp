@@ -573,7 +573,7 @@ int main(int argc, char *argv[])
               illumina_flag = true;
               illumina_file_name_R1 = argv[++i];
               pe1_names.push_back(illumina_file_name_R1);
-              
+              cout << illumina_file_name_R1 << endl;
               int jj=0;
               while( ( (i+1+jj)<argc ) && (argv[i+1+jj][0] != '-') ) {
                   pe1_names.push_back(argv[i+jj+1]);
@@ -653,11 +653,11 @@ int main(int argc, char *argv[])
         {
             VectorOnlyFlag = true;
             continue;    
-        } else {
+        } /*else {
             cout << "Unknown parameter: " << argv[i] << endl;
             PrintHelp();
             return 0;
-        }
+        }*/
     }
     
     /*******************************************/

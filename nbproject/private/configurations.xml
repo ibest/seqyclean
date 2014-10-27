@@ -81,20 +81,30 @@
         </compilecommandpicklist>
         <compilecommand>${AUTO_COMPILE}</compilecommand>
       </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual minimum_read_length 0</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/SRR519926.sra_1.fastq -2 test_data/SRR519926.sra_2.fastq -o test_data/SRR519926 --ow -qual -minimum_read_length 0</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -qual -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -qual -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o test/test</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/artif_pe1.fastq -2 test_data/artif_pe2.fastq -qual -o test/test --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/TestSRR_PE1.fastq -2 test_data/TestSRR_PE2.fastq -qual -o test/test --ow --verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/TestSRR_PE1.fastq -2 test_data/TestSRR_PE2.fastq -qual -o test/test --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in.sff -o test/test -qual --ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual --ow</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/TestSRR_PE1.fastq -2 test_data/TestSRR_PE2.fastq -qual -o test/test --ow</runcommand>
+        <runcommand>bin/./seqyclean -454 test_data/in* -o test/test -qual --ow</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

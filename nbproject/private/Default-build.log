@@ -1,0 +1,34 @@
+rm -rf obj/
+mkdir obj/
+rm -rf bin/
+mkdir bin/
+#g++ -I src/ -O -Wall -c -o obj/gzstream.o src/gzstream.C 
+gcc -I src/ -O -Wall -c -o obj/gzstream.o src/gzstream.C 
+ar cr obj/libgzstream.a obj/gzstream.o
+g++ -g -O3 -c -o obj/abi.o src/abi.c
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated
+g++ -g -O3 -c -o obj/poly.o src/poly.c
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated
+g++ -g -O3 -c -o obj/sff.o src/sff.c
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated
+g++ -g -I src/ -Wno-deprecated-declarations -O3 -c -o obj/sffreader.o src/sffreader.cpp
+g++ -Wall -g -O3 -c -o obj/ascii.o src/ascii.cpp
+g++ -Wall -g -O3 -c -o obj/util.o src/util.cpp
+g++ -Wall -g -O3 -c -o obj/Read.o src/Read.cpp
+g++ -Wall -g -O3 -c -o obj/QualTrim.o src/QualTrim.cpp
+g++ -Wall -g -O3 -c -o obj/Report.o src/Report.cpp
+g++ -Wall -g -O3 -c -o obj/iz_SSAHA.o src/iz_SSAHA.cpp
+g++ -Wall -g -O3  -c -o obj/pairwise.o src/pairwise.cpp
+g++ -Wall -g -O3 -c -o obj/Dictionary.o src/Dictionary.cpp
+g++ -Wall -g -O3 -c -o obj/KMerRoutine.o src/KMerRoutine.cpp
+g++ -Wall -g -Wno-int-to-void-pointer-cast -O3 -c -o obj/MainPipeLine.o src/MainPipeLine.cpp 
+g++ -Wall -g -O3 -c -o obj/Illumina.o src/Illumina.cpp 
+g++ -Wall -g -O3  -c -o obj/Roche.o src/Roche.cpp 
+src/Roche.cpp:103:1: warning: control may reach end of non-void function [-Wreturn-type]
+}
+^
+1 warning generated.
+g++ -Wall -g -O3  -c -o obj/dup.o src/dup.cpp 
+g++ -Wall -g -O3 -c -o obj/flash.o src/flash.cpp 
+g++ -Wall -g -O3  -c -o obj/main.o src/main.cpp 
+g++ -Wall -g -L. -O3 -o  bin/seqyclean obj/main.o obj/flash.o obj/dup.o obj/Roche.o obj/Illumina.o obj/MainPipeLine.o obj/KMerRoutine.o obj/Dictionary.o obj/pairwise.o obj/iz_SSAHA.o obj/Report.o obj/QualTrim.o obj/Read.o obj/util.o obj/ascii.o obj/sffreader.o obj/sff.o obj/poly.o obj/abi.o obj/gzstream.o -Iobj/lgzstream.a -lpthread -lz
