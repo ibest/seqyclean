@@ -4,7 +4,7 @@
 int strdist(string s1, string s2) {
     int sum = 0;
     if((s1.length() == s2.length()) && (s1.length() > 0)) {
-        for(unsigned int i=0; i < s1.length(); ++i) {
+        for(unsigned int i=0; i < s1.length(); i++) {
             if(s1[i] != s2[i]) sum++;
         }
     } else {
@@ -25,21 +25,23 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
     string s2 = seq2;
     unsigned int rlen = s1.length();
     //first check for dovetail:
-    if( s1.length() != s2.length() ) return -10000;
-    if((int)s1.length() < adapterlength) return -10000;
-    if((int)s2.length() < adapterlength) return -10000;
+    if( s1.length() != s2.length() ) {
+        std::cout << "!!! " << s1.length() << " " << s2.length() << std::endl; 
+        std::cout << s1 << "\n" << s2 << "\n";
+        return -10000;
+    }
+    if(((int)s1.length() < adapterlength) || ((int)s2.length() < adapterlength) ) return -10000;
     
     if(!flag) {
-        for(unsigned int i = rlen; i >= (unsigned int)minoverlap; i--) {
-            if((double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) >= overlap_t ) {
+        for(unsigned int i = rlen; i >= minoverlap; i--) {
+            if ((double)(i - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) >= overlap_t ) {
                 //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
                 return i;
             }
             //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
         }
         
-    }
-    if(flag) {
+    } else {
         //Next check for perfect overlap
         if((double)(rlen - strdist(s1, s2))/(double)rlen >= overlap_t ) {
                 //found perfect overlap

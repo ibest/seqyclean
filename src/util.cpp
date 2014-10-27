@@ -164,25 +164,20 @@ string MakeRevComplement(string init_str) {
     
     reverse(init_str.begin(), init_str.end());
     
-    for(int i = 0; i<(int)init_str.length(); i++) {
+    for(unsigned int i = 0; i<init_str.length(); i++) {
         if(init_str[i] == 'A') {
             init_str[i] = 'T';
             continue;
-        }
-        if(init_str[i] == 'T') {
+        } else if(init_str[i] == 'T') {
             init_str[i] = 'A';
             continue;
-        }
-        if(init_str[i] == 'G') {
+        } else if(init_str[i] == 'G') {
             init_str[i] = 'C';
             continue;
-        }
-        if(init_str[i] == 'C') {
+        } else if(init_str[i] == 'C') {
             init_str[i] = 'G';
             continue;
         }
-        
-        
     }
     
     return init_str;

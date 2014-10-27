@@ -217,6 +217,11 @@ void IlluminaDynamic()
                         cout << "Warming: in PE2 file, the raw read length is less or equal than minimum_read_length\n" ; 
                         sum_stat << "Warming: in PE2 file, the raw read length is less or equal than minimum_read_length\n" ; 
                     }
+                    
+                    // We have to make the length of the reads to be equal:
+                    unsigned int rlen = min(read1->read.length(), read2->read.length());
+                    read1->read = read1->read.substr(0,rlen);
+                    read2->read = read2->read.substr(0,rlen);
                         
                     //Serial realization - useful for debugging if something does not work as expected
                     //Duplicates removal
@@ -2023,8 +2028,8 @@ bool TrimAdapterPE(Read *read1, Read *read2) {
             read2->lclip = 0; read2->rclip = read2->tru_sec_pos;
        
             return true;
-        }
-    }*/
+        
+    } */
     
     return false;
 }
