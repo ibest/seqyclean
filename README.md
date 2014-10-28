@@ -17,43 +17,43 @@ It handles SFF and FASTQ file formats.
 
 # Usage  
 ```
-usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]\n"
+usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]
 ```            
 ## Common arguments for all library types
 ```
--h, --help - show this help and exit.\n"
--v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.\n"
--c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.\n"
--k <int> - Common size of k-mer, default=15\n"
--d - distance between consecutive k-mers, default=1\n"
--kc <int> - Size of k-mer used in sampling contaminat genome, default=15\n"
--qual <int> <int> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
--qual_only - Performs only quality trimming without trimming of adapters, default=off.\n"
--ow - Overwrite existing results, default=off\n"
--minlen <int> - Minimum length of read to accept, default=50 bp.\n"
--polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.\n"
--verbose - Verbose output, default=off.\n"
--detrep - Generate detailed report for each read, default=off.\n"
+-h, --help - show this help and exit.
+-v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.
+-c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.
+-k <int> - Common size of k-mer, default=15.
+-d - distance between consecutive k-mers, default=1.
+-kc <int> - Size of k-mer used in sampling contaminat genome, default=15.
+-qual <int> <int> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20).
+-qual_only - Performs only quality trimming without trimming of adapters, default=off.
+-ow - Overwrite existing results, default=off.
+-minlen <int> - Minimum length of read to accept, default=50 bp.
+-polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.
+-verbose - Verbose output, default=off.
+-detrep - Generate detailed report for each read, default=off.
 ```
 ## Roche 454 arguments
 ```
--t <int> - Number of threads (not yet applicable to Illumina mode), default=4.\n" 
--fastq - Output in FASTQ format, default=off.\n"
--fasta_out - Output in FASTA format, default=off.\n"
--m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.\n"
+-t <int> - Number of threads (not yet applicable to Illumina mode), default=4.
+-fastq - Output in FASTQ format, default=off.
+-fasta_out - Output in FASTA format, default=off.
+-m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.
 ```
 ## Illumina paired- and single-end arguments
 ```
 -1 <filename1> -2 <filename2> - Paired-end mode (see examples below)
--U <filename> - single-end mode
--shuffle - Store non-paired Illumina reads in shuffled file, default=off.\n"
--i64 - Turns on 64-quality base, default = off.\n"
--adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters\n"
--alen <value> - minimum adapter length for dovetail overlap, default = 60 bp.\n"
--ot <value> - overlap threshold (only in paired-end mode, default = 0.75.\n"
--dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.\n" 
--no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
--new2old - switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
+-U <filename> - Single-end mode
+-shuffle - Store non-paired Illumina reads in shuffled file, default=off.
+-i64 - Turns on 64-quality base, default = off.
+-adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters
+-alen <value> - minimum adapter length for dovetail overlap, default = 60 bp.
+-ot <value> - overlap threshold (only in paired-end mode, default = 0.75.
+-dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.
+-no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.
+-new2old - switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
 ```
 
 # Examples
