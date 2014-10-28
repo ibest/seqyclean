@@ -24,20 +24,20 @@ usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o outp
 -h, --help - show this help and exit.
 -v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.
 -c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.
--k <int> - Common size of k-mer, default=15.
+-k <value> - Common size of k-mer, default=15.
 -d - distance between consecutive k-mers, default=1.
--kc <int> - Size of k-mer used in sampling contaminat genome, default=15.
--qual <int> <int> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20).
+-kc <value> - Size of k-mer used in sampling contaminat genome, default=15.
+-qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20).
 -qual_only - Performs only quality trimming without trimming of adapters, default=off.
 -ow - Overwrite existing results, default=off.
--minlen <int> - Minimum length of read to accept, default=50 bp.
+-minlen <value> - Minimum length of read to accept, default=50 bp.
 -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.
 -verbose - Verbose output, default=off.
 -detrep - Generate detailed report for each read, default=off.
 ```
 ## Roche 454 arguments
 ```
--t <int> - Number of threads (not yet applicable to Illumina mode), default=4.
+-t <value> - Number of threads (not yet applicable to Illumina mode), default=4.
 -fastq - Output in FASTQ format, default=off.
 -fasta_out - Output in FASTA format, default=off.
 -m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.
