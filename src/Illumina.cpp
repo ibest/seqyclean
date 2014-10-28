@@ -1364,10 +1364,10 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         ( polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat2) + "\n" : "") +
                         ("Average left trim length: " + double2str(avg_left_trim_len_pe2) + " bp\n" ) +
                         "Reads right trimmed ->\n" +
+                        "By adapter: " +  i2str(right_trimmed_by_adapter2,new char[15],10) + "\n" +
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality2,new char[15],10) + "\n" : "") +
                         (vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector2,new char[15],10) + "\n" : "" ) +
-                        ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat2) + "\n" : "") +                        
-                        "By adapter: " +  i2str(right_trimmed_by_adapter2,new char[15],10) + "\n" +
+                        ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat2) + "\n" : "") +                      
                         ("Average right trim length: " + double2str(avg_right_trim_len_pe2) + " bp\n") +
                         "PE2 reads discarded:" + i2str(discarded2,new char[15],10) + "\n" +
                         (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant2,new char[15],10) + "\n" : "" ) +
@@ -1794,10 +1794,6 @@ int TrimIllumina(Read* read1, Read* read2)
        }
     }
     
-    /*if (read1->illumina_readID == "@SRR519926.sra.337037 337037 length=251") {
-        cout << "!!!\n";
-    }*/
-    
     // Trim adapters
     bool adapter_found = false;
     //cout << read1->read << "\n";
@@ -1815,7 +1811,6 @@ int TrimIllumina(Read* read1, Read* read2)
     tmp_avg_right_clip_2 = read2->initial_length - read2->rclip;
     tmp_avg_left_clip_2 = read2->lclip;
     
-    //cout << read1->lclip << " " << read1->rclip << "\n";
     // Trim quality
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
     if( qual_trim_flag  ) {
@@ -1835,6 +1830,7 @@ int TrimIllumina(Read* read1, Read* read2)
            if (read1->lucy_rclip < read1->rclip) {
                 read1->rclip = read1->lucy_rclip;
                 read1->right_trimmed_by_quality = 1;
+                
            }
            
            tmp_avg_left_clip_1 += read1->lclip;
@@ -1845,6 +1841,10 @@ int TrimIllumina(Read* read1, Read* read2)
            //
            read1->read = read1->read.substr(read1->lclip, read1->read.length()-read1->lclip);
            read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->lclip, read1->illumina_quality_string.length()-read1->lclip);
+           
+           read1->lucy_lclip =0;
+           read1->lucy_rclip = read1->read.length();
+       
        }
        
        QualTrimIllumina( read2, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
@@ -1870,6 +1870,9 @@ int TrimIllumina(Read* read1, Read* read2)
            
            read2->read = read2->read.substr(read2->lclip, read2->read.length()-read2->lclip);
            read2->illumina_quality_string = read2->illumina_quality_string.substr(read2->lclip, read2->illumina_quality_string.length()-read2->lclip);
+           
+           read2->lucy_lclip =0;
+           read2->lucy_rclip = read2->read.length();
        }
     }
         
@@ -1915,11 +1918,12 @@ int TrimIllumina(Read* read1, Read* read2)
     }
     
     if(polyat_flag) {
+        
        // Сбрасываем точки усечения:
        read1->lclip = 0; read1->rclip = read1->read.length();
        read2->lclip = 0; read2->rclip = read2->read.length(); 
        
-       //If poly A/T flag is set:
+       //Trim poly A/T:
        PolyAT_Trim(read1); 
        PolyAT_Trim(read2);
        
