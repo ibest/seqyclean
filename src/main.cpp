@@ -27,10 +27,9 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.5 (2014-10-26)";
+string version = "1.9.6 (2014-10-28)";
 bool contaminants_flag = false;
 bool vector_flag = false;
-bool amplicon_flag = false;
 bool qual_trim_flag = false;
 bool sff_file_flag = false;
 bool fastq_file_flag = false;
@@ -188,11 +187,10 @@ int main(int argc, char *argv[])
     
     /*Parsing command line arguments*/
     for (int i=1; i<argc; i++) {
-        if( string(argv[i]) == "--version" ) {
+        if( string(argv[i]) == "-ver" ) {
            cout << "Version: " << version << endl; // Print version and return
            return 1;
-        }
-        else if (string(argv[i]) == "-adapters") {  // Load custom Illumina adapters
+        } else if (string(argv[i]) == "-adp") {  // Load custom Illumina adapters
            if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
              adapter_file = argv[++i];
@@ -205,23 +203,19 @@ int main(int argc, char *argv[])
              }
            }
            continue;
-        } 
-        else if (string(argv[i]) == "-num_windows") {  // Numer of windows for quality trimming
+        } else if (string(argv[i]) == "-numw") {  // Number of windows for quality trimming
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                num_windows = atoi(argv[++i]);
             }
             continue;
-        } 
-        else if (string(argv[i]) == "-be") {  
+        } else if (string(argv[i]) == "-be") {  // Bracket error
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
             }
-        }
-        else if (string(argv[i]) == "--fasta_output") {  // Output in Fasta format
+        } else if (string(argv[i]) == "-fasta_out") {  // Output in Fasta format
             fasta_output = true;
             output_fastqfile_flag = false;
-        }
-        else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
+        } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) {
                max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
@@ -281,43 +275,37 @@ int main(int argc, char *argv[])
            }
            
            continue;
-        }
-        else if( string(argv[i]) == "--verbose" ) 
+        } else if( string(argv[i]) == "-verbose" ) 
         {
            verbose = true;
            continue;
-        }
-        else if( string(argv[i]) == "--qual_only" ) 
+        } else if( string(argv[i]) == "-qual_only" ) 
         {
            lucy_only_flag = true;
            trim_adapters_flag = false;
            continue;
-        } 
-        else if( string(argv[i]) == "--shuffle" ) 
+        } else if( string(argv[i]) == "-shuffle" ) 
         {
            shuffle_flag = true;
            continue;
-        }
-        else if( string(argv[i]) == "--dup" ) 
+        } else if( string(argv[i]) == "-dup" ) 
         {
            rem_dup = true;
-           if( string(argv[i]) == "-start_dw" ) 
+           if( string(argv[i]) == "-startdw" ) 
            {
                start_dw = atoi(argv[++i]);
            }
-           if( string(argv[i]) == "-size_dw" ) 
+           if( string(argv[i]) == "-sizedw" ) 
            {
                size_dw = atoi(argv[++i]);
            }
            
            continue;
-        }
-        else if( string(argv[i]) == "--ow" ) 
+        } else if( string(argv[i]) == "-ow" ) 
         {
            overwrite_flag = true;
            continue;
-        }
-        else if( string(argv[i]) == "--overlap" ) 
+        } else if( string(argv[i]) == "-minov" ) //
         {
            overlap_flag = true;
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
@@ -325,23 +313,15 @@ int main(int argc, char *argv[])
               minoverlap = atoi(argv[++i]);
            }
            continue;
-        }
-        else if( string(argv[i]) == "-max_al_mism" ) 
+        } else if( string(argv[i]) == "-max_mism" ) 
         {
            max_al_mism = atoi(argv[++i]);
            continue;
-        }
-        else if( string(argv[i]) == "--keep_fastq_orig" ) 
-        {
-           keep_fastq_orig = true;
-           continue;
-        }
-        else if( string(argv[i]) == "--no_ts_adapter_trim" ) 
+        } else if( string(argv[i]) == "-no_ts_adapter_trim" ) 
         {
            trim_adapters_flag = false;
            continue;
-        }
-        else if( string(argv[i]) == "-polyat" ) 
+        } else if( string(argv[i]) == "-polyat" ) 
         {
            polyat_flag = true;
            
@@ -358,8 +338,7 @@ int main(int argc, char *argv[])
               }
            }
            continue;
-        }
-        else if(string(argv[i]) == "-v" )
+        } else if(string(argv[i]) == "-v" )
         {
            if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -367,8 +346,7 @@ int main(int argc, char *argv[])
              vector_flag = true;
            }
            continue;
-        }
-        else if(string(argv[i]) == "-c" )
+        } else if(string(argv[i]) == "-c" )
         { 
            if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
            {
@@ -376,8 +354,7 @@ int main(int argc, char *argv[])
              contaminants_flag = true;
            }
            continue;
-        }
-        else if(string(argv[i]) == "-m" )
+        } else if(string(argv[i]) == "-m" )
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
@@ -385,24 +362,21 @@ int main(int argc, char *argv[])
              rlmids_file = argv[++i]; /*Custom file with RL MIDS given*/
            }
            continue;
-        }
-        else if(string(argv[i]) == "-adapter_length" )
+        } else if(string(argv[i]) == "-alen" ) // To control adapter length
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
              adapterlength = atoi(argv[++i]); 
            }
            continue;
-        }
-        else if(string(argv[i]) == "-ot" )
+        } else if(string(argv[i]) == "-ot" )
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
              overlap_t = atof(argv[++i]);
            }
            continue;
-        }
-        else if(string(argv[i]) == "-k" )
+        } else if(string(argv[i]) == "-k" ) // K-mer size
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
@@ -413,24 +387,14 @@ int main(int argc, char *argv[])
                return 0;
            }
            continue;
-        }
-        else if(string(argv[i]) == "-f" )
+        } else if(string(argv[i]) == "-d" ) // Distance between consecutive k-mers
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
               DISTANCE = atoi(argv[++i]);
            }
            continue;
-        }
-        else if(string(argv[i]) == "--test" )
-        {
-           if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
-           {
-              DISTANCE = atoi(argv[++i]);
-           }
-           continue;
-        }
-        else if(string(argv[i]) == "-t" )
+        } else if(string(argv[i]) == "-t" ) // Number of threads (works only with 454 mode)
         {
            if ( (i+1)<argc && isdigit(argv[i+1][0]) ) 
            {
@@ -441,54 +405,20 @@ int main(int argc, char *argv[])
                return 0;
            }
            continue;
-        }
-        else if(string(argv[i]) == "--detailed_report" )
+        } else if(string(argv[i]) == "-detrep" ) // Detailed report is needed to produce
         {
            detailed_report = true;
            
            continue;
-        }
-        else if(string(argv[i]) == "-i64" )
+        } else if(string(argv[i]) == "-i64" ) // Using 64 base for quality value
         {
            i64_flag = true;
            
            continue;
-        }
-        else if(string(argv[i]) == "--new2old_illumina" )
-        {
+        } else if(string(argv[i]) == "-new2old" ) { // From new to the older header
            new2old_illumina = true;
            continue;
-        }
-        else if(string(argv[i]) == "-L_limit" )
-        {
-           if ( isdigit(argv[i+1][0]) ) 
-                L_limit = atoi(argv[++i]);
-           
-           continue;
-        }
-        else if(string(argv[i]) == "-R_limit" )
-        {
-           if ( isdigit(argv[i+1][0]) ) 
-                R_limit = atoi(argv[++i]);
-           
-           continue;
-        }
-        else if(string(argv[i]) == "-vmr" )
-        {
-           if ( isdigit(argv[i+1][0]) ) 
-                vmr = atoi(argv[++i]);
-           
-           continue;
-        }
-        else if(string(argv[i]) == "-vml" )
-        {
-           if ( isdigit(argv[i+1][0]) ) 
-                vml = atoi(argv[++i]);
-           
-           continue;
-        }
-        else if(string(argv[i]) == "-allowable_distance" )
-        {
+        } else if(string(argv[i]) == "-allowable_distance" ) {
            if ( isdigit(argv[i+1][0]) ) {
                 allowable_distance = atoi(argv[++i]);
            } else {
@@ -500,26 +430,22 @@ int main(int argc, char *argv[])
            if(allowable_distance > 50) allowable_distance = 15;
            
            continue; 
-        }
-        else if(string(argv[i]) == "-minimum_read_length" )
-        {
+        } else if(string(argv[i]) == "-minlen" ) { // Minimum read length
            if ( isdigit(argv[i+1][0]) ) {
                 minimum_read_length = atoi(argv[++i]);
            } else {
-               cout << "Error: parameter \'minimum_read_length\' has empty value.\n";
+               cout << "Error: parameter \'minlen\' has empty value.\n";
                PrintHelp();
                return 0;
            }
            
            if(minimum_read_length > 10000) {
                minimum_read_length = 50;
-               cout << "warning: parameter minimum_read_length exceeded the maximum value of 10,000 bases and was set to 50 bases.\n";
+               cout << "Warning: parameter minlen exceeded the maximum value of 10,000 bases and was set to 50 bases.\n";
            }
            
            continue;
-        }
-	else if(string(argv[i]) == "-kc" )
-        {
+        } else if(string(argv[i]) == "-kc" ) {
            if ( isdigit(argv[i+1][0]) ) {
                 KMER_SIZE_CONT = atoi(argv[++i]);
            } else {
@@ -529,8 +455,7 @@ int main(int argc, char *argv[])
            }
            
            continue;
-        }
-        else if(string(argv[i]) == "--RLMIDS" )
+        } else if(string(argv[i]) == "-rlmids" )
         {
            cout << "Supported RL MIDS:\n";
            for(int i=0; i<36; i++) 
@@ -539,8 +464,7 @@ int main(int argc, char *argv[])
            }
            
            return 0;
-        }
-        else if(string(argv[i]) == "-o" ) 
+        } else if(string(argv[i]) == "-o" ) // To specify output prefix
         {
            if(argv[i+1] == NULL) 
            {
@@ -551,24 +475,20 @@ int main(int argc, char *argv[])
            {
                output_prefix = string(argv[++i]);
            }
-        }
-        else if( string(argv[i]) == "--fastq" ) 
+        } else if( string(argv[i]) == "-fastq" ) //output file with cleaned reads in FASTQ format, for 454 mode only
         {
-           output_fastqfile_flag = true; //output file with cleaned reads in FASTQ format, for 454 mode only
+           output_fastqfile_flag = true; 
            fasta_output = false;
            continue;
-        }
-        else if(string(argv[i]) == "-?" )
+        } else if(string(argv[i]) == "-?" )
         {
            PrintHelp();
            exit(1);
-        }   
-        else if(string(argv[i]) == "-h" )
+        } else if(string(argv[i]) == "-h" )
         {
            PrintHelp();
            exit(1);
-        }
-        else if( string(argv[i]) == "-1" ) {
+        } else if( string(argv[i]) == "-1" ) {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) {
               illumina_flag = true;
               illumina_file_name_R1 = argv[++i];
@@ -581,8 +501,7 @@ int main(int argc, char *argv[])
               }
            }
            continue;
-        }
-        else if( string(argv[i]) == "-2" )
+        } else if( string(argv[i]) == "-2" )
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
@@ -600,8 +519,7 @@ int main(int argc, char *argv[])
            }
            
            continue;
-        } 
-        else if( string(argv[i]) == "-U" ) //single-end file mode
+        } else if( string(argv[i]) == "-U" ) //single-end file mode
         {
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
@@ -619,8 +537,7 @@ int main(int argc, char *argv[])
            }
            
            continue;
-        }
-        else if( string(argv[i]) == "-454" ) 
+        } else if( string(argv[i]) == "-454" ) 
         {
             if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
             {
@@ -638,21 +555,6 @@ int main(int argc, char *argv[])
             }
             
             continue;
-        }
-        else if( string(argv[i]) == "--MakeRocheReport" ) 
-        {
-            MakeRocheReport((char*)"RocheClipPoints_report.tsv", argv[++i]);
-            return 0;
-        }
-        else if( string(argv[i]) == "-pmax" ) 
-        {
-            pmax = atoi(argv[++i]);
-            continue;
-        }
-        else if( string(argv[i]) == "--vonly" ) 
-        {
-            VectorOnlyFlag = true;
-            continue;    
         } /*else {
             cout << "Unknown parameter: " << argv[i] << endl;
             PrintHelp();
@@ -1293,31 +1195,39 @@ void PrintHelp() {
     cout << "**********************************************************************************************************************\n";        
     cout << "usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]\n"
             "\n"
-            "optional arguments:\n"
-            "-h, --help - show this help and exit.\n"
-            "-v <string> - path to vector file.\n"
-            "-c <string> - path to file of contaminant genome.\n"
-            "-m <string> - path to file with custom barcodes.\n" 
-            "-k <int> - common size of k-mer.\n"
-            "-kc <int> - size of k-mer used in sampling contaminat genome.\n"
-            "-f - if is set, that overlap is perfomed for paired-end reads.\n"
-            "-t <int> - number of threads (not yet applicable to Illumina mode).\n" 
-            "-qual <int> <int> - quality trimming flag with error boundaries: max_average_error, max_error_at_ends\n"
-            "--qual_only - perform only quality trimming without trimming of adapters.\n"
-            "--fastq - output in FASTQ format.\n"
-            "--ow - overwrite existing results.\n"
-            "-minimum_read_length <int> - minimum length of read to accept.\n"
-            "-polyat [cdna] [cerr] [crng] - flag for Poly A/T trimming.\n"
-            "--shuffle - storing non-paired Illumina reads in shuffled file.\n"
-            "-i64 - quality base.\n"
-            "-adapter_length <value>\n"
-            "-ot <int> - overlap threshold.\n"
-            "--overlap <minoverlap=value> - flag to overlap paired-end reads.\n"
-            "--dup [-start_dw][-size_dw] - flag to filter duplicated sequences.\n" 
-            "--no_ts_adapter_trim - do not trim Illumina adapters.\n"
-            "--new2old_illumina - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )\n";
+            "Common arguments for all library types:\n"
+            "   -h, --help - show this help and exit.\n"
+            "   -v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.\n"
+            "   -c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.\n"
+            "   -k <int> - Common size of k-mer, default=15\n"
+            "   -d - distance between consecutive k-mers, default=1\n"
+            "   -kc <int> - Size of k-mer used in sampling contaminat genome, default=15\n"
+            "   -qual <int> <int> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
+            "   -qual_only - Performs only quality trimming without trimming of adapters, default=off.\n"
+            "   -ow - Overwrite existing results, default=off\n"
+            "   -minlen <int> - Minimum length of read to accept, default=50 bp.\n"
+            "   -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.\n"
+            "   -verbose - Verbose output, default=off.\n"
+            "   -detrep - Generate detailed report for each read, default=off.\n"
+            "Roche 454 only arguments:\n"
+            "   -t <int> - Number of threads (not yet applicable to Illumina mode), default=4.\n" 
+            "   -fastq - Output in FASTQ format, default=off.\n"
+            "   -fasta_out - Output in FASTA format, default=off.\n"
+            "   -m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.\n"
+            "Illumina paired- and single-end arguments:\n"
+            "   -1 <filename1> -2 <filename2> - Paired-end mode (see examples below)\n"
+            "   -U <filename> - single-end mode\n"
+            "   -shuffle - Store non-paired Illumina reads in shuffled file, default=off.\n"
+            "   -i64 - Turns on 64-quality base, default = off.\n"
+            "   -adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters\n"
+            "   -alen <value> - minimum adapter length for dovetail overlap, default = 60 bp.\n"
+            "   -ot <value> - overlap threshold (only in paired-end mode, default = 0.75.\n"
+            //"   -overlap <minoverlap=value> - flag to overlap paired-end reads (only in paired-end mode)\n"
+            "   -dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.\n" 
+            "   -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
+            "   -new2old - switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
 cout <<"Examples\n"
-"Roche pyrosequence library:\n"
+"Roche 454:\n"
 "./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta\n"
 "Paired-end Illumina library:\n"
 "./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina\n"

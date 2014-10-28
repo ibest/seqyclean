@@ -109,12 +109,12 @@ char* itoa(int value, char* result, int base) {
         return result;
 }
 
-string i2str(unsigned long long value, char* result, int base) {
+string i2str(long long value, char* result, int base) {
         // check that the base if valid
 	if (base < 2 || base > 36) { *result = '\0'; return string(result); }
 	
         char* ptr = result, *ptr1 = result, tmp_char;
-	unsigned long long tmp_value;
+	long long tmp_value;
 	
 	do {
                 tmp_value = value;

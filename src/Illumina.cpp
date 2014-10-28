@@ -12,48 +12,48 @@ extern bool custom_adapters;
 vector<string> adapters;
 
 // Статистика:
-unsigned long long se_bases_kept, se_bases_discarded;
-unsigned long long se_discard_cnt = 0;
-unsigned long long se_bases_anal = 0;        
+long long se_bases_kept, se_bases_discarded;
+long long se_discard_cnt = 0;
+long long se_bases_anal = 0;        
 unsigned long avg_trim_len_se;
 
-unsigned long long pe1_bases_anal, pe2_bases_anal, pe_bases_kept, pe_bases_discarded, se_pe1_bases_kept, se_pe2_bases_kept;
-unsigned long long pe_discard_cnt;
+long long pe1_bases_anal, pe2_bases_anal, pe_bases_kept, pe_bases_discarded, se_pe1_bases_kept, se_pe2_bases_kept;
+long long pe_discard_cnt;
 double avg_trim_len_pe1, avg_trim_len_pe2;
 /*Raw implementation of average. Later I will come with a better algorithm*/
-unsigned long long avg_bases_pe1 = 0;
-unsigned long long avg_bases_pe2 = 0;
-unsigned long long avg_left_clip_1 = 0;
-unsigned long long avg_left_clip_2 = 0;
-unsigned long long avg_right_clip_1 = 0;
-unsigned long long avg_right_clip_2 = 0;
-unsigned long long cnt1_avg, cnt2_avg; //Counters needed for calculating the average trimming length
-unsigned long long cnt_avg_len1, cnt_avg_len2; 
+long long avg_bases_pe1 = 0;
+long long avg_bases_pe2 = 0;
+long long avg_left_clip_1 = 0;
+long long avg_left_clip_2 = 0;
+long long avg_right_clip_1 = 0;
+long long avg_right_clip_2 = 0;
+long long cnt1_avg, cnt2_avg; //Counters needed for calculating the average trimming length
+long long cnt_avg_len1, cnt_avg_len2; 
 double avg_len_pe1, avg_len_pe2; 
 double cnt_right_trim_pe1, avg_right_trim_len_pe1, cnt_right_trim_pe2, avg_right_trim_len_pe2; 
 double cnt_left_trim_pe1, avg_left_trim_len_pe1, cnt_left_trim_pe2, avg_left_trim_len_pe2;
-unsigned long long cnt1, cnt2;
-unsigned long long pe_accept_cnt, se_pe1_accept_cnt, se_pe2_accept_cnt; 
-unsigned long long ts_adapters1, ts_adapters2; 
-unsigned long long num_vectors1, num_vectors2; 
-unsigned long long num_contaminants1, num_contaminants2; 
-unsigned long long accepted1,accepted2; 
-unsigned long long discarded1,discarded2; 
-unsigned long long perfect_ov_cnt, partial_ov_cnt; 
-unsigned long long discarded_by_contaminant1, discarded_by_contaminant2; 
-unsigned long long discarded_by_read_length1, discarded_by_read_length2; 
+long long cnt1, cnt2;
+long long pe_accept_cnt, se_pe1_accept_cnt, se_pe2_accept_cnt; 
+long long ts_adapters1, ts_adapters2; 
+long long num_vectors1, num_vectors2; 
+long long num_contaminants1, num_contaminants2; 
+long long accepted1,accepted2; 
+long long discarded1,discarded2; 
+long long perfect_ov_cnt, partial_ov_cnt; 
+long long discarded_by_contaminant1, discarded_by_contaminant2; 
+long long discarded_by_read_length1, discarded_by_read_length2; 
 /*Left trims*/
-unsigned long long left_trimmed_by_quality1 , left_trimmed_by_quality2; 
-unsigned long long left_trimmed_by_vector1 , left_trimmed_by_vector2; 
+long long left_trimmed_by_quality1 , left_trimmed_by_quality2; 
+long long left_trimmed_by_vector1 , left_trimmed_by_vector2; 
 /*Right trims/discards*/
-unsigned long long right_trimmed_by_quality1 , right_trimmed_by_quality2; 
-unsigned long long right_trimmed_by_adapter1 , right_trimmed_by_adapter2; 
-unsigned long long right_trimmed_by_vector1 , right_trimmed_by_vector2;  
-unsigned long long right_trimmed_by_polyat1, right_trimmed_by_polyat2; 
-unsigned long long left_trimmed_by_polyat1, left_trimmed_by_polyat2; 
+long long right_trimmed_by_quality1 , right_trimmed_by_quality2; 
+long long right_trimmed_by_adapter1 , right_trimmed_by_adapter2; 
+long long right_trimmed_by_vector1 , right_trimmed_by_vector2;  
+long long right_trimmed_by_polyat1, right_trimmed_by_polyat2; 
+long long left_trimmed_by_polyat1, left_trimmed_by_polyat2; 
     
             
-unsigned long long duplicates = 0;
+long long duplicates = 0;
         
 std::string stat_str, tsv_stat_str;
    
@@ -197,7 +197,7 @@ void IlluminaDynamic()
                     read1->initial_length = record_block1[1].length();
                     read1->read = record_block1[1];
                     read1->illumina_quality_string = line1;
-                    pe1_bases_anal += (unsigned long long)read1->read.length();
+                    pe1_bases_anal += (long long)read1->read.length();
                         
                     if(read1->initial_length <= minimum_read_length)
                     {
@@ -210,7 +210,7 @@ void IlluminaDynamic()
                     read2->initial_length = record_block2[1].length();
                     read2->read = record_block2[1];
                     read2->illumina_quality_string = line2;
-                    pe2_bases_anal += (unsigned long long)read2->read.length();
+                    pe2_bases_anal += (long long)read2->read.length();
                         
                     if(read2->initial_length <= minimum_read_length)
                     {
@@ -313,13 +313,13 @@ void IlluminaDynamic()
                                  WritePEFile(pe_output_file1, read1);
                                  WritePEFile(pe_output_file2, read2);
                                  pe_accept_cnt+=1;
-                                 pe_bases_kept += (unsigned long long)read1->read.length();
-                                 pe_bases_kept += (unsigned long long)read2->read.length();
+                                 pe_bases_kept += (long long)read1->read.length();
+                                 pe_bases_kept += (long long)read2->read.length();
                              } else {
                                  WriteShuffleFile( shuffle_file, read1, read2 );
                                  pe_accept_cnt+=1;
-                                 pe_bases_kept += (unsigned long long)read1->read.length();
-                                 pe_bases_kept += (unsigned long long)read2->read.length();
+                                 pe_bases_kept += (long long)read1->read.length();
+                                 pe_bases_kept += (long long)read2->read.length();
                              }
                                
                              cnt1_avg+=1;
@@ -970,12 +970,12 @@ void IlluminaDynamicSE()
     se_bases_anal = 0;        
     avg_trim_len_se = 0;
     /*Raw implementation of average. Later I will come with a better algorithm*/
-    unsigned long long avg_bases_se = 0;
-    unsigned long long avg_left_clip = 0;
-    unsigned long long avg_right_clip = 0;
+    long long avg_bases_se = 0;
+    long long avg_left_clip = 0;
+    long long avg_right_clip = 0;
     
-    unsigned long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
-    unsigned long long cnt_avg_len; cnt_avg_len = 0;
+    long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
+    long long cnt_avg_len; cnt_avg_len = 0;
                  
     double avg_len_se; avg_len_se = 0.0;
     double cnt_right_trim_se, avg_right_trim_len_se; 
@@ -984,27 +984,27 @@ void IlluminaDynamicSE()
     cnt_right_trim_se = avg_right_trim_len_se = 0;
     cnt_left_trim_se = avg_left_trim_len_se = 0;
     
-    unsigned long long cnt; cnt = 0;
-    unsigned long long se_accept_cnt; se_accept_cnt = 0;
-    unsigned long long ts_adapters; ts_adapters = 0;
-    unsigned long long num_vectors; num_vectors = 0;
-    unsigned long long num_contaminants; num_contaminants = 0;
-    unsigned long long accepted; accepted = 0;
-    unsigned long long discarded; discarded = 0;
+    long long cnt; cnt = 0;
+    long long se_accept_cnt; se_accept_cnt = 0;
+    long long ts_adapters; ts_adapters = 0;
+    long long num_vectors; num_vectors = 0;
+    long long num_contaminants; num_contaminants = 0;
+    long long accepted; accepted = 0;
+    long long discarded; discarded = 0;
 //    unsigned long discarded_by_quality1, discarded_by_quality2; discarded_by_quality1 = discarded_by_quality2 = 0;
-    unsigned long long discarded_by_contaminant; discarded_by_contaminant = 0;
-    unsigned long long discarded_by_read_length; discarded_by_read_length = 0;
+    long long discarded_by_contaminant; discarded_by_contaminant = 0;
+    long long discarded_by_read_length; discarded_by_read_length = 0;
 //    unsigned long discarded_by_vector1 , discarded_by_vector2; discarded_by_vector1 = discarded_by_vector2 = 0;
     /*Left trims*/
-    unsigned long long left_trimmed_by_quality; left_trimmed_by_quality = 0;
-    unsigned long long left_trimmed_by_vector; left_trimmed_by_vector = 0;
+    long long left_trimmed_by_quality; left_trimmed_by_quality = 0;
+    long long left_trimmed_by_vector; left_trimmed_by_vector = 0;
     /*Right trims/discards*/
-    unsigned long long right_trimmed_by_quality; right_trimmed_by_quality = 0;
-    unsigned long long right_trimmed_by_adapter; right_trimmed_by_adapter = 0;
-    unsigned long long right_trimmed_by_vector;  right_trimmed_by_vector = 0;
+    long long right_trimmed_by_quality; right_trimmed_by_quality = 0;
+    long long right_trimmed_by_adapter; right_trimmed_by_adapter = 0;
+    long long right_trimmed_by_vector;  right_trimmed_by_vector = 0;
     
-    unsigned long long right_trimmed_by_polyat, left_trimmed_by_polyat; right_trimmed_by_polyat = left_trimmed_by_polyat = 0;
-    unsigned long long discarded_by_polyAT = 0;
+    long long right_trimmed_by_polyat, left_trimmed_by_polyat; right_trimmed_by_polyat = left_trimmed_by_polyat = 0;
+    long long discarded_by_polyAT = 0;
     
     fstream rep_file, se_output_file;
     if (detailed_report) {
@@ -1304,31 +1304,31 @@ void IlluminaDynamicSE()
 }
 
 
-string PrintIlluminaStatistics(unsigned long long cnt1, unsigned long long cnt2, 
-                                    unsigned long long  pe1_bases_anal, unsigned long long  pe2_bases_anal, 
-                                    unsigned long long ts_adapters1, unsigned long long ts_adapters2, 
-                                    unsigned long long num_vectors1, unsigned long long num_vectors2, 
-                                    unsigned long long num_contaminants1, unsigned long long num_contaminants2, 
-                                    unsigned long long left_trimmed_by_quality1, unsigned long long left_trimmed_by_quality2,
-                                    unsigned long long left_trimmed_by_vector1, unsigned long long left_trimmed_by_vector2, 
+string PrintIlluminaStatistics(long long cnt1, long long cnt2, 
+                                    long long  pe1_bases_anal, long long  pe2_bases_anal, 
+                                    long long ts_adapters1, long long ts_adapters2, 
+                                    long long num_vectors1, long long num_vectors2, 
+                                    long long num_contaminants1, long long num_contaminants2, 
+                                    long long left_trimmed_by_quality1, long long left_trimmed_by_quality2,
+                                    long long left_trimmed_by_vector1, long long left_trimmed_by_vector2, 
                                     double avg_left_trim_len_pe1, double avg_left_trim_len_pe2, 
-                                    unsigned long long right_trimmed_by_adapter1, unsigned long long right_trimmed_by_adapter2, 
-                                    unsigned long long right_trimmed_by_quality1,unsigned long long right_trimmed_by_quality2,
-                                    unsigned long long right_trimmed_by_vector1,unsigned long long right_trimmed_by_vector2,
+                                    long long right_trimmed_by_adapter1, long long right_trimmed_by_adapter2, 
+                                    long long right_trimmed_by_quality1,long long right_trimmed_by_quality2,
+                                    long long right_trimmed_by_vector1,long long right_trimmed_by_vector2,
                                     double avg_right_trim_len_pe1,double avg_right_trim_len_pe2,
-                                    unsigned long long discarded1, unsigned long long discarded2,
-                                    unsigned long long discarded_by_contaminant1, unsigned long long discarded_by_contaminant2,
-                                    unsigned long long discarded_by_read_length1, unsigned long long discarded_by_read_length2,
-                                    unsigned long long pe_accept_cnt, unsigned long long  pe_bases_kept, 
-                                    unsigned long long pe_discard_cnt,unsigned long long  pe_bases_discarded, 
-                                    unsigned long long se_pe1_accept_cnt, unsigned long long se_pe1_bases_kept,
-                                    unsigned long long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
+                                    long long discarded1, long long discarded2,
+                                    long long discarded_by_contaminant1, long long discarded_by_contaminant2,
+                                    long long discarded_by_read_length1, long long discarded_by_read_length2,
+                                    long long pe_accept_cnt, long long  pe_bases_kept, 
+                                    long long pe_discard_cnt,long long  pe_bases_discarded, 
+                                    long long se_pe1_accept_cnt, long long se_pe1_bases_kept,
+                                    long long se_pe2_accept_cnt, long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
-                                    unsigned long long perfect_ov_cnt, unsigned long long partial_ov_cnt,
-                                    unsigned long long duplicates,
-                                    unsigned long long left_trimmed_by_polyat1, unsigned long long right_trimmed_by_polyat1,
-                                    unsigned long long left_trimmed_by_polyat2, unsigned long long right_trimmed_by_polyat2
+                                    long long perfect_ov_cnt, long long partial_ov_cnt,
+                                    long long duplicates,
+                                    long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
+                                    long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2
                                     )
 {
     
@@ -1388,31 +1388,31 @@ string PrintIlluminaStatistics(unsigned long long cnt1, unsigned long long cnt2,
     
 }
 
-string PrintIlluminaStatisticsTSV(unsigned long long cnt1, unsigned long long cnt2, 
-                                    unsigned long long  pe1_bases_anal, unsigned long long  pe2_bases_anal, 
-                                    unsigned long long ts_adapters1, unsigned long long ts_adapters2, 
-                                    unsigned long long num_vectors1, unsigned long long num_vectors2, 
-                                    unsigned long long num_contaminants1, unsigned long long num_contaminants2, 
-                                    unsigned long long left_trimmed_by_quality1, unsigned long long left_trimmed_by_quality2,
-                                    unsigned long long left_trimmed_by_vector1, unsigned long long left_trimmed_by_vector2, 
+string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2, 
+                                    long long  pe1_bases_anal, long long  pe2_bases_anal, 
+                                    long long ts_adapters1, long long ts_adapters2, 
+                                    long long num_vectors1, long long num_vectors2, 
+                                    long long num_contaminants1, long long num_contaminants2, 
+                                    long long left_trimmed_by_quality1, long long left_trimmed_by_quality2,
+                                    long long left_trimmed_by_vector1, long long left_trimmed_by_vector2, 
                                     double avg_left_trim_len_pe1, double avg_left_trim_len_pe2, 
-                                    unsigned long long right_trimmed_by_adapter1, unsigned long long right_trimmed_by_adapter2, 
-                                    unsigned long long right_trimmed_by_quality1,unsigned long long right_trimmed_by_quality2,
-                                    unsigned long long right_trimmed_by_vector1,unsigned long long right_trimmed_by_vector2,
+                                    long long right_trimmed_by_adapter1, long long right_trimmed_by_adapter2, 
+                                    long long right_trimmed_by_quality1,long long right_trimmed_by_quality2,
+                                    long long right_trimmed_by_vector1,long long right_trimmed_by_vector2,
                                     double avg_right_trim_len_pe1,double avg_right_trim_len_pe2,
-                                    unsigned long long discarded1, unsigned long long discarded2,
-                                    unsigned long long discarded_by_contaminant1, unsigned long long discarded_by_contaminant2,
-                                    unsigned long long discarded_by_read_length1, unsigned long long discarded_by_read_length2,
-                                    unsigned long long pe_accept_cnt, unsigned long long pe_bases_kept, 
-                                    unsigned long long pe_discard_cnt,unsigned long long pe_bases_discarded, 
-                                    unsigned long long se_pe1_accept_cnt, unsigned long long se_pe1_bases_kept,
-                                    unsigned long long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
+                                    long long discarded1, long long discarded2,
+                                    long long discarded_by_contaminant1, long long discarded_by_contaminant2,
+                                    long long discarded_by_read_length1, long long discarded_by_read_length2,
+                                    long long pe_accept_cnt, long long pe_bases_kept, 
+                                    long long pe_discard_cnt,long long pe_bases_discarded, 
+                                    long long se_pe1_accept_cnt, long long se_pe1_bases_kept,
+                                    long long se_pe2_accept_cnt, long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
-                                    unsigned long long perfect_ov_cnt, unsigned long long partial_ov_cnt,
-                                    unsigned long long left_trimmed_by_polyat1, unsigned long long right_trimmed_by_polyat1,
-                                    unsigned long long left_trimmed_by_polyat2, unsigned long long right_trimmed_by_polyat2,
-                                    unsigned long long duplicates
+                                    long long perfect_ov_cnt, long long partial_ov_cnt,
+                                    long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
+                                    long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
+                                    long long duplicates
                                     )
 {
     
@@ -1488,26 +1488,26 @@ string PrintIlluminaStatisticsTSV(unsigned long long cnt1, unsigned long long cn
     return stat_str_tsv;
 }
 
-string PrintIlluminaStatisticsSE(unsigned long long cnt, unsigned long long se_bases_anal, 
-                                    unsigned long long ts_adapters,
-                                    unsigned long long num_vectors,
-                                    unsigned long long num_contaminants, 
-                                    unsigned long long left_trimmed_by_quality,
-                                    unsigned long long left_trimmed_by_vector, 
+string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal, 
+                                    long long ts_adapters,
+                                    long long num_vectors,
+                                    long long num_contaminants, 
+                                    long long left_trimmed_by_quality,
+                                    long long left_trimmed_by_vector, 
                                     double avg_left_trim_len_se,
-                                    unsigned long long right_trimmed_by_adapter,
-                                    unsigned long long right_trimmed_by_quality,
-                                    unsigned long long right_trimmed_by_vector,
+                                    long long right_trimmed_by_adapter,
+                                    long long right_trimmed_by_quality,
+                                    long long right_trimmed_by_vector,
                                     double avg_right_trim_len_se,
-                                    unsigned long long discarded, 
-                                    unsigned long long discarded_by_contaminant,
-                                    unsigned long long discarded_by_read_length,
-                                    unsigned long long se_accept_cnt, unsigned long long se_bases_kept, 
-                                    unsigned long long se_discard_cnt,unsigned long long se_bases_discarded, 
+                                    long long discarded, 
+                                    long long discarded_by_contaminant,
+                                    long long discarded_by_read_length,
+                                    long long se_accept_cnt, long long se_bases_kept, 
+                                    long long se_discard_cnt,long long se_bases_discarded, 
                                     double avg_trim_len_se,
                                     double avg_len_se,
-                                    unsigned long long left_trimmed_by_polyat, unsigned long long right_trimmed_by_polyat,
-                                    unsigned long long discarded_by_polyAT
+                                    long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
+                                    long long discarded_by_polyAT
                                     )
 {
     
@@ -1543,26 +1543,26 @@ string PrintIlluminaStatisticsSE(unsigned long long cnt, unsigned long long se_b
 }
 
 
-string PrintIlluminaStatisticsTSVSE(unsigned long long cnt,
-                                    unsigned long long se_bases_anal, 
-                                    unsigned long long ts_adapters, 
-                                    unsigned long long num_vectors,  
-                                    unsigned long long num_contaminants, 
-                                    unsigned long long left_trimmed_by_quality, 
+string PrintIlluminaStatisticsTSVSE(long long cnt,
+                                    long long se_bases_anal, 
+                                    long long ts_adapters, 
+                                    long long num_vectors,  
+                                    long long num_contaminants, 
+                                    long long left_trimmed_by_quality, 
 
-                                    unsigned long long left_trimmed_by_vector, 
+                                    long long left_trimmed_by_vector, 
                                     double avg_left_trim_len_se, 
-                                    unsigned long long right_trimmed_by_adapter, 
-                                    unsigned long long right_trimmed_by_quality,
-                                    unsigned long long right_trimmed_by_vector,
+                                    long long right_trimmed_by_adapter, 
+                                    long long right_trimmed_by_quality,
+                                    long long right_trimmed_by_vector,
                                     double avg_right_trim_len_se,
-                                    unsigned long long discarded, 
-                                    unsigned long long discarded_by_contaminant, 
-                                    unsigned long long discarded_by_read_length,
-                                    unsigned long long se_accept_cnt, 
+                                    long long discarded, 
+                                    long long discarded_by_contaminant, 
+                                    long long discarded_by_read_length,
+                                    long long se_accept_cnt, 
                                     double avg_trim_len_se,
-                                    unsigned long long left_trimmed_by_polyat, unsigned long long right_trimmed_by_polyat,
-                                    unsigned long long discarded_by_polyAT
+                                    long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
+                                    long long discarded_by_polyAT
                                     )
 {
     

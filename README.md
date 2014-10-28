@@ -1,7 +1,7 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.9.3 (2014-10-17)```
+Version: ```1.9.6 (2014-10-28)```
 
 Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
 
@@ -16,84 +16,78 @@ SeqyClean offers:
 It handles SFF and FASTQ file formats.
 
 # Usage  
-## Roche 454
-
 ```
-./seqyclean -454 input_file_name -o output_prefix [options]
+usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]\n"
+```            
+## Common arguments for all library types
+```
+-h, --help - show this help and exit.\n"
+-v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.\n"
+-c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.\n"
+-k <int> - Common size of k-mer, default=15\n"
+-d - distance between consecutive k-mers, default=1\n"
+-kc <int> - Size of k-mer used in sampling contaminat genome, default=15\n"
+-qual <int> <int> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
+-qual_only - Performs only quality trimming without trimming of adapters, default=off.\n"
+-ow - Overwrite existing results, default=off\n"
+-minlen <int> - Minimum length of read to accept, default=50 bp.\n"
+-polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.\n"
+-verbose - Verbose output, default=off.\n"
+-detrep - Generate detailed report for each read, default=off.\n"
+```
+## Roche 454 arguments
+```
+-t <int> - Number of threads (not yet applicable to Illumina mode), default=4.\n" 
+-fastq - Output in FASTQ format, default=off.\n"
+-fasta_out - Output in FASTA format, default=off.\n"
+-m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.\n"
+```
+## Illumina paired- and single-end arguments
+```
+-1 <filename1> -2 <filename2> - Paired-end mode (see examples below)
+-U <filename> - single-end mode
+-shuffle - Store non-paired Illumina reads in shuffled file, default=off.\n"
+-i64 - Turns on 64-quality base, default = off.\n"
+-adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters\n"
+-alen <value> - minimum adapter length for dovetail overlap, default = 60 bp.\n"
+-ot <value> - overlap threshold (only in paired-end mode, default = 0.75.\n"
+-dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.\n" 
+-no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
+-new2old - switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
+```
 
-options:
--v vector_file
--c file_of_contaminants
--m file_of_RL_MIDS
--k k_mer_size
--kc k_mer_size
--f overlap
--t number_of_threads
--qual max_avg_error max_error_at_ends
---qual_only
---fastq
---keep_fastq_orig
---ow
--minimum_read_length <value>
--polyat [cdna] [cerr] [crng]
+# Examples
+
+## Roche 454
+Output in SFF, no quality trimming, vector trimming is performed:
+```
+./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta
+```
+Output in SFF, quality trimming with default parameters, vector trimming and contaminants screening are performed:
+```
+./seqyclean -454 test_data/in.sff -o test/Test454 -qual -v test_data/vectors.fasta -c test_data/contaminants.fasta
 ```
 
 ## Illumina
 
 ### Paired-end
+Trimming of adapters is performed, quality trimming with default parameters:
 ```
-./seqyclean -1 input_file_name_1 -2 input_file_name_2 -o output_prefix [options]
-
-options:
--v vector_file
--c file_of_contaminants
--k k_mer_size
--kc k_mer_size
--qual max_avg_error max_error_at_ends
---qual_only
--minimum_read_length <value>
--i64
--adapter_length <value>
--ot <value>
---overlap <minoverlap=value>
---ow
---dup][-start_dw][-size_dw]
--polyat [cdna] [cerr] [crng]
---no_ts_adapter_trim
---new2old_illumina - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
+./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual -o test/Test_Illumina
+``` 
+   
+Trimmings of adapters and vectors are performed, quality trimming with default parameters:
 ```
+./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -qual -v test_data/vectors.fasta -o test/Test_Illumina
+```    
 
 ### Single-end
-
+Trimming of adapters, vectors and contaminant screening are performed, quality trimming with default parameters:
 ```
-./seqyclean -U input_file_name -o output_prefix [options]
+./seqyclean -U test_data/R1.fastq.gz -o test/Test_Illumina -v test_data/vectors.fasta -c test_data/contaminants.fasta
                                 
-options:
--v vector_file                                
--c file_of_contaminants
--k k_mer_size
--kc k_mer_size
--qual max_avg_error max_error_at_ends
---qual_only
--minimum_read_length <value>
---ow
--polyat [cdna] [cerr] [crng]
---no_ts_adapter_trim
---new2old_illumina - switch to fix read IDs ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 )
 ```
 
-
-# Examples
-
-## Roche 454
-```
-./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta
-```
-
-## Illumina
-```
-./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina
-```    
 
 # Supported RL MIDS (for Roche 454 only)
 
@@ -136,8 +130,6 @@ RL35,ACAGTGTCGAT,RL35,ATCGACAGTGT
 RL36,ACGAGCGCGCT,RL36,AGCGCGCGCGT
 ```
 
-# Contact
+# Contacts
 
 Please ask Ilya (zhba3458@vandals.uidaho.edu) in case of any questions.
-
-

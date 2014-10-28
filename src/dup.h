@@ -18,7 +18,7 @@
 
 using namespace std;
 
-void screen_duplicates(Read *read1, Read *read2, unsigned long long &duplicates);
+void screen_duplicates(Read *read1, Read *read2, long long &duplicates);
 
 // Starting position and a window size for searching for duplicates:
 extern int start_dw, size_dw;
