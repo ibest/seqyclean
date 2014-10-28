@@ -132,4 +132,4 @@ RL36,ACGAGCGCGCT,RL36,AGCGCGCGCGT
 
 # Contacts
 
-Please ask Ilya (zhba3458@vandals.uidaho.edu) in case of any questions.
+Please ask Ilya (ilyaz@uidaho.edu or zhba3458@vandals.uidaho.edu) in case of any questions.
