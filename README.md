@@ -18,7 +18,10 @@ It handles SFF and FASTQ file formats.
 # Usage  
 ```
 usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]
-```            
+```
+
+The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1, -2 for paired-end Illumina reads, -U for single-end reads. See examples below.
+            
 ## Common arguments for all library types
 ```
 -h, --help - show this help and exit.
