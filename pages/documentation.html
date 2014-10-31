@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Documentation</title>
+    
+    <meta name="author" content="Ilya Y. Zhbannikov">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="../css/kbroman.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+    
+  </head>
+
+  	<div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="http://izhbannikov.github.io/MetAmp">Meta-Amplicon Analysis Project</a>
+          <a href="http://www.ibest.uiaho.edu"><img src="../media/ibest_logo.jpg" width=100 height=30 alt="Site logo" align = "right" style="opacity:0.4;"></a>
+          <ul class="nav">
+              <li><a href="http://izhbannikov.github.io/MetAmp/">Home</a></li>
+              <li><a href="https://github.com/izhbannikov/MetAmp/zipball/master" id="download-zip" class="button">Download</a></li>
+              <li><a href="../pages/documentation.html">Documentation</a></li>
+              <li><a href="../pages/resources.html">Resources</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h2>Documentation</h2>
+</div>
+
+<div class="row-fluid">
+  <div class="span12">
+  	<p>Documentation in one file: <a href="media/UserGuide.pdf">UserGuide.pdf</a> </p>
+    <h3>Program description</h3>
+    <p>MetAmp tool is developed for analysis of amplicon data by combining several marker regions from 16S rRNA genes. Such marker regions serve as unique identificators for species. There are nine marker regions in bacterial 16S rRNA gene.</p>
+	
+	<h3>Installation</h3>
+	<p>Download or clone from the GitHub, save it in some folder you wish. Then simply run make. This will check for required packages and install in case if some packages were not found.</p>
+
+	<h3>Quick start</h3>
+	
+	<p>
+	Before analysis, you may need to perform re-labeling of your read headers: a read header should contain barcodelabel (see more at www.drive5.com), for example:
+
+<blockquote><pre>@read1;barcodelabel=TCAG;
+GATGAACGCTGGCGGCGTGCCTAATACATGCAAGT...AT
++
+IIIAAAIIIIIIIIIIIIIIIHHHIAAAAAAAAAA...II</pre></blockquote>
+
+If you use Illumina sequence data, you also have to merge overlapping paired-end reads.
+
+Later I will provide the scripts that can do these things above, but for now you can simply use scripts provided at 
+<a href="http://drive5.com">www.drive5.com</a>.
+	
+	</p>
+	
+	<ol>
+		<li>
+			<p>Set the program and analysis directories in main.R:</p>
+		
+			<blockquote><pre>
+dir_path <- "~/Projects/metamp/"
+analysis_dir <- "analysis"</pre></blockquote>
+		</li>
+		<li>
+			<p>Provide your sequences (in main.R file)</p>
+			<p>Amplicon data:</p>
+			<blockquote><pre>
+libs <- c("data/staggered/SRR072223_V13V31_1_relabeled.fastq",
+	 "data/staggered/SRR072223_V35V53_1_relabeled.fastq",
+	 "data/staggered/SRR072223_V69V96_1_relabeled.fastq")</pre></blockquote>
+			<p>and reference sequences:</p>
+			<blockquote><pre>
+ref16S <- "data/16S_gold_hmc.fasta"
+refs <- c("data/16S_gold_hmc_V13V31.fasta", # V1-3
+          "data/16S_gold_hmc_V35V53.fasta", # V3-5
+          "data/16S_gold_hmc_V69V96.fasta") # V6-9</pre></blockquote>
+		</li>
+		<li>
+			<p>Run the script main.R</p>
+			<blockquote><pre>source("main.R")</pre></blockquote>	
+		</li>
+		<li>
+			<p>Output files will be in analysis directory:</p>
+			<ul>			
+    			<li>clusters.clstr - contains large table in uc format (see www.drive5.com)</li>
+    			<li>otu_table.txt - OTU table, where rows are OTUs and colums are barcodes.</li>
+    			<li>coordinates.crd - file that contains NMDS coordinates of each point (reference and empirical, see provided explanations in UserGuide.pdf)</li>
+    			<li>log.txt - a simple log file that record every stage of analysis.</li>
+			</ul>
+		
+		
+		</li>
+	</ol>
+	
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p><small>
+  <!-- start of MetAmp's footer; modify this part -->
+              <a href="http://www.uidaho.edu"> &copy; 2014 University of Idaho</a>
+  <!-- end of MetAmp's footer; modify this part -->
+        </small></p>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
+
