@@ -24,11 +24,11 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
             
 ## Common arguments for all library types
 ```
--h, --help - show this help and exit.
+-h, --help - Show this help and exit.
 -v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.
 -c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.
 -k <value> - Common size of k-mer, default=15.
--d - distance between consecutive k-mers, default=1.
+-d - Distance between consecutive k-mers, default=1.
 -kc <value> - Size of k-mer used in sampling contaminat genome, default=15.
 -qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20).
 -qual_only - Performs only quality trimming without trimming of adapters, default=off.
@@ -52,11 +52,12 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -shuffle - Store non-paired Illumina reads in shuffled file, default=off.
 -i64 - Turns on 64-quality base, default = off.
 -adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters
--alen <value> - minimum adapter length for dovetail overlap, default = 60 bp.
--ot <value> - overlap threshold (only in paired-end mode, default = 0.75.
+-alen <value> - Minimum adapter length for dovetail overlap for adapter trimming, default = 60 bp.
+-at <value> - overlap threshold (only in paired-end mode, default = 0.75.
+-overlap <value> - Turns on merging overlapping paired-end reads. Parameter <value> is a minimum overlap length, default=16 bp.
 -dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.
 -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.
--new2old - switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
+-new2old - A switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
 ```
 
 # Examples
