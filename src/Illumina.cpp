@@ -227,41 +227,42 @@ void IlluminaDynamic()
                     //Duplicates removal
                     if(rem_dup)
                         screen_duplicates(read1, read2, duplicates);
-                    
-                    // Удалить адаптеры, ошибочно считанные нуклеотиды и т.д.:
-                    //TrimIllumina(read1, read2); // Move lower
-                    
                     //Checking for overlap:
                     bool overlap_found = false;
                     Read *c = new Read();
                     if( overlap_flag && (read1->discarded == 0) && (read2->discarded == 0) ) {
-                        
-                        Read *s1 = new Read(); s1->read = read1->read; s1->illumina_quality_string = read1->illumina_quality_string;
-                        Read *s2 = new Read(); s2->read = read2->read; s2->illumina_quality_string = read2->illumina_quality_string;
+                        Read *s1 = new Read();
+                        Read *s2 = new Read(); 
+                        int len = read1->read.length();
+                        char t[len+1];
+                        read1->read.copy(t, sizeof t);
+                        t[len] = '\0';
+                        s1->read = t; 
+                        read1->illumina_quality_string.copy(t, sizeof t);
+                        t[len] = '\0';
+                        s1->illumina_quality_string = t;
+                        read2->read.copy(t, sizeof t);
+                        t[len] = '\0';
+                        s2->read = t; 
+                        read2->illumina_quality_string.copy(t, sizeof t);
+                        t[len] = '\0';
+                        s2->illumina_quality_string = t;
                         int ov;
                         string tread = MakeRevComplement(s2->read);
                         ov = find_overlap_pos(s1->read, tread, minoverlap);
                         if( ov > 0 ) {
                             partial_ov_cnt += 1;
-                            int rlen = read1->read.length();  
                             //Overlap, make consensus sequence:
                             s1->read = s1->read.substr(0, ov);
                             s1->illumina_quality_string = s1->illumina_quality_string.substr(0, ov);
                             s2->read = MakeRevComplement(s2->read.substr(0,ov));
                             s2->illumina_quality_string = s2->illumina_quality_string.substr(0, ov);
                             reverse(s2->illumina_quality_string.begin(), s2->illumina_quality_string.end());
+                            
                             c = make_consensus(s1, s2);
-                            /*
-                            // Final read:
-                            string c_se = MakeRevComplement(read2->read.substr(ov,rlen-ov)) + c->read + read1->read.substr(ov,rlen-ov);
-                            read2->illumina_quality_string = read2->illumina_quality_string.substr(ov,rlen-ov);
-                            reverse(read2->illumina_quality_string.begin(), read2->illumina_quality_string.end());
-                            string c_qual = read2->illumina_quality_string + c->illumina_quality_string + read1->illumina_quality_string.substr(ov, rlen-ov);
-                            cout << read1->illumina_readID << "\n" << c->read.length() << " " << read1->read.substr(ov,rlen-ov).length() << " " << read2->illumina_quality_string.length() << "\n";
-                            c->read = c_se;
-                            c->illumina_quality_string = c_qual;
-                            */
+                            
                             read1->tru_sec_found = 1; read2->tru_sec_found = 1;
+                            read1->tru_sec_pos = ov-1; read2->tru_sec_pos = ov-1;
                             read1->merged = true; read2->merged = true;
                             overlap_found = true;
                          }
@@ -271,43 +272,38 @@ void IlluminaDynamic()
                             c->tru_sec_found = 1;
                             c->tru_sec_pos = -1;
                             MakeClipPointsIllumina(c);
-                                
+                             
                             //c->lclip = read1->lclip;
                             //c->rclip = c->read.length() - read2->lclip;
                                 
-                            if(c->rclip < c->lclip) {
+                            if((c->rclip < c->lclip) || c->discarded) {
                                read1->discarded = 1;
                                read2->discarded = 1;
-                               pe_discard_cnt+=1;
-                               pe_bases_discarded += read1->read.length();
-                               pe_bases_discarded += read2->read.length();
-                               continue;
+                               c->discarded = 1;
+                            } else {
+                                c->read = c->read.substr(0 , c->rclip );
+                                c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
+                                c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
+                                c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
+                            
+                                // Read ID reconstruction:
+                                vector<string> temp_id;
+                                split_str( read1->illumina_readID, temp_id, " " );
+                                vector<string> temp_id1;
+                                split_str( temp_id[0], temp_id1, " " );
+                                c->illumina_readID = temp_id1[0];
+                                temp_id.clear();
+                                temp_id1.clear();
                             }
-                                
-                            c->read = c->read.substr(0 , c->rclip );
-                            c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
-                                
-                            c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
-                            c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
-                            
-                            // Read ID reconstruction:
-                            vector<string> temp_id;
-                            split_str( read1->illumina_readID, temp_id, " " );
-                            vector<string> temp_id1;
-                            split_str( temp_id[0], temp_id1, " " );
-                            c->illumina_readID = temp_id1[0];
-                            temp_id.clear();
-                            temp_id1.clear();
-                            
                             
                          }
                     } 
                     
-                    if(overlap_found && overlap_flag) {
+                    if(overlap_found && overlap_flag && (c->discarded == 0)) {
                          WriteSEFile(se_file, c);
                     } else {
                         // Удалить адаптеры, ошибочно считанные нуклеотиды и т.д.:
-                        TrimIllumina(read1, read2); // Move lower
+                        TrimIllumina(read1, read2);
                     }
                     
                     if( (read1->discarded == 0) && (read2->discarded == 0) && (read1->merged == false) && (read2->merged == false)) {
@@ -348,7 +344,7 @@ void IlluminaDynamic()
                         WriteSEFile( se_file, read2 );
                         se_pe2_accept_cnt +=1;
                         se_pe2_bases_kept += read2->read.length();
-                    } else {
+                    } else if( (read1->merged == 0) && (read2->merged == 0) ) {
                         pe_discard_cnt+=1;
                         pe_bases_discarded += read1->read.length();
                         pe_bases_discarded += read2->read.length();
@@ -390,21 +386,20 @@ void IlluminaDynamic()
                     if (read2->left_trimmed_by_polyat == 1) left_trimmed_by_polyat2++;
                         
                     record_block1.clear();
-                        read1->illumina_readID.clear(); 
-                        read1->illumina_quality_string.clear();
-                        read1->read.clear();
+                    read1->illumina_readID.clear(); 
+                    read1->illumina_quality_string.clear();
+                    read1->read.clear();
           
-                        record_block2.clear();
-                        read2->illumina_readID.clear(); 
-                        read2->illumina_quality_string.clear();
-                        read2->read.clear();
+                    record_block2.clear();
+                    read2->illumina_readID.clear(); 
+                    read2->illumina_quality_string.clear();
+                    read2->read.clear();
           
-                        delete read1;
-                        delete read2;
+                    delete read1;
+                    delete read2;
                         
-                        if( ((cnt1 % 1000 ) == 0) && verbose)
-                        {
-                            st_str = PrintIlluminaStatistics(cnt1, cnt2, 
+                    if( ((cnt1 % 1000 ) == 0) && verbose) {
+                        st_str = PrintIlluminaStatistics(cnt1, cnt2, 
                                     pe1_bases_anal, pe2_bases_anal, 
                                     ts_adapters1, ts_adapters2, 
                                     num_vectors1, num_vectors2, 
@@ -431,20 +426,18 @@ void IlluminaDynamic()
                                     left_trimmed_by_polyat2, right_trimmed_by_polyat2
                                    );
                             
-                            if (cnt1 > 1000)
-                            {
-                                vector<string> t;
-                                split_str(st_str, t, "\n");
-                                for(int kk=0; kk<(int)t.size(); ++kk)
-                                {
+                        if (cnt1 > 1000) {
+                            vector<string> t;
+                            split_str(st_str, t, "\n");
+                            for(int kk=0; kk<(int)t.size(); ++kk){
                                    cout << "\033[A\033[2K";
-                                }
-                                t.clear();
                             }
-                            
-                            cout << st_str;
-                            
+                            t.clear();
                         }
+                            
+                        cout << st_str;
+                            
+                    }
                         
                     record_block1.clear();
                     record_block2.clear();
@@ -803,7 +796,7 @@ void MakeClipPointsIllumina(Read* read)
            read->left_trimmed_by_quality = 1;
         
         if (trim_adapters_flag) {
-            if (read->tru_sec_pos == -1 || read->tru_sec_pos == 0) {
+            if (read->tru_sec_pos <= 0) {
                 read->rclip = min((int)read->read.length(),read->lucy_rclip + 1);
             } else {
                 read->rclip = min(read->tru_sec_pos,read->lucy_rclip + 1);
@@ -811,8 +804,6 @@ void MakeClipPointsIllumina(Read* read)
         } else {
             read->rclip = min((int)read->read.length(),read->lucy_rclip + 1);
         }
-        
-        //read->rclip = min(trim_adapters_flag ? (read->tru_sec_pos == -1 ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(),read->lucy_rclip + 1 );
         
         if( (read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length ) )
         {
