@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.6 (2014-10-28)";
+string version = "1.9.7 (2014-11-01)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
         {
            overwrite_flag = true;
            continue;
-        } else if( string(argv[i]) == "-minov" ) //
+        } else if( string(argv[i]) == "-overlap" ) //
         {
            overlap_flag = true;
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
              adapterlength = atoi(argv[++i]); 
            }
            continue;
-        } else if(string(argv[i]) == "-ot" )
+        } else if(string(argv[i]) == "-at" )
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
@@ -1196,11 +1196,11 @@ void PrintHelp() {
     cout << "usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]\n"
             "\n"
             "Common arguments for all library types:\n"
-            "   -h, --help - show this help and exit.\n"
+            "   -h, --help - Show this help and exit.\n"
             "   -v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.\n"
             "   -c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.\n"
             "   -k <value> - Common size of k-mer, default=15\n"
-            "   -d - distance between consecutive k-mers, default=1\n"
+            "   -d - Distance between consecutive k-mers, default=1\n"
             "   -kc <value> - Size of k-mer used in sampling contaminat genome, default=15\n"
             "   -qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
             "   -qual_only - Performs only quality trimming without trimming of adapters, default=off.\n"
@@ -1216,16 +1216,16 @@ void PrintHelp() {
             "   -m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.\n"
             "Illumina paired- and single-end arguments:\n"
             "   -1 <filename1> -2 <filename2> - Paired-end mode (see examples below)\n"
-            "   -U <filename> - single-end mode\n"
+            "   -U <filename> - Single-end mode\n"
             "   -shuffle - Store non-paired Illumina reads in shuffled file, default=off.\n"
             "   -i64 - Turns on 64-quality base, default = off.\n"
             "   -adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters\n"
-            "   -alen <value> - minimum adapter length for dovetail overlap, default = 60 bp.\n"
-            "   -ot <value> - overlap threshold (only in paired-end mode, default = 0.75.\n"
-            //"   -overlap <minoverlap=value> - flag to overlap paired-end reads (only in paired-end mode)\n"
+            "   -alen <value> - Minimum adapter length for dovetail overlap, default = 60 bp.\n"
+            "   -at <value> - Overlap threshold (only in paired-end mode, default = 0.75.\n"
+            "   -overlap <minoverlap=value> - Flag to overlap paired-end reads (only in paired-end mode)\n"
             "   -dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.\n" 
             "   -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
-            "   -new2old - switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
+            "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
 cout <<"Examples\n"
 "Roche 454:\n"
 "./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta\n"

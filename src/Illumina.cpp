@@ -229,34 +229,35 @@ void IlluminaDynamic()
                         screen_duplicates(read1, read2, duplicates);
                     
                     // Удалить адаптеры, ошибочно считанные нуклеотиды и т.д.:
-                    TrimIllumina(read1, read2);
+                    //TrimIllumina(read1, read2); // Move lower
                     
                     //Checking for overlap:
                     bool overlap_found = false;
                     Read *c = new Read();
                     if( overlap_flag && (read1->discarded == 0) && (read2->discarded == 0) ) {
-                         Read *s1 = new Read(); s1->read = read1->read; s1->illumina_quality_string = read1->illumina_quality_string;
-                         Read *s2 = new Read(); s2->read = read2->read; s2->illumina_quality_string = read2->illumina_quality_string;
-                         int ov;
-                         string tread = MakeRevComplement(s2->read);
-                         ov = find_overlap_pos(s1->read, tread, adapterlength, true);
-                         if(ov == 0) {
-                            perfect_ov_cnt += 1;
-                            //Perfect overlap, make consensus sequence:
-                            s2->read = MakeRevComplement(s2->read);
-                            c = make_consensus(s1, s2);  //don't cut, just overlap
-                            overlap_found = true;
-                         }
-                         if( ov > 0 ) {
+                        
+                        Read *s1 = new Read(); s1->read = read1->read; s1->illumina_quality_string = read1->illumina_quality_string;
+                        Read *s2 = new Read(); s2->read = read2->read; s2->illumina_quality_string = read2->illumina_quality_string;
+                        int ov;
+                        string tread = MakeRevComplement(s2->read);
+                        ov = find_overlap_pos(s1->read, tread, minoverlap);
+                        if( ov > 0 ) {
                             partial_ov_cnt += 1;
                             int rlen = read1->read.length();  
                             //Overlap, make consensus sequence:
-                            s1->read = s1->read.substr(rlen-ov, ov);  // cut off left end
-                            s2->read = MakeRevComplement(s2->read.substr(rlen-ov,ov));  //cut off right end
+                            s1->read = s1->read.substr(0, ov);
+                            s1->illumina_quality_string = s1->illumina_quality_string.substr(0, ov);
+                            s2->read = MakeRevComplement(s2->read.substr(0,ov));
+                            s2->illumina_quality_string = s2->illumina_quality_string.substr(0, ov);
+                            reverse(s2->illumina_quality_string.begin(), s2->illumina_quality_string.end());
                             c = make_consensus(s1, s2);
-                            string c_se = read1->read.substr(0,rlen-ov) + c->read + MakeRevComplement(read2->read.substr(0,rlen-ov)); //MakeRevComplement(read2->read.substr(0,read2->read.length() - ov));
-                            string c_qual = read2->illumina_quality_string.substr(0,rlen-ov); //read2->illumina_quality_string.substr(0,read2->illumina_quality_string.length() - ov);
-                            c_qual = read1->illumina_quality_string.substr(0,rlen-ov) + c->illumina_quality_string + string ( c_qual.rbegin(), c_qual.rend() );
+                            
+                            // Final read:
+                            string c_se = MakeRevComplement(read2->read.substr(ov,rlen-ov)) + c->read + read1->read.substr(ov,rlen-ov);
+                            read2->illumina_quality_string = read2->illumina_quality_string.substr(ov,rlen-ov);
+                            reverse(read2->illumina_quality_string.begin(), read2->illumina_quality_string.end());
+                            string c_qual = read2->illumina_quality_string + c->illumina_quality_string + read1->illumina_quality_string.substr(ov, rlen-ov);
+                            cout << read1->illumina_readID << "\n" << c->read.length() << " " << read1->read.substr(ov,rlen-ov).length() << " " << read2->illumina_quality_string.length() << "\n";
                             c->read = c_se;
                             c->illumina_quality_string = c_qual;
                             overlap_found = true;
@@ -286,28 +287,29 @@ void IlluminaDynamic()
                             c->read = c->read.substr( c->lclip, c->rclip - c->lclip );
                             c->illumina_quality_string = c->illumina_quality_string.substr( c->lclip, c->rclip - c->lclip );
                             
+                            // Read ID reconstruction:
                             vector<string> temp_id;
                             split_str( read1->illumina_readID, temp_id, " " );
                             vector<string> temp_id1;
                             split_str( temp_id[0], temp_id1, " " );
                             c->illumina_readID = temp_id1[0];
-                                
                             temp_id.clear();
                             temp_id1.clear();
                             
                             if (detailed_report) {
-                                rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << read1->lclip << "\t" << read1->rclip << "\t" << (read1->tru_sec_pos == -1 ? "NA" : int2str(read1->tru_sec_pos))  << "\t" << read1->initial_length << "\t" << (read1->lucy_lclip <= 1 ? 1 : read1->lucy_lclip) << "\t" << (read1->lucy_rclip <= 1 ? 1 : read1->lucy_rclip) << "\t" << read1->discarded << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
-                                rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << read2->lclip << "\t" << read2->rclip << "\t" << (read2->tru_sec_pos == -1 ? "NA" : int2str(read2->tru_sec_pos)) << "\t"  << read2->initial_length << "\t" << (read2->lucy_lclip <= 1 ? 1 : read2->lucy_lclip) << "\t" << (read2->lucy_rclip <= 1 ? 1 : read2->lucy_rclip) << "\t" << read2->discarded << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
+                                rep_file1 << read1->illumina_readID.substr(1,read1->illumina_readID.length()-1) << "\t" << 0 << "\t" << ov << "\t" << ov  << "\t" << read1->initial_length << "\t" << "NA" << "\t" << "NA" << "\t" << 0 << "\t" << read1->contaminants << "\t" << (vector_flag == true ? int2str(read1->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read1->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read1->vec_len) : "NA") << "\n";
+                                rep_file2 << read2->illumina_readID.substr(1,read2->illumina_readID.length()-1) << "\t" << 0 << "\t" << ov << "\t" << ov << "\t"  << read2->initial_length << "\t" << "NA" << "\t" << "NA" << "\t" << 0 << "\t" << read2->contaminants << "\t" << (vector_flag == true ? int2str(read2->v_start) : "NA") << "\t" << (vector_flag == true ? int2str(read2->v_end) : "NA") << "\t" << (vector_flag == true ? int2str(read2->vec_len) : "NA") << "\n";
                             }
                          }
-                      }
-                        
-                        
+                    } 
+                    
                     if(overlap_found && overlap_flag) {
                          WriteSEFile(se_file, c);
                     } else {
-                         if( (read1->discarded == 0) && (read2->discarded == 0) )
-                         {
+                        // Удалить адаптеры, ошибочно считанные нуклеотиды и т.д.:
+                        TrimIllumina(read1, read2); // Move lower
+                    
+                        if( (read1->discarded == 0) && (read2->discarded == 0) ) {
                              if (!shuffle_flag)
                              {
                                  WritePEFile(pe_output_file1, read1);
@@ -1985,9 +1987,9 @@ int TrimIllumina(Read* read1, Read* read2)
 bool TrimAdapterPE(Read *read1, Read *read2) {
     
     string revcomp = MakeRevComplement(read2->read);
-    int o = find_overlap_pos(read1->read, revcomp, adapterlength, false);
+    int o = find_overlap_pos(read1->read, revcomp, adapterlength);
     if( (o > 0) && (o != -10000)) {
-       //cout << o << '\n';
+       
        read1->tru_sec_found = 1; read2->tru_sec_found = 1;
        read1->tru_sec_pos = o-1;//o; 
        read2->tru_sec_pos = o-1;//o;
@@ -2001,39 +2003,10 @@ bool TrimAdapterPE(Read *read1, Read *read2) {
        read1->lclip = 0; read1->rclip = read1->tru_sec_pos;
        read2->lclip = 0; read2->rclip = read2->tru_sec_pos;
        
+       // Making a new sequence from these two overlapped:
+       
        return true;
-    } /*else { // Try another direction
-        string revcomp1 = MakeRevComplement(read1->read);
-        //string revcomp2 = MakeRevComplement(read2->read);
-        int o = find_overlap_pos(revcomp1, read2->read, adapterlength, false);
-        if( (o > 0) && (o != -10000)) {
-            //cout << o << '\n';
-            int rlen = read1->read.length();
-            read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-            read1->tru_sec_pos = o-1;//o; 
-            read2->tru_sec_pos = o-1;//o;
-       
-            //read1->read = read1->read.substr(read1->tru_sec_pos, rlen-read1->tru_sec_pos);
-            //read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->tru_sec_pos, rlen-read1->tru_sec_pos);
-            //
-            //read2->read = read2->read.substr(0, read2->tru_sec_pos);
-            //read2->illumina_quality_string = read2->illumina_quality_string.substr(0, read2->tru_sec_pos);
-       
-            read1->read = read1->read.substr(read1->tru_sec_pos,rlen-read1->tru_sec_pos);
-            read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->tru_sec_pos,rlen-read1->tru_sec_pos);
-       
-            read2->read = read2->read.substr(read2->tru_sec_pos,rlen-read2->tru_sec_pos);
-            read2->illumina_quality_string = read2->illumina_quality_string.substr(read2->tru_sec_pos,rlen-read2->tru_sec_pos);
-       
-            
-
-
-            read1->lclip = 0; read1->rclip = read1->tru_sec_pos;
-            read2->lclip = 0; read2->rclip = read2->tru_sec_pos;
-       
-            return true;
-        
-    } */
+    } 
     
     return false;
 }
