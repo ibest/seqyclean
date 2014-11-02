@@ -251,7 +251,7 @@ void IlluminaDynamic()
                             s2->illumina_quality_string = s2->illumina_quality_string.substr(0, ov);
                             reverse(s2->illumina_quality_string.begin(), s2->illumina_quality_string.end());
                             c = make_consensus(s1, s2);
-                            
+                            /*
                             // Final read:
                             string c_se = MakeRevComplement(read2->read.substr(ov,rlen-ov)) + c->read + read1->read.substr(ov,rlen-ov);
                             read2->illumina_quality_string = read2->illumina_quality_string.substr(ov,rlen-ov);
@@ -260,17 +260,19 @@ void IlluminaDynamic()
                             cout << read1->illumina_readID << "\n" << c->read.length() << " " << read1->read.substr(ov,rlen-ov).length() << " " << read2->illumina_quality_string.length() << "\n";
                             c->read = c_se;
                             c->illumina_quality_string = c_qual;
+                            */
+                            read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                             overlap_found = true;
                          }
                               
                          if(overlap_found) {
                             IlluminaDynRoutine_post(c);
-                            c->tru_sec_found = 0;
+                            c->tru_sec_found = 1;
                             c->tru_sec_pos = -1;
                             MakeClipPointsIllumina(c);
                                 
-                            c->lclip = read1->lclip;
-                            c->rclip = c->read.length() - read2->lclip;
+                            //c->lclip = read1->lclip;
+                            //c->rclip = c->read.length() - read2->lclip;
                                 
                             if(c->rclip <= c->lclip) {
                                read1->discarded = 1;
