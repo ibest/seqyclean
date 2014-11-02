@@ -61,7 +61,6 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 ```
 
 # Examples
-
 ## Roche 454
 Output in SFF, no quality trimming, vector trimming is performed:
 ```
@@ -71,7 +70,6 @@ Output in SFF, quality trimming with default parameters, vector trimming and con
 ```
 ./seqyclean -454 test_data/in.sff -o test/Test454 -qual -v test_data/vectors.fasta -c test_data/contaminants.fasta
 ```
-
 ## Illumina
 
 ### Paired-end
