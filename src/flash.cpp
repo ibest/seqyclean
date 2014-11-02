@@ -17,7 +17,7 @@ int strdist(string s1, string s2) {
 }
 
 
-int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
+int find_overlap_pos(string seq1, string seq2, int adapterlength) {
     //compare sequences starting at a dovetailed overlap defined by adapterlength
     //Note: this assumes untrimmed sequences of equal length and reports an overlap
     //when 90% identity otherwise it checks until overlap is < minoverlap
@@ -30,30 +30,17 @@ int find_overlap_pos(string seq1, string seq2, int adapterlength, bool flag) {
         std::cout << s1 << "\n" << s2 << "\n";
         return -10000;
     }
+    
     if(((int)s1.length() < adapterlength) || ((int)s2.length() < adapterlength) ) return -10000;
     
-    if(!flag) {
-        for(unsigned int i = rlen; i >= minoverlap; i--) {
-            if ((double)(i - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) >= overlap_t ) {
-                //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
-                return i;
-            }
+    for(unsigned int i = rlen; i >= minoverlap; i--) {
+        if ((double)(i - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i) >= overlap_t ) {
             //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
+            return i;
         }
-        
-    } else {
-        //Next check for perfect overlap
-        if((double)(rlen - strdist(s1, s2))/(double)rlen >= overlap_t ) {
-                //found perfect overlap
-                return 0;
-        }
-        //Finally check for partial overlap
-        for(unsigned int i = 1; i <= rlen-minoverlap; i++) {
-            if((double)( (rlen-i) - strdist(s1.substr(i,rlen-i), s2.substr(0,rlen-i)))/(double)(rlen-i) >= overlap_t ) {
-                return i;
-            }
-        }
+        //std::cout << "i=" << i << " " << (double)( (i) - strdist(s1.substr(0,i), s2.substr(rlen-i,i)))/(double)(i)  <<  '\n';
     }
+    
     
     return -10000;
 }
@@ -73,10 +60,10 @@ Read *make_consensus(Read *seq1, Read *seq2) {
                 new_qual += seq1->illumina_quality_string[i];
             } else if(seq1->illumina_quality_string[i] > seq2->illumina_quality_string[i] ) {
                 new_seq += seq1->read[i];
-                new_qual += (char)( 33 + (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i]);
+                new_qual += (char)( i64_flag ? 64 : 33 + (unsigned int)seq1->illumina_quality_string[i] - (unsigned int)seq2->illumina_quality_string[i]);
             } else {
                 new_seq += seq2->read[i];
-                new_qual += (char)( 33 + (unsigned int)seq2->illumina_quality_string[i] - (unsigned int)seq1->illumina_quality_string[i]);
+                new_qual += (char)( i64_flag ? 64 : 33 + (unsigned int)seq2->illumina_quality_string[i] - (unsigned int)seq1->illumina_quality_string[i]);
             }
         }
     }
