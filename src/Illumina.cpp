@@ -228,9 +228,6 @@ void IlluminaDynamic()
                     if(rem_dup)
                         screen_duplicates(read1, read2, duplicates);
                     
-                    // Удалить адаптеры, ошибочно считанные нуклеотиды и т.д.:
-                    //TrimIllumina(read1, read2); // Move lower
-                    
                     //Checking for overlap:
                     bool overlap_found = false;
                     Read *c = new Read();
@@ -243,7 +240,7 @@ void IlluminaDynamic()
                         ov = find_overlap_pos(s1->read, tread, minoverlap);
                         if( ov > 0 ) {
                             partial_ov_cnt += 1;
-                            int rlen = read1->read.length();  
+                            //int rlen = read1->read.length();  
                             //Overlap, make consensus sequence:
                             s1->read = s1->read.substr(0, ov);
                             s1->illumina_quality_string = s1->illumina_quality_string.substr(0, ov);
@@ -274,7 +271,7 @@ void IlluminaDynamic()
                                 
                             //c->lclip = read1->lclip;
                             //c->rclip = c->read.length() - read2->lclip;
-                                
+                            /*    
                             if(c->rclip < c->lclip) {
                                read1->discarded = 1;
                                read2->discarded = 1;
@@ -282,7 +279,7 @@ void IlluminaDynamic()
                                pe_bases_discarded += read1->read.length();
                                pe_bases_discarded += read2->read.length();
                                continue;
-                            }
+                            }*/
                                 
                             c->read = c->read.substr(0 , c->rclip );
                             c->illumina_quality_string = c->illumina_quality_string.substr(0,c->rclip) ; 
