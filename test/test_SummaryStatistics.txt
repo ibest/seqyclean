@@ -1,0 +1,69 @@
+====================Parameters========================
+Version: 1.9.7 (2014-11-01)
+--------------------Basic parameters--------------------
+Provided data files : 
+PE1: test_data/R1_001.fastq, PE2: test_data/R2_001.fastq
+PE1: test_data/R1_002.fastq, PE2: test_data/R2_002.fastq
+PE1: test_data/R1_003.fastq, PE2: test_data/R2_003.fastq
+Adapters trimming: YES. 
+Vector screening: NO
+Contaminants screening: NO
+Quality trimming: YES
+Maximum error: 20
+Maximum error at ends: 20
+Poly A/T trimming: NO
+--------------------Output files--------------------
+Output prefix: test/test
+Report files: test/test_PE1_Report.tsv, test/test_PE2_Report.tsv
+PE1 file: test/test_PE1.fastq
+PE2 file: test/test_PE2.fastq
+Single-end reads: test/test_SE.fastq
+Single-end overlapped reads: test/test_SEOLP.fastq
+--------------------Other parameters--------------------
+Maximum number of mismatches allowed in alignment: 5
+Minimum read length to accept: 50
+New to old-style Illumina headers: NO
+Old-style Illumina: NO
+Q-value: 33
+====================Starting the process====================
+Running the Illumina cleaning process...
+Processing files: test_data/R1_001.fastq, test_data/R2_001.fastq
+Processing files: test_data/R1_002.fastq, test_data/R2_002.fastq
+Processing files: test_data/R1_003.fastq, test_data/R2_003.fastq
+====================Summary Statistics====================
+PE1 reads analyzed: 3000, Bases:453000
+Found ->
+Adapters: 81, 2.7%
+Reads left trimmed ->
+By quality: 180
+Average left trim length: 1.52834 bp
+Reads right trimmed ->
+By adapter: 0
+By quality: 633
+Average right trim length: 6.23549 bp
+PE1 reads discarded: 192
+By read length: 183
+-----------------------------------------------------------
+PE2 reads analyzed: 3000, Bases:453000
+Found ->
+Adapters: 48, 1.6%
+Reads left trimmed ->
+By quality: 219
+Average left trim length: 1.44636 bp
+Reads right trimmed ->
+By adapter: 0
+By quality: 1006
+Average right trim length: 9.64103 bp
+PE2 reads discarded:324
+By read length: 312
+----------------------Summary for PE & SE----------------------
+Pairs kept: 2598, 86.6%, Bases: 740160, 81.6954%
+Pairs discarded: 198, 6.6%, Bases: 57828, 6.38278%
+Single Reads PE1 kept: 174, Bases: 18297
+Single Reads PE2 kept: 42, Bases: 4848
+Average trimmed length PE1: 145 bp
+Average trimmed length PE2: 139 bp
+Overlaps: 48, 1.6%
+====================Done cleaning====================
+Program finished.
+Elapsed time = 1.74244 seconds.
