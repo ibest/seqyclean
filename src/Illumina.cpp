@@ -297,6 +297,8 @@ void IlluminaDynamic()
                             }
                             
                          }
+                        delete s1;
+                        delete s2;
                     } 
                     
                     if(overlap_found && overlap_flag && (c->discarded == 0)) {
@@ -397,6 +399,7 @@ void IlluminaDynamic()
           
                     delete read1;
                     delete read2;
+                    delete c;
                         
                     if( ((cnt1 % 1000 ) == 0) && verbose) {
                         st_str = PrintIlluminaStatistics(cnt1, cnt2, 
