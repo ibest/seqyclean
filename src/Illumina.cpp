@@ -260,7 +260,7 @@ void IlluminaDynamic()
                             reverse(s2->illumina_quality_string.begin(), s2->illumina_quality_string.end());
                             
                             c = make_consensus(s1, s2);
-                            
+                            c->tru_sec_found = 1; c->tru_sec_pos = ov;
                             read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                             read1->tru_sec_pos = ov-1; read2->tru_sec_pos = ov-1;
                             read1->merged = true; read2->merged = true;
@@ -269,13 +269,8 @@ void IlluminaDynamic()
                               
                          if(overlap_found) {
                             IlluminaDynRoutine_post(c);
-                            c->tru_sec_found = 1;
-                            c->tru_sec_pos = -1;
                             MakeClipPointsIllumina(c);
                              
-                            //c->lclip = read1->lclip;
-                            //c->rclip = c->read.length() - read2->lclip;
-                                
                             if((c->rclip < c->lclip) || c->discarded) {
                                read1->discarded = 1;
                                read2->discarded = 1;
@@ -819,10 +814,10 @@ void MakeClipPointsIllumina(Read* read)
                read->right_trimmed_by_adapter = 1;
         }
         
-        if(read->rclip >= read->clear_length)
+        /*if(read->rclip >= read->clear_length)
         {
             read->rclip = read->clear_length; read->right_trimmed_by_adapter = 0;
-        } 
+        }*/
         
     }
     else if( (!qual_trim_flag) && (vector_flag ) )
