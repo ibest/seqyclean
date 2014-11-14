@@ -473,6 +473,7 @@ void IlluminaDynamic()
                             duplicates,
                             left_trimmed_by_polyat1, right_trimmed_by_polyat1,
                             left_trimmed_by_polyat2, right_trimmed_by_polyat2
+                            
                             );
     
     
@@ -1078,7 +1079,11 @@ void IlluminaDynamicSE()
                         se_bases_anal += read->read.length();
                         //std::cout << read->illumina_quality_string << "\n";
                         //Serial realization - useful for debugging if something does not work as expected
-          
+                        if(rem_dup)
+                            screen_duplicates(read, duplicates);
+      
+                        
+                        
                         IlluminaDynRoutine(read, adapter_found, query_string);
                         
                         if(read->discarded == 0)
@@ -1125,19 +1130,11 @@ void IlluminaDynamicSE()
                           if( read->discarded == 0 )
                           {
                             cnt_avg+=1;
-                                        /*if (cnt_avg == 1) {
-                                            first_avg = read->rclip - read->lclip;
-                                            avg_trim_len_se = first_avg;
-                                        } else {
-                                            avg_trim_len_se = GetAvg( avg_trim_len_se, cnt_avg, read->rclip - read->lclip, first_avg );
-                                            cout << avg_trim_len_se << endl;
-                                        }*/
                             avg_bases_se += read->rclip - read->lclip;
                             avg_trim_len_se = avg_bases_se/cnt_avg;
                           }
                           cnt_avg_len+=1; 
-                                    //avg_len_se = GetAvg( avg_len_se, cnt_avg_len, read->read.length() );
-                                    
+                                   
                  
                         } 
                                 
@@ -1192,7 +1189,8 @@ void IlluminaDynamicSE()
                                     avg_len_se,
                                     right_trimmed_by_polyat,
                                     left_trimmed_by_polyat,
-                                    discarded_by_polyAT
+                                    discarded_by_polyAT,
+                                    duplicates
                                    );
                             
                             if (cnt > 1000)
@@ -1239,7 +1237,8 @@ void IlluminaDynamicSE()
                                     avg_len_se,
                                     left_trimmed_by_polyat, 
                                     right_trimmed_by_polyat,
-                                    discarded_by_polyAT
+                                    discarded_by_polyAT,
+                                    duplicates
                                    );
     
     if (verbose) {
@@ -1275,7 +1274,8 @@ void IlluminaDynamicSE()
                                    avg_trim_len_se,
                                    left_trimmed_by_polyat, 
                                    right_trimmed_by_polyat,
-                                   discarded_by_polyAT
+                                   discarded_by_polyAT,
+                                   duplicates
                             ) << endl;
                  
     
@@ -1497,7 +1497,8 @@ string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                                     double avg_trim_len_se,
                                     double avg_len_se,
                                     long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
-                                    long long discarded_by_polyAT
+                                    long long discarded_by_polyAT,
+                                    long long duplicates
                                     )
 {
     
@@ -1525,8 +1526,8 @@ string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                         "By read length: " +  i2str(discarded_by_read_length,new char[15],10) + "\n" +
                         "----------------------Summary for SE----------------------\n" +
                         ("Reads kept: " + i2str(se_accept_cnt,new char[15],10) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + i2str(se_bases_kept,new char[15],10) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
-                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n");// +
-                       // ("Average read length: " + double2str(avg_len_se) + " bp\n");
+                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n") +
+                        ( rem_dup ? "Duplicates: " + int2str(duplicates) + "\n" : "");
     
     return ans;
    
@@ -1552,7 +1553,8 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                                     long long se_accept_cnt, 
                                     double avg_trim_len_se,
                                     long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
-                                    long long discarded_by_polyAT
+                                    long long discarded_by_polyAT,
+                                    long long duplicates
                                     )
 {
     
@@ -1579,7 +1581,8 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                                 ( !shuffle_flag ?  se_output_filename : "NA" ) +"\t"+
                                 int2str(max_al_mism) +"\t" +
                                 int2str(minimum_read_length)+ "\t" +
-                                ( new2old_illumina ? "YES" : "NO") + "\t"; 
+                                ( new2old_illumina ? "YES" : "NO") + "\t"+
+                                ( rem_dup ? "YES" : "NO" ) + "\t"; 
                    
     
     
@@ -1605,8 +1608,8 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                         + i2str(se_bases_kept,new char[15],10) + "\t" + //bases kept
                         double2str( (double)se_bases_kept/(double)se_bases_anal*100.0) + "\t" + //%
                        double2str(avg_trim_len_se) +
-                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat)  + "\n" : "");
-            
+                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "") +
+                       ( rem_dup ? "\tYES" + int2str(duplicates) + "\n" : "");
     
      return stat_str_tsv;
     

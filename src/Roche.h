@@ -19,6 +19,7 @@
 #include "Dictionary.h"
 #include "gzstream.h"
 #include "poly.h"
+#include "dup.h"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ extern bool lucy_only_flag;
 extern unsigned short cdna, c_err, crng;
 extern bool fasta_output;
 extern bool detailed_report;
+extern bool rem_dup;
 
 int RocheRoutine();
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads);

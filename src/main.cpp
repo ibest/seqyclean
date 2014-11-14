@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.7 (2014-11-01)";
+string version = "1.9.8 (2014-11-13)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -82,7 +82,7 @@ char *vector_file;
 char *cont_file;
 char* rlmids_file;
 // Starting position and a window size for searching for duplicates:
-int start_dw = 10, size_dw = 15;
+int start_dw = 10, size_dw = 35, max_dup = 3;
 
 /*Other parameters*/
 /*Illumina*/
@@ -290,7 +290,8 @@ int main(int argc, char *argv[])
            continue;
         } else if( string(argv[i]) == "-dup" ) 
         {
-           rem_dup = true;
+           rem_dup = true; ++i;
+           
            if( string(argv[i]) == "-startdw" ) 
            {
                start_dw = atoi(argv[++i]);
@@ -298,6 +299,10 @@ int main(int argc, char *argv[])
            if( string(argv[i]) == "-sizedw" ) 
            {
                size_dw = atoi(argv[++i]);
+           }
+           if( string(argv[i]) == "-maxdup" ) 
+           {
+               max_dup = atoi(argv[++i]);
            }
            
            continue;
@@ -855,7 +860,14 @@ int main(int argc, char *argv[])
                         cout << "Poly A/T trimming: NO" << endl;
                         sum_stat << "Poly A/T trimming: NO" << endl;
                 }
-        
+                if(rem_dup) {
+                        cout << "Duplicates removal: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+                        sum_stat << "Duplicates removal: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+                } else {
+                        cout << "Duplicates removal: NO" << endl;
+                        sum_stat << "Duplicates removal: NO" << endl;
+                }
+                
                 cout << "--------------------Output files--------------------\n";
                 sum_stat << "--------------------Output files--------------------\n";
         
@@ -1223,7 +1235,7 @@ void PrintHelp() {
             "   -alen <value> - Minimum adapter length for dovetail overlap, default = 60 bp.\n"
             "   -at <value> - Overlap threshold (only in paired-end mode, default = 0.75.\n"
             "   -overlap <minoverlap=value> - Flag to overlap paired-end reads (only in paired-end mode)\n"
-            "   -dup [-startdw][-sizedw] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=15) are starting position and size of the window within a read.\n" 
+            "   -dup [-startdw 10][-sizedw 35] [-maxdup 3] - Turns on screening duplicated sequences, default=off. Here: -startdw (defalt=10) and -sizedw (default=25) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.\n" 
             "   -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
 cout <<"Examples\n"

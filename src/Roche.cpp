@@ -9,6 +9,7 @@ long counter = 0;
 
 int RocheRoutine()
 {
+    long long duplicates = 0;
     if( !trim_adapters_flag ) { // No adapter trimming
         for(int i=0; i<(int)roche_names.size(); ++i) {
            if( string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" || string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq" ) { /*FASTQ file given. Process it.*/
@@ -21,8 +22,10 @@ int RocheRoutine()
            }
         }
             
-        if( qual_trim_flag  ) // Quality trimming enabled
-          cout << "Quality trimming\n"; QualityTrimming(reads);
+        if( qual_trim_flag  ) { // Quality trimming enabled
+          cout << "Quality trimming\n"; 
+          QualityTrimming(reads);
+        }
            
         cout << "Making output files...\n";
         MakeLucyFastq( output_prefix + "_qual.fastq" );
@@ -53,6 +56,10 @@ int RocheRoutine()
        }
         
        cout << "Conversion finished. Total number of reads read from given file(s): " << reads.size() << endl;
+       
+       if(rem_dup)
+          for(unsigned long i=0; i< reads.size(); i++) 
+            screen_duplicates(reads[i], duplicates);
        
        /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
        if( qual_trim_flag  )
@@ -153,7 +160,8 @@ void QualityTrimming( vector<Read*>& reads ) {
 
 void RemoveContaminants454(vector<Read*>& reads454) {
     for(unsigned int index = 0; index < (unsigned int)reads454.size(); index++) {
-        
+        if (reads454[index]->discarded == 1)
+            continue;
         if(CheckContaminants(reads454[index]->read) == 0) {
            reads454[index]->discarded = 1;
            reads454[index]->discarded_by_contaminant = 1;

@@ -12,6 +12,9 @@
 
 void PolyAT_Trim(Read* read)
 {
+    if (read->discarded == 1)
+        return;
+    
     int left, right;
     left = right = 0;
     

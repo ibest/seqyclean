@@ -184,7 +184,8 @@ string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                                     double avg_trim_len_se,
                                     double avg_len_se,
                                     long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
-                                    long long discarded_by_polyAT
+                                    long long discarded_by_polyAT,
+                                    long long duplicates
                                     );
 
 string PrintIlluminaStatisticsTSVSE(long long cnt,
@@ -205,7 +206,8 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                                     long long se_accept_cnt, 
                                     double avg_trim_len_se,
                                     long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
-                                    long long discarded_by_polyAT
+                                    long long discarded_by_polyAT,
+                                    long long duplicates
                                    );
 
 

@@ -780,7 +780,9 @@ void grim(int length, int *left, int *right)
 //int main(int argc, char **argv)
 int QualTrim( Read* read, double max_avg_err, double end_lim )
 {       
-   // cout << qual_str << endl;
+    if (read->discarded == 1) 
+        return 0;
+    
         //FILE * pFile;
 	int quality[10000];
 	unsigned int qual_count, i;//length, i;

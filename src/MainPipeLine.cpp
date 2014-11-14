@@ -129,6 +129,13 @@ static void *t_FindRLClip(void *targs) {
   long i = 0;
   i = (long)targs;
   
+  if (reads[i]->discarded == 1) {
+      line_counter++;
+      if(line_counter%50000 == 0)
+          cout << "Line No: " << line_counter << endl;
+      pthread_exit(NULL);
+  }
+  
   /*Obtaing a left clip point*/
   GetLClip2(reads[i], false);
   
