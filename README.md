@@ -37,6 +37,7 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.
 -verbose - Verbose output, default=off.
 -detrep - Generate detailed report for each read, default=off.
+-dup [-startdw][-sizedw][-maxdup] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=35) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.
 ```
 ## Roche 454 arguments
 ```
@@ -55,7 +56,6 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -alen <value> - Minimum adapter length for dovetail overlap for adapter trimming, default = 60 bp.
 -at <value> - overlap threshold (only in paired-end mode, default = 0.75.
 -overlap <value> - Turns on merging overlapping paired-end reads. Parameter <value> is a minimum overlap length, default=16 bp.
--dup [-startdw][-sizedw][-maxdup] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=35) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.
 -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.
 -new2old - A switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
 ```

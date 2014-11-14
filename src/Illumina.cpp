@@ -1244,11 +1244,11 @@ void IlluminaDynamicSE()
     if (verbose) {
         vector<string> t;
         split_str(st_str, t, "\n");
-        /*for(int kk=0; kk<(int)t.size(); ++kk)
+        for(int kk=0; kk<(int)t.size(); ++kk)
         {
             cout << "\033[A\033[2K";
             sum_stat << "\033[A\033[2K";
-        }*/
+        }
         t.clear();
     }
     
@@ -1471,9 +1471,9 @@ string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                        (i2str(se_pe2_accept_cnt,new char[15],10) + "\t" + i2str(se_pe2_bases_kept,new char[15],10) +"\t") +
                        (double2str(avg_trim_len_pe1) + "\t") +
                        double2str(avg_trim_len_pe2) +
-                       (rem_dup ? "\t" + int2str(duplicates) : "\tNA") + 
                        ( overlap_flag ? "\t" + int2str(perfect_ov_cnt) + "\t" + int2str(partial_ov_cnt) : "\tNA\tNA") +
-                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat1) + "\t" + int2str(right_trimmed_by_polyat1) + "\t" + int2str(left_trimmed_by_polyat2) + "\t" + int2str(right_trimmed_by_polyat2) : "\tNA\tNA\tNA\tNA\tNA\tNA\tNA");
+                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat1) + "\t" + int2str(right_trimmed_by_polyat1) + "\t" + int2str(left_trimmed_by_polyat2) + "\t" + int2str(right_trimmed_by_polyat2) : "\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA") +
+                       ( rem_dup ? "\tYES\t" + int2str(duplicates) + "\t" + int2str(size_dw) + "\t" + int2str(start_dw) + "\t" + int2str(max_dup) + "\n" : "\tNA\tNA\tNA\tNA\tNA\n");
                       
     return stat_str_tsv;
 }
@@ -1581,8 +1581,8 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                                 ( !shuffle_flag ?  se_output_filename : "NA" ) +"\t"+
                                 int2str(max_al_mism) +"\t" +
                                 int2str(minimum_read_length)+ "\t" +
-                                ( new2old_illumina ? "YES" : "NO") + "\t"+
-                                ( rem_dup ? "YES" : "NO" ) + "\t"; 
+                                ( new2old_illumina ? "YES" : "NO") + "\t";
+                                
                    
     
     
@@ -1608,8 +1608,8 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                         + i2str(se_bases_kept,new char[15],10) + "\t" + //bases kept
                         double2str( (double)se_bases_kept/(double)se_bases_anal*100.0) + "\t" + //%
                        double2str(avg_trim_len_se) +
-                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "") +
-                       ( rem_dup ? "\tYES" + int2str(duplicates) + "\n" : "");
+                       (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "\tNA\tNA\tNA\tNA\tNA\tNA") +
+                       ( rem_dup ? "\tYES\t" + int2str(duplicates) + "\t" + int2str(size_dw) + "\t" + int2str(start_dw) + "\t" + int2str(max_dup) + "\n" : "\tNA\tNA\tNA\tNA\tNA\n");
     
      return stat_str_tsv;
     

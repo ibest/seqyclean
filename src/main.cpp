@@ -292,15 +292,15 @@ int main(int argc, char *argv[])
         {
            rem_dup = true; ++i;
            
-           if( string(argv[i]) == "-startdw" ) 
+           if((i+1)<argc && string(argv[i]) == "-startdw" ) 
            {
                start_dw = atoi(argv[++i]);
            }
-           if( string(argv[i]) == "-sizedw" ) 
+           if((i+1)<argc && string(argv[i]) == "-sizedw" ) 
            {
                size_dw = atoi(argv[++i]);
            }
-           if( string(argv[i]) == "-maxdup" ) 
+           if((i+1)<argc && string(argv[i]) == "-maxdup" ) 
            {
                max_dup = atoi(argv[++i]);
            }
@@ -794,7 +794,7 @@ int main(int argc, char *argv[])
         if(!illumina_se_flag)
         {
         
-            sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tDuplicates\tperfect_ov\tpartial_ov\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat1\tright_trimmed_by_polyat1\tleft_trimmed_by_polyat2\tright_trimmed_by_polyat2\n";
+            sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tperfect_ov\tpartial_ov\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat1\tright_trimmed_by_polyat1\tleft_trimmed_by_polyat2\tright_trimmed_by_polyat2\tdup_scr\tduplicates\tsizedw\tstartdw\tmaxdup\n";
     
                 cout << "Provided data files : " << endl;
                 sum_stat << "Provided data files : " << endl;
@@ -926,7 +926,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_SEReadsWVector\tSEReadsWContam_found\tPerc_SEReadsWContam\tSELeftTrimmedQual\tSELeftTrimmedVector\tSEAvgLeftTrimLen\tSERightTrimmedAdap\tSERightTrimmedQual\tSERightTrimmedVector\tSEAvgRightTrimLen\tSEDiscardedTotal\tSEDiscByContam\tSEDiscByLength\tSEReadsKept\tPerc_Kept\tBases\tPerc_Bases\tAvgTrimmedLenSE\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat\tright_trimmed_by_polyat\n";
+            sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_SEReadsWVector\tSEReadsWContam_found\tPerc_SEReadsWContam\tSELeftTrimmedQual\tSELeftTrimmedVector\tSEAvgLeftTrimLen\tSERightTrimmedAdap\tSERightTrimmedQual\tSERightTrimmedVector\tSEAvgRightTrimLen\tSEDiscardedTotal\tSEDiscByContam\tSEDiscByLength\tSEReadsKept\tPerc_Kept\tBases\tPerc_Bases\tAvgTrimmedLenSE\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat\tright_trimmed_by_polyat\tdup_scr\tduplicates\tsizedw\tstartdw\tmaxdup\n";
     
                 cout << "Provided data file(s) : " << endl;
                 sum_stat << "Provided data file(s) : " << endl;
@@ -991,6 +991,14 @@ int main(int argc, char *argv[])
                         cout << "Poly A/T trimming: NO" << endl;
                         sum_stat << "Poly A/T trimming: NO" << endl;
                 }
+                
+                if(rem_dup) {
+                        cout << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+                        sum_stat << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+                } else {
+                        cout << "Duplicates screening: NO" << endl;
+                        sum_stat << "Duplicates screening: NO" << endl;
+                }
         
                 cout << "--------------------Output files--------------------\n";
                 sum_stat << "--------------------Output files--------------------\n";
@@ -1032,7 +1040,7 @@ int main(int argc, char *argv[])
     //if(roche_flag & !polyat_flag)
     if(roche_flag)
     {
-        sum_stat_tsv << "Version\tFiles\tNUM_THREADS\tAdaptersTrimming\tVectorTrimming\tkmer_size\tDistance\tContamScr\tkmer_contam_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\tOutputFilename\tMax_align_mismatches\tMinReadLen\tReadsAnalyzed\tBases\tleft_mid_tags_found\tpercentage_left_mid_tags_found\tright_mid_tags_found\tpercentage_right_mid_tags_found\tReadsWithVector_found\tpercentage_ReadsWithVector_found\tReadsWithContam_found\tpercentage_ReadsWithContam_found\tLeftTrimmedByAdapter\tLeftTrimmedByQual\tLeftTrimmedByVector\tAvgLeftTrimLen\tRightTrimmedByAdapter\tRightTrimmedByQual\tRightTrimmedByVector\tAvgRightTrimLen\tDiscardedTotal\tDiscByContam\tDiscByLength\tReadsKept\tPercentageKept\tAvgTrimmedLen\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat\tright_trimmed_by_polyat\n";
+        sum_stat_tsv << "Version\tFiles\tNUM_THREADS\tAdaptersTrimming\tVectorTrimming\tkmer_size\tDistance\tContamScr\tkmer_contam_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\tOutputFilename\tMax_align_mismatches\tMinReadLen\tReadsAnalyzed\tBases\tleft_mid_tags_found\tpercentage_left_mid_tags_found\tright_mid_tags_found\tpercentage_right_mid_tags_found\tReadsWithVector_found\tpercentage_ReadsWithVector_found\tReadsWithContam_found\tpercentage_ReadsWithContam_found\tLeftTrimmedByAdapter\tLeftTrimmedByQual\tLeftTrimmedByVector\tAvgLeftTrimLen\tRightTrimmedByAdapter\tRightTrimmedByQual\tRightTrimmedByVector\tAvgRightTrimLen\tDiscardedTotal\tDiscByContam\tDiscByLength\tReadsKept\tPercentageKept\tAvgTrimmedLen\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat\tright_trimmed_by_polyat\tdup_scr\tduplicates\tsizedw\tstartdw\tmaxdup\n";
     
         cout << "--------------------Basic parameters--------------------\n";
         sum_stat << "--------------------Basic parameters--------------------\n";
@@ -1100,6 +1108,15 @@ int main(int argc, char *argv[])
         } else {
            cout << "Poly A/T trimming: NO" << endl;
            sum_stat << "Poly A/T trimming: NO" << endl;
+        }
+        
+        if(rem_dup) {
+           cout << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+           sum_stat << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+ 
+        } else {
+           cout << "Duplicates screening: NO" << endl;
+           sum_stat << "Duplicates screening: NO" << endl;
         }
         
         cout << "--------------------Output files--------------------\n";
@@ -1185,8 +1202,6 @@ int main(int argc, char *argv[])
     cout << "Program finished.\n";
     sum_stat << "Program finished.\n";
     
-    
-    
     VectorSeqs.clear();
     VectorDict.clear();
     ContDict.clear();
@@ -1221,6 +1236,7 @@ void PrintHelp() {
             "   -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.\n"
             "   -verbose - Verbose output, default=off.\n"
             "   -detrep - Generate detailed report for each read, default=off.\n"
+            "   -dup [-startdw 10][-sizedw 35] [-maxdup 3] - Turns on screening duplicated sequences, default=off. Here: -startdw (defalt=10) and -sizedw (default=25) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.\n" 
             "Roche 454 only arguments:\n"
             "   -t <value> - Number of threads (not yet applicable to Illumina mode), default=4.\n" 
             "   -fastq - Output in FASTQ format, default=off.\n"
@@ -1235,7 +1251,6 @@ void PrintHelp() {
             "   -alen <value> - Minimum adapter length for dovetail overlap, default = 60 bp.\n"
             "   -at <value> - Overlap threshold (only in paired-end mode, default = 0.75.\n"
             "   -overlap <minoverlap=value> - Flag to overlap paired-end reads (only in paired-end mode)\n"
-            "   -dup [-startdw 10][-sizedw 35] [-maxdup 3] - Turns on screening duplicated sequences, default=off. Here: -startdw (defalt=10) and -sizedw (default=25) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.\n" 
             "   -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
 cout <<"Examples\n"

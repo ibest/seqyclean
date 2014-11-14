@@ -70,7 +70,8 @@ string PrintRocheStatisticsTSV(unsigned long cnt,
                                     unsigned long accepted, 
                                     double avg_trim_len,
                                     unsigned long left_trimmed_by_polyat,
-                                    unsigned long right_trimmed_by_polyat
+                                    unsigned long right_trimmed_by_polyat,
+                                    long long duplicates
                                );
 void MakeFinalStatistics(fstream &sum_stat);
 void WriteToFASTQ(string file_name);

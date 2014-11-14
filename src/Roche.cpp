@@ -5,108 +5,81 @@ long accept_counter;
 long trim_counter;
 long line_counter = 0;
 long counter = 0;
-
+long long duplicated = 0;
 
 int RocheRoutine()
 {
-    long long duplicates = 0;
-    if( !trim_adapters_flag ) { // No adapter trimming
-        for(int i=0; i<(int)roche_names.size(); ++i) {
-           if( string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" || string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq" ) { /*FASTQ file given. Process it.*/
-              ParseFastqFile(roche_names[i], reads); output_fastqfile_flag = true; output_sfffile_flag = false;
-           } else if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) { // Sff file given
-              process_sff_to_fastq( roche_names[i], 0 ); output_fastqfile_flag = false; output_sfffile_flag = true;
-           } else {
-              cout << "Unknown file format\n";
-              return -1;
-           }
-        }
-            
-        if( qual_trim_flag  ) { // Quality trimming enabled
-          cout << "Quality trimming\n"; 
-          QualityTrimming(reads);
-        }
-           
-        cout << "Making output files...\n";
-        MakeLucyFastq( output_prefix + "_qual.fastq" );
-        string report_filename =  output_prefix + "_qual_Report.tsv"; 
-        MakeLucyReport2( (char*)report_filename.c_str(), reads );
-        cout << "Done!\n";
-           
-        return 0;
-    } else {
-       //Building dictionary for RL MIDS : 
-       if(custom_rlmids_flag ) {
-          Build_RLMIDS_Dictionary(rlmids_file);
-       } else {
-          Build_RLMIDS_Dictionary();
-       }
+    cout << "Running the main pipeline..." << endl;
+       
+    for(int i=0; i<(int)roche_names.size(); ++i) {
+        cout << "Parsing file: " << roche_names[i] << "..." << endl;
+        //If SFF format is given -> process it
+        if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) {
+            cout << "File is in SFF format, starting conversion...\n" ; process_sff_to_fastq( roche_names[i], 0 );
+        } else if(string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" || string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq") {
+            //FASTQ file given. Process it.
+            cout << "File is in FASTQ format, starting conversion...\n" ;
+            ParseFastqFile(roche_names[i], reads);
+        }            
+    }
         
-       for(int i=0; i<(int)roche_names.size(); ++i) {
-            cout << "Parsing file: " << roche_names[i] << "..." << endl;
-            //If SFF format is given -> process it
-            if( string(roche_names[i]).substr( strlen(roche_names[i])-3, 3 ) == "sff" ) {
-               cout << "File is in SFF format, starting conversion...\n" ; process_sff_to_fastq( roche_names[i], 0 );
-            } 
-            else if(string(roche_names[i]).substr( strlen(roche_names[i])-5, 5 ) == "fastq" || string(roche_names[i]).substr( strlen(roche_names[i])-2, 2 ) == "fq") {
-               //FASTQ file given. Process it.
-               cout << "File is in FASTQ format, starting conversion...\n" ;
-               ParseFastqFile(roche_names[i], reads);
-            }            
-       }
-        
-       cout << "Conversion finished. Total number of reads read from given file(s): " << reads.size() << endl;
+    cout << "Conversion finished. Total number of reads read from given file(s): " << reads.size() << endl;
        
-       if(rem_dup)
-          for(unsigned long i=0; i< reads.size(); i++) 
-            screen_duplicates(reads[i], duplicates);
-       
-       /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
-       if( qual_trim_flag  )
-           for(unsigned long i=0; i< reads.size(); i++) 
-              QualTrim( reads[i], max_a_error, max_e_at_ends ); /*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
+    if(rem_dup)
+        for(unsigned long i=0; i< reads.size(); i++) 
+            screen_duplicates(reads[i], duplicated);
+    
+    /*If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.*/
+    if( qual_trim_flag  )
+        for(unsigned long i=0; i< reads.size(); i++) 
+            QualTrim( reads[i], max_a_error, max_e_at_ends ); /*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
            
-       if(polyat_flag) //If poly A/T flag is set:
-           for(unsigned long i=0; i< reads.size(); i++)
-              PolyAT_Trim(reads[i]);
+    if(polyat_flag) //If poly A/T flag is set:
+        for(unsigned long i=0; i< reads.size(); i++)
+            PolyAT_Trim(reads[i]);
        
-       if(contaminants_flag )
-           RemoveContaminants454(reads);
+    if (contaminants_flag )
+        RemoveContaminants454(reads);
            
-       /*Run the main routine: Adaptor + Vector/Contaminants trimming or only Adaptors*/
-       cout << "Running the main pipeline..." << endl;
-       MainPipeLine();
-       cout << "Making clip points..." << endl;
-       MakeClipPoints();
-       
-       cout << "Making output files..." << endl;
-       
-       if (output_sfffile_flag) {
-           WriteToSFF( roche_output_file_name );
-       } else if ( output_fastqfile_flag ) {
-           WriteToFASTQ( output_prefix + ".fastq" );
-       } else if (fasta_output) {
-           WriteToFASTQ( output_prefix + ".fasta" );
-       } else {
-           WriteToFASTQ( output_prefix + ".fastq" );  
-       }
-       
-       if (detailed_report) {
-        cout << "Making a report..." << endl;
-        MakeReport( roche_rep_file_name );
-       }
+    if (trim_adapters_flag) {
+        //Building dictionary for RL MIDS : 
+        if(custom_rlmids_flag ) {
+           Build_RLMIDS_Dictionary(rlmids_file);
+        } else {
+           Build_RLMIDS_Dictionary();
+        }
+        MainPipeLine();
+    }
+    
+    cout << "Making clip points..." << endl;
+    MakeClipPoints();
 
-       MakeFinalStatistics(sum_stat);
+    cout << "Making output files..." << endl;
        
-       // Cleaning up..
-       reads.clear();
-       /*Reset counters*/
-       accept_counter = 0;
-       discard_counter = 0;
-       trim_counter = counter = 0;
-    }        
-    // Cleaning up..   
+    if (output_sfffile_flag) {
+        WriteToSFF( roche_output_file_name );
+    } else if ( output_fastqfile_flag ) {
+        WriteToFASTQ( output_prefix + ".fastq" );
+    } else if (fasta_output) {
+        WriteToFASTQ( output_prefix + ".fasta" );
+    } else {
+        WriteToFASTQ( output_prefix + ".fastq" );  
+    }
+       
+    if (detailed_report) {
+       cout << "Making a report..." << endl;
+       MakeReport( roche_rep_file_name );
+    }
+
+    MakeFinalStatistics(sum_stat);
+       
+    // Cleaning up..
     reads.clear();
+    /*Reset counters*/
+    accept_counter = 0;
+    discard_counter = 0;
+    trim_counter = counter = 0;
+    
 }
 
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads) {
@@ -555,6 +528,13 @@ void MakeFinalStatistics( fstream &sum_stat )
     cout << "By read length: " <<  discarded_by_read_length << "\n";
     sum_stat << "By read length: " <<  discarded_by_read_length << "\n";
     
+    if(rem_dup)
+    {
+        cout << "Duplicates: " <<  duplicated << "\n";
+        sum_stat << "Duplicates: " <<  duplicated << "\n";
+    }
+    
+    
     cout << "--------------------------------------------------------\n";
     sum_stat << "--------------------------------------------------------\n";
     
@@ -587,7 +567,8 @@ void MakeFinalStatistics( fstream &sum_stat )
                                     accepted, 
                                     avg_trim_len,
                                     left_trimmed_by_polyat,
-                                    right_trimmed_by_polyat);
+                                    right_trimmed_by_polyat,
+                                    duplicated);
 }
 
 
@@ -612,7 +593,8 @@ string PrintRocheStatisticsTSV(unsigned long cnt,
                                     unsigned long accepted, 
                                     double avg_trim_len,
                                     unsigned long left_trimmed_by_polyat,
-                                    unsigned long right_trimmed_by_polyat
+                                    unsigned long right_trimmed_by_polyat,
+                                    long long duplicated
                                )
 {
         string filename_str;
@@ -664,7 +646,8 @@ string PrintRocheStatisticsTSV(unsigned long cnt,
                        i2str(accepted,new char[15],10) + "\t" + //se reads kept
                         double2str( (double)accepted/(double)cnt*100.0) + "\t" +//perc kept
                        double2str(avg_trim_len) + 
-                        (polyat_flag ? "\tYes\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "");
+                        (polyat_flag ? "\tYes\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "\tNA\tNA\tNA\tNA\tNA\tNA") +
+                       ( rem_dup ? "\tYES\t" + int2str(duplicated) + "\t" + int2str(size_dw) + "\t" + int2str(start_dw) + "\t" + int2str(max_dup) + "\n" : "\tNA\tNA\tNA\tNA\tNA\n");
             
     
      return stat_str_tsv;
