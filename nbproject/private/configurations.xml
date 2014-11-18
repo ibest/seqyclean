@@ -52,6 +52,8 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
+      <df name="test">
+      </df>
       <df name="test_data">
       </df>
     </df>
@@ -92,18 +94,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual --ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -dup </runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1* -o test/test -qual</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1* -o test/test -qual -ow</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/R1* -o test/test -qual -ow -dup</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -dup</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -dup -ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -ow -dup </runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -ow -dup</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta_out</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta_out -fastq</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fastq -fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fastq</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -ow -dup</runcommand>
+        <runcommand>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

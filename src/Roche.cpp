@@ -58,12 +58,12 @@ int RocheRoutine()
        
     if (output_sfffile_flag) {
         WriteToSFF( roche_output_file_name );
-    } else if ( output_fastqfile_flag ) {
+    } 
+    if ( output_fastqfile_flag ) {
         WriteToFASTQ( output_prefix + ".fastq" );
-    } else if (fasta_output) {
-        WriteToFASTQ( output_prefix + ".fasta" );
-    } else {
-        WriteToFASTQ( output_prefix + ".fastq" );  
+    }  
+    if (fasta_output) {
+        WriteToFASTA( output_prefix + ".fasta" );
     }
        
     if (detailed_report) {
@@ -665,6 +665,7 @@ void WriteToFASTQ(string file_name) {
             continue;
         
         if(reads[i]->lclip >= (int)reads[i]->read.length()) {
+           
            reads[i]->discarded = 1;
            reads[i]->discarded_by_read_length = 1;
            reads[i]->lclip = reads[i]->rclip = 1;
@@ -677,32 +678,71 @@ void WriteToFASTQ(string file_name) {
         }
         
         string read_id_to_write = string(reads[i]->readID);
-        if(read_id_to_write[0] != '@' && !fasta_output)
+        if(read_id_to_write[0] != '@')
                 read_id_to_write = "@" + read_id_to_write;
             
-        reads[i]->read = reads[i]->read.substr(0 , reads[i]->rclip );
-        reads[i]->read = reads[i]->read.substr( reads[i]->lclip, reads[i]->read.length() - reads[i]->lclip );
+        string read = reads[i]->read.substr(0 , reads[i]->rclip );
+        read = reads[i]->read.substr( reads[i]->lclip, read.length() - reads[i]->lclip );
         
         string quality = string((char*)reads[i]->quality); 
             
-        if (!fasta_output) {
-            quality = quality.substr(0,reads[i]->rclip) ; 
-            quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
-        
-        }
+        quality = quality.substr(0,reads[i]->rclip) ; 
+        quality = quality.substr( reads[i]->lclip, quality.length() - reads[i]->lclip );
             
-        if( (int)reads[i]->read.length() < minimum_read_length ) {reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; continue;}
-         
-        if (fasta_output) {
-            output_file << '>' << read_id_to_write << endl; // Read ID
-            output_file << reads[i]->read << endl; // Bases
-        } else {
-            output_file << read_id_to_write << endl; // Read ID
-            output_file << reads[i]->read << endl; // Bases
-            output_file << '+' << endl;
-            output_file << quality << endl; // Quality
+        if( (int)read.length() < minimum_read_length ) {
+            reads[i]->discarded = 1; 
+            reads[i]->discarded_by_read_length = 1; 
+            reads[i]->lclip = reads[i]->rclip = 1; 
+            continue;
         }
+         
+        output_file << read_id_to_write << endl; // Read ID
+        output_file << read << endl; // Bases
+        output_file << '+' << endl;
+        output_file << quality << endl; // Quality
+        
+    }
     
+    output_file.close();
+    
+}
+
+void WriteToFASTA(string file_name) {
+    fstream output_file;
+    output_file.open( file_name.c_str(), ios::out );
+    
+    for (unsigned int i=0; i<reads.size(); i++) {
+        
+        if (reads[i]->discarded)
+            continue;
+        
+        if(reads[i]->lclip >= (int)reads[i]->read.length()) {
+                        cout << reads[i]->lclip << " " << reads[i]->rclip << " " << reads[i]->read.length() << "\n";
+
+           reads[i]->discarded = 1;
+           reads[i]->discarded_by_read_length = 1;
+           reads[i]->lclip = reads[i]->rclip = 1;
+           continue;
+        } else if(reads[i]->lclip >= reads[i]->rclip) {
+                        cout << reads[i]->lclip << " " << reads[i]->rclip << " " << reads[i]->read.length() << "\n";
+
+           reads[i]->discarded = 1;
+           reads[i]->discarded_by_read_length = 1;
+           reads[i]->lclip = reads[i]->rclip = 1;
+           continue;
+        }
+        
+        string read = reads[i]->read.substr(0 , reads[i]->rclip );
+        read = reads[i]->read.substr( reads[i]->lclip, read.length() - reads[i]->lclip );
+        
+        if( (int)read.length() < minimum_read_length ) {
+            reads[i]->discarded = 1; reads[i]->discarded_by_read_length = 1; reads[i]->lclip = reads[i]->rclip = 1; 
+            continue;
+        }
+         
+        output_file << '>' << reads[i]->readID << endl; // Read ID
+        output_file << read << endl; // Bases
+        
     }
     
     output_file.close();

@@ -212,9 +212,8 @@ int main(int argc, char *argv[])
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
             }
-        } else if (string(argv[i]) == "-fasta_out") {  // Output in Fasta format
+        } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
-            output_fastqfile_flag = false;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) {
@@ -483,7 +482,6 @@ int main(int argc, char *argv[])
         } else if( string(argv[i]) == "-fastq" ) //output file with cleaned reads in FASTQ format, for 454 mode only
         {
            output_fastqfile_flag = true; 
-           fasta_output = false;
            continue;
         } else if(string(argv[i]) == "-?" )
         {

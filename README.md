@@ -43,7 +43,7 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 ```
 -t <value> - Number of threads (not yet applicable to Illumina mode), default=4.
 -fastq - Output in FASTQ format, default=off.
--fasta_out - Output in FASTA format, default=off.
+-fasta - Output in FASTA format, default=off.
 -m <filename> - Using custom barcodes, default=off. <filename> - a path to a FASTA-file with custom barcodes.
 ```
 ## Illumina paired- and single-end arguments

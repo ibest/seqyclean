@@ -76,6 +76,7 @@ string PrintRocheStatisticsTSV(unsigned long cnt,
 void MakeFinalStatistics(fstream &sum_stat);
 void WriteToFASTQ(string file_name);
 void WriteToSFF(string file_name);
+void WriteToFASTA(string file_name);
 
 #endif	/* ROCHE_H */
 
