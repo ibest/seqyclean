@@ -1265,7 +1265,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
 {
     
      string stat_str = string("====================Summary Statistics====================\n");
-     stat_str += string("PE1 reads analyzed: ") +  i2str(cnt1, new char[25], 10)   + string(", Bases:") +  i2str(pe1_bases_anal, new char[25], 10) + string("\n")  +
+     stat_str += string("PE1 reads analyzed: ") +  i2str(cnt1, new char[25], 10)   + string(", Bases: ") +  i2str(pe1_bases_anal, new char[25], 10) + string("\n")  +
                         (trim_adapters_flag ? "Found ->\n" : "") +
                         (trim_adapters_flag ? "Adapters: " + i2str(ts_adapters1,new char[15],10) + ", " + double2str( (double)ts_adapters1/(double)cnt1*100.0) + "%\n" : "") + 
                         (vector_flag ? "# of reads with vector: " + i2str(num_vectors1,new char[15],10) + ", " + double2str( (double)num_vectors1/(double)cnt1*100.0) + "%\n" : "") +
@@ -1285,7 +1285,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant1,new char[15],10) + "\n" : "" ) +
                         "By read length: " +  i2str(discarded_by_read_length1,new char[15],10) + "\n" +
                         "-----------------------------------------------------------\n" +
-                        "PE2 reads analyzed: " + i2str(cnt2,new char[25],10) + ", Bases:" + i2str(pe2_bases_anal,new char[25],10) + "\n" +
+                        "PE2 reads analyzed: " + i2str(cnt2,new char[25],10) + ", Bases: " + i2str(pe2_bases_anal,new char[25],10) + "\n" +
                         (trim_adapters_flag ? "Found ->\n" : "") + 
                         (trim_adapters_flag ? "Adapters: " + i2str(ts_adapters2,new char[15],10) + ", " + double2str( (double)ts_adapters2/(double)cnt2*100.0) + "%\n" : "") +
                         (vector_flag ? ("# of reads with vector: " + i2str(num_vectors2,new char[15],10) + ", " + double2str( (double)num_vectors2/(double)cnt2*100.0) + "%\n") : "") +
