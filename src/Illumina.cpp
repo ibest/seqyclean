@@ -1272,7 +1272,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
      string stat_str = string("====================Summary Statistics====================\n");
      stat_str += string("PE1 reads analyzed: ") +  i2str(cnt1, new char[25], 10)   + string(", Bases:") +  i2str(pe1_bases_anal, new char[25], 10) + string("\n")  +
                         "Found ->\n" +
-                        "Adapters: " + i2str(ts_adapters1,new char[15],10) + ", " + double2str( (double)ts_adapters1/(double)cnt1*100.0) + "%\n" + 
+                        (trim_adapters_flag ? "Adapters: " + i2str(ts_adapters1,new char[15],10) + ", " + double2str( (double)ts_adapters1/(double)cnt1*100.0) + "%\n" : "") + 
                         ( vector_flag ? "# of reads with vector: " + i2str(num_vectors1,new char[15],10) + ", " + double2str( (double)num_vectors1/(double)cnt1*100.0) + "%\n" : "") +
                         ( contaminants_flag ? "# of reads with contaminants: " + i2str(num_contaminants1,new char[15],10) + ", " + double2str( (double)num_contaminants1/(double)cnt1*100.0) + "%\n" : "") +
                         ( (qual_trim_flag || vector_flag) ? "Reads left trimmed ->\n" : "" ) +
@@ -1281,7 +1281,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         ( polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat1) + "\n" : "") +
                         "Average left trim length: " + double2str(avg_left_trim_len_pe1) + " bp\n" +
                         "Reads right trimmed ->\n" +
-                        "By adapter: " +  i2str(right_trimmed_by_adapter1,new char[25],10) + "\n" +
+                        (trim_adapters_flag ? "By adapter: " +  i2str(right_trimmed_by_adapter1,new char[25],10) + "\n" : "") +
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality1,new char[15],10) + "\n" : "") +
                         ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector1,new char[15],10) + "\n" : "" ) +
                         ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat1) + "\n" : "") +
@@ -1292,19 +1292,19 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         "-----------------------------------------------------------\n" +
                         "PE2 reads analyzed: " + i2str(cnt2,new char[25],10) + ", Bases:" + i2str(pe2_bases_anal,new char[25],10) + "\n" +
                         "Found ->\n" + 
-                        ("Adapters: " + i2str(ts_adapters2,new char[15],10) + ", " + double2str( (double)ts_adapters2/(double)cnt2*100.0) + "%\n") +
-                        ( vector_flag ? ("# of reads with vector: " + i2str(num_vectors2,new char[15],10) + ", " + double2str( (double)num_vectors2/(double)cnt2*100.0) + "%\n") : "") +
-                        ( contaminants_flag? "# of reads with contaminants: " + i2str(num_contaminants2,new char[15],10) + ", " + double2str( (double)num_contaminants2/(double)cnt2*100.0) + "%\n" : "") +
-                        ( (qual_trim_flag || vector_flag ) ? "Reads left trimmed ->\n" : "" ) +
+                        (trim_adapters_flag ? "Adapters: " + i2str(ts_adapters2,new char[15],10) + ", " + double2str( (double)ts_adapters2/(double)cnt2*100.0) + "%\n" : "") +
+                        (vector_flag ? ("# of reads with vector: " + i2str(num_vectors2,new char[15],10) + ", " + double2str( (double)num_vectors2/(double)cnt2*100.0) + "%\n") : "") +
+                        (contaminants_flag? "# of reads with contaminants: " + i2str(num_contaminants2,new char[15],10) + ", " + double2str( (double)num_contaminants2/(double)cnt2*100.0) + "%\n" : "") +
+                        ((qual_trim_flag || vector_flag ) ? "Reads left trimmed ->\n" : "" ) +
                         (qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality2,new char[15],10) + "\n" : "" ) +
-                        ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector2,new char[15],10) + "\n" : "" ) +
-                        ( polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat2) + "\n" : "") +
+                        (vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector2,new char[15],10) + "\n" : "" ) +
+                        (polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat2) + "\n" : "") +
                         ("Average left trim length: " + double2str(avg_left_trim_len_pe2) + " bp\n" ) +
                         "Reads right trimmed ->\n" +
-                        "By adapter: " +  i2str(right_trimmed_by_adapter2,new char[15],10) + "\n" +
-                        ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality2,new char[15],10) + "\n" : "") +
+                        (trim_adapters_flag ? "By adapter: " +  i2str(right_trimmed_by_adapter2,new char[15],10) + "\n" : "") +
+                        (qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality2,new char[15],10) + "\n" : "") +
                         (vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector2,new char[15],10) + "\n" : "" ) +
-                        ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat2) + "\n" : "") +                      
+                        (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat2) + "\n" : "") +                      
                         ("Average right trim length: " + double2str(avg_right_trim_len_pe2) + " bp\n") +
                         "PE2 reads discarded:" + i2str(discarded2,new char[15],10) + "\n" +
                         (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant2,new char[15],10) + "\n" : "" ) +
@@ -1316,7 +1316,6 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
                         ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n") +
-                        //(overlap_flag ? "Perfect overlaps: " + int2str(perfect_ov_cnt) + "\n" : "") +
                         (overlap_flag ? "Overlaps: " + int2str(partial_ov_cnt) + ", "+ double2str( (double)partial_ov_cnt/(double)cnt1*100.0) + "%\n" : "") + 
                         (rem_dup ? "Duplicates: " + int2str(duplicates) + "\n" : "");
             
