@@ -230,7 +230,7 @@ void IlluminaDynamic()
                     //Checking for overlap:
                     bool overlap_found = false;
                     Read *c = new Read();
-                    if( overlap_flag && (read1->discarded == 0) && (read2->discarded == 0) ) {
+                    if(overlap_flag && (read1->discarded == 0) && (read2->discarded == 0)) {
                         Read *s1 = new Read();
                         Read *s2 = new Read(); 
                         int len = read1->read.length();
@@ -1438,8 +1438,8 @@ string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
     
     
         stat_str_tsv += int2str(cnt1)   + "\t" +  i2str(pe1_bases_anal, new char[25], 10) + "\t"  +
-                       i2str(ts_adapters1,new char[15],10) + "\t" + double2str( (double)ts_adapters1/(double)cnt1*100.0) + "\t" + 
-                       ( vector_flag ? i2str(num_vectors1,new char[15],10) + "\t" + double2str( (double)num_vectors1/(double)cnt1*100.0) + "\t" : "NA\tNA\t" ) +
+                       i2str(ts_adapters1,new char[25],10) + "\t" + double2str( (double)ts_adapters1/(double)cnt1*100.0) + "\t" + 
+                       ( vector_flag ? i2str(num_vectors1,new char[25],10) + "\t" + double2str( (double)num_vectors1/(double)cnt1*100.0) + "\t" : "NA\tNA\t" ) +
                        ( contaminants_flag ? i2str(num_contaminants1,new char[15],10) + "\t" + double2str( (double)num_contaminants1/(double)cnt1*100.0) + "\t" : "NA\tNA\t" ) +
                        ( qual_trim_flag ? i2str(left_trimmed_by_quality1,new char[15],10) + "\t" : "NA\t" ) +
                        ( vector_flag ? i2str(left_trimmed_by_vector1,new char[15],10) + "\t" : "NA\t" ) +
@@ -1790,12 +1790,12 @@ int TrimIllumina(Read* read1, Read* read2)
     // Trim adapters
     bool adapter_found = false;
     //cout << read1->read << "\n";
-    adapter_found = TrimAdapterPE(read1,read2);
-    
-    if (!adapter_found) {
-        TrimAdapterSE(read1);
-        TrimAdapterSE(read2);
-    }
+    if (trim_adapters_flag)
+        adapter_found = TrimAdapterPE(read1,read2);
+        if (!adapter_found) {
+            TrimAdapterSE(read1);
+            TrimAdapterSE(read2);
+        }
     
     // Обновляем статистику:
     tmp_avg_right_clip_1 = read1->initial_length - read1->rclip;
