@@ -52,8 +52,6 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
-      <df name="test">
-      </df>
       <df name="test_data">
       </df>
     </df>
