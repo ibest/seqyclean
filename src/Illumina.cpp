@@ -538,28 +538,17 @@ void IlluminaDynamic()
 
 int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
 {
-    //Remove not-needed Ns:
-    //TrimNs( read->read );
-    
-    if((int)read->read.length() > minimum_read_length)
-    {
+    if((int)read->read.length() > minimum_read_length) {
         read->illumina_quality_string = read->illumina_quality_string.substr(0, read->read.length());
         read->clear_length = read->read.length();
-    }
-    else
-    {
-        //cout << read->read.length() << "\n";
+    } else {
         read->discarded = 1;
         read->discarded_by_read_length = 1;
         return -1;
     }
     
-    
-    
-    if(contaminants_flag )
-    {
-       if(CheckContaminants(read->read) == 0) 
-       {
+    if(contaminants_flag) {
+       if(CheckContaminants(read->read) == 0) {
            read->contam_found = 1;
            read->discarded_by_contaminant = 1;
            read->contaminants = 1;
@@ -568,134 +557,106 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
        }
     }
             
-        
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
-    if( qual_trim_flag  ) 
-    {
+    if( qual_trim_flag  ) {
        QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
-       if (read->discarded_by_quality == 1)
-       {
+       if (read->discarded_by_quality == 1) {
           read->discarded = 1;
           return -1;
        }
-       if (lucy_only_flag)
-       {
+       if (lucy_only_flag) {
            read->rclip = read->lucy_rclip;
            read->lclip = read->lucy_lclip;
            return 0;
        }
     }
     
-    if(polyat_flag) {
-       //If poly A/T flag is set:
-       PolyAT_Trim(read); 
-    }
+    if(polyat_flag)
+        PolyAT_Trim(read); 
     
     if( vector_flag ) 
-            CheckVector(read); 
+        CheckVector(read); 
        
-    //Run the main routine: Adapter + Vector/Contaminants trimming or only Adaptors
     //First 15 bases of i5 adapter forward
     if(trim_adapters_flag && illumina_flag_se) {
         size_t found;
-        if (!adapter_found)
-        {
-                string ts_adapter = tmpl_i5_1.substr(0,15);
+        if (!adapter_found){
+            string ts_adapter = tmpl_i5_1.substr(0,15);
+            found = read->read.find(ts_adapter);
+            if( found != string::npos ){
+                cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                adapter_found = true;
+                query_str = ts_adapter;
+                read->tru_sec_pos = found;
+                read->tru_sec_found = 1;
+            }else{
+                //First 20 bases of i5 adapter in reverse complement
+                ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
                 found = read->read.find( ts_adapter );
-                if( found != string::npos ) 
-                {
-                        cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                        sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                if( found != string::npos ){
+                    cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    adapter_found = true;
+                    query_str = ts_adapter;
+                    read->tru_sec_pos = found;
+                    read->tru_sec_found = 1;
+                } else {
+                    //First 20 bases of i7 adapter forward
+                    ts_adapter = tmpl_i7_1.substr(0,15);
+                    found = read->read.find( ts_adapter );
+                    if( found != string::npos ) {
+                        cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                        sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
                         adapter_found = true;
                         query_str = ts_adapter;
                         read->tru_sec_pos = found;
                         read->tru_sec_found = 1;
-                }
-                else
-                {
+                    } else {
                         //First 20 bases of i5 adapter in reverse complement
-                        ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
+                        ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
                         found = read->read.find( ts_adapter );
-                        if( found != string::npos ) 
-                        {
-                                cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                                adapter_found = true;
-                                query_str = ts_adapter;
-                                read->tru_sec_pos = found;
-                                read->tru_sec_found = 1;
+                        if( found != string::npos ) {
+                            cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                            sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                            adapter_found = true;
+                            query_str = ts_adapter;
+                            read->tru_sec_pos = found;
+                            read->tru_sec_found = 1;
+                        } else {
+                            read->tru_sec_pos = -1;
+                            read->tru_sec_found = 0;
                         }
-                        else
-                        {
-                                //First 20 bases of i7 adapter forward
-                                ts_adapter = tmpl_i7_1.substr(0,15);
-                                found = read->read.find( ts_adapter );
-                                if( found != string::npos ) 
-                                {
-                                        cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                                        sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                                        adapter_found = true;
-                                        query_str = ts_adapter;
-                                        read->tru_sec_pos = found;
-                                        read->tru_sec_found = 1;
-                                } 
-                                else
-                                {
-                                        //First 20 bases of i5 adapter in reverse complement
-                                        ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
-                                        found = read->read.find( ts_adapter );
-                                        if( found != string::npos ) 
-                                        {
-                                                cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                                                sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                                                adapter_found = true;
-                                                query_str = ts_adapter;
-                                                read->tru_sec_pos = found;
-                                                read->tru_sec_found = 1;
-                                        } 
-                                        else
-                                        {
-                                                read->tru_sec_pos = -1;
-                                                read->tru_sec_found = 0;
-                                        }
-                                }
-                        }
+                    }
                 }
-        }
-        else
-        {
-                bool adp_found = false;
-                found = read->read.rfind( query_str );
-                if( found != string::npos ) 
-                {
+            }
+        } else {
+            bool adp_found = false;
+            found = read->read.rfind( query_str );
+            if( found != string::npos ) {
+                adp_found = true;
+                read->tru_sec_pos = found;
+                read->tru_sec_found = 1;
+            } else {
+                //SSAHA job starts here
+                iz_SSAHA *izssaha = new iz_SSAHA();
+                AlignResult al_res = izssaha->Find( read->read , query_str );
+                AlignScores scores;
+                if( al_res.found_flag  ) {
+                    scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
+                    if(scores.mismatches <= max_al_mism  ) {
                         adp_found = true;
-                        read->tru_sec_pos = found;
+                        read->tru_sec_pos = al_res.pos;
                         read->tru_sec_found = 1;
-                } 
-                else 
-                {
-                        //SSAHA job starts here
-                        iz_SSAHA *izssaha = new iz_SSAHA();
-                        AlignResult al_res = izssaha->Find( read->read , query_str );
-                        AlignScores scores;
-                        if( al_res.found_flag  ) 
-                        {
-                                scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-                                if(scores.mismatches <= max_al_mism  ) 
-                                {
-                                        adp_found = true;
-                                        read->tru_sec_pos = al_res.pos;
-                                        read->tru_sec_found = 1;
-                                }
-                        }
-                        delete izssaha;
+                    }
                 }
+                delete izssaha;
+            }
         
-                if(!adp_found) 
-                {
-                        read->tru_sec_pos = -1;
-                        read->tru_sec_found = 0;
-                }
+            if(!adp_found) {
+                read->tru_sec_pos = -1;
+                read->tru_sec_found = 0;
+            }
         }
     }
     return 0;
@@ -703,7 +664,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
 
 void MakeClipPointsIllumina(Read* read) 
 {
-    //Clip points
+   //Clip points
    if( (qual_trim_flag ) && (vector_flag ) )
    {
         if(read->vector_found == 1)
@@ -785,11 +746,8 @@ void MakeClipPointsIllumina(Read* read)
                         read->right_trimmed_by_adapter = 1;
             }
         }
-    }
-    else if( (qual_trim_flag ) && (!vector_flag) )
-    {
+    } else if( (qual_trim_flag ) && (!vector_flag) ){
         //Keep in mind that Lucy's clip points are zero-based!
-        
         read->lclip = read->lucy_lclip;
         if(read->lclip > 0)
            read->left_trimmed_by_quality = 1;
@@ -804,22 +762,13 @@ void MakeClipPointsIllumina(Read* read)
             read->rclip = min((int)read->read.length(),read->lucy_rclip + 1);
         }
         
-        if( (read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length ) )
-        {
+        if((read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length )){
             read->rclip = read->lucy_rclip;
             read->right_trimmed_by_quality = 1;
-        }
-        else if( (read->rclip == read->tru_sec_pos) && trim_adapters_flag)
-        {
+        } else if((read->rclip == read->tru_sec_pos) && trim_adapters_flag){
            if( (read->rclip < (int)read->read.length()) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
                read->right_trimmed_by_adapter = 1;
         }
-        
-        /*if(read->rclip >= read->clear_length)
-        {
-            read->rclip = read->clear_length; read->right_trimmed_by_adapter = 0;
-        }*/
-        
     }
     else if( (!qual_trim_flag) && (vector_flag ) )
     {
@@ -895,8 +844,6 @@ void MakeClipPointsIllumina(Read* read)
              read->left_trimmed_by_polyat = 1;
           }
    }
-   
-    
 }
 
 string New2OldNbl(string header)
@@ -1334,7 +1281,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         ( polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat1) + "\n" : "") +
                         "Average left trim length: " + double2str(avg_left_trim_len_pe1) + " bp\n" +
                         "Reads right trimmed ->\n" +
-                        "By adapter: " +  i2str(right_trimmed_by_adapter1,new char[15],10) + "\n" +
+                        "By adapter: " +  i2str(right_trimmed_by_adapter1,new char[25],10) + "\n" +
                         ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality1,new char[15],10) + "\n" : "") +
                         ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector1,new char[15],10) + "\n" : "" ) +
                         ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat1) + "\n" : "") +
@@ -1790,12 +1737,13 @@ int TrimIllumina(Read* read1, Read* read2)
     // Trim adapters
     bool adapter_found = false;
     //cout << read1->read << "\n";
-    if (trim_adapters_flag)
+    if (trim_adapters_flag) {
         adapter_found = TrimAdapterPE(read1,read2);
         if (!adapter_found) {
             TrimAdapterSE(read1);
             TrimAdapterSE(read2);
         }
+    }
     
     // Обновляем статистику:
     tmp_avg_right_clip_1 = read1->initial_length - read1->rclip;
