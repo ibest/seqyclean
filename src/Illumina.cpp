@@ -1454,19 +1454,19 @@ string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
     string ans = "====================Summary Statistics====================\n" +
                         ("SE reads analyzed: " +  i2str(cnt,new char[15],10)  + ", Bases:" +  i2str(se_bases_anal, new char[25],10)  + "\n") +
                         "Found ->\n" +
-                        "Adapters: " + i2str(ts_adapters,new char[15],10) + ", " + double2str( (double)ts_adapters/(double)cnt*100.0) + "%\n" + 
-                        ( vector_flag ? "# of reads with vector: " + i2str(num_vectors,new char[15],10) + ", " + double2str( (double)num_vectors/(double)cnt*100.0) + "%\n" : "") +
-                        ( contaminants_flag ? "# of reads with contaminants: " + i2str(num_contaminants,new char[15],10) + ", " + double2str( (double)num_contaminants/(double)cnt*100.0) + "%\n" : "") +
-                        ( (qual_trim_flag || vector_flag) ? "Reads left trimmed ->\n" : "" ) +
-                        ( qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality,new char[15],10) + "\n" : "" ) +
-                        ( vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
-                        ( polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat) + "\n": "") +
+                        (trim_adapters_flag ? "Adapters: " + i2str(ts_adapters,new char[15],10) + ", " + double2str( (double)ts_adapters/(double)cnt*100.0) + "%\n" : "") + 
+                        (vector_flag ? "# of reads with vector: " + i2str(num_vectors,new char[15],10) + ", " + double2str( (double)num_vectors/(double)cnt*100.0) + "%\n" : "") +
+                        (contaminants_flag ? "# of reads with contaminants: " + i2str(num_contaminants,new char[15],10) + ", " + double2str( (double)num_contaminants/(double)cnt*100.0) + "%\n" : "") +
+                        ((qual_trim_flag || vector_flag) ? "Reads left trimmed ->\n" : "" ) +
+                        (qual_trim_flag ? "By quality: " +  i2str(left_trimmed_by_quality,new char[15],10) + "\n" : "" ) +
+                        (vector_flag ? "By vector: " +  i2str(left_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
+                        (polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat) + "\n": "") +
                         "Average left trim length: " + double2str(avg_left_trim_len_se) + " bp\n" +
                         "Reads right trimmed ->\n" +
-                        "By adapter: " +  i2str(right_trimmed_by_adapter,new char[15],10) + "\n" +
-                        ( qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality,new char[15],10) + "\n" : "") +
-                        ( vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
-                        ( polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat) + "\n" : "") +
+                        (trim_adapters_flag ? "By adapter: " +  i2str(right_trimmed_by_adapter,new char[15],10) + "\n": "") +
+                        (qual_trim_flag ? "By quality: " +  i2str(right_trimmed_by_quality,new char[15],10) + "\n" : "") +
+                        (vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector,new char[15],10) + "\n" : "" ) +
+                        (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat) + "\n" : "") +
                         "Average right trim length: " + double2str(avg_right_trim_len_se) + " bp\n" +
                         "SE reads discarded: " + i2str(discarded,new char[15],10) + "\n" +
                         ( contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant,new char[15],10) + "\n" : "" ) +
@@ -1531,28 +1531,26 @@ string PrintIlluminaStatisticsTSVSE(long long cnt,
                                 ( new2old_illumina ? "YES" : "NO") + "\t";
                                 
                    
-    
-    
         stat_str_tsv += int2str(cnt)   + "\t" + //reads analyzed
                         int2str(se_bases_anal) + "\t"  + //bases
-                       i2str(ts_adapters,new char[15],10) + "\t" //adapters
+                       i2str(ts_adapters,new char[25],10) + "\t" //adapters
                         + double2str( (double)ts_adapters/(double)cnt*100.0) + "\t" + //perc adapters
-                       ( vector_flag ? i2str(num_vectors,new char[15],10) + "\t" + double2str( (double)num_vectors/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc vectors
-                       ( contaminants_flag ? i2str(num_contaminants,new char[15],10) + "\t" //cont
+                       ( vector_flag ? i2str(num_vectors,new char[25],10) + "\t" + double2str( (double)num_vectors/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc vectors
+                       ( contaminants_flag ? i2str(num_contaminants,new char[25],10) + "\t" //cont
                         + double2str( (double)num_contaminants/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc cont
-                       ( qual_trim_flag ? i2str(left_trimmed_by_quality,new char[15],10) + "\t" : "NA\t" ) +  //left trimmed qual
-                       ( vector_flag ? i2str(left_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) + //left trimmed vect
+                       ( qual_trim_flag ? i2str(left_trimmed_by_quality,new char[25],10) + "\t" : "NA\t" ) +  //left trimmed qual
+                       ( vector_flag ? i2str(left_trimmed_by_vector,new char[25],10) + "\t" : "NA\t" ) + //left trimmed vect
                        double2str(avg_left_trim_len_se) + "\t" + //avg left trim len
-                       i2str(right_trimmed_by_adapter,new char[15],10) + "\t" + 
-                       ( qual_trim_flag ? i2str(right_trimmed_by_quality,new char[15],10) + "\t" : "NA\t") +
-                       ( vector_flag ? i2str(right_trimmed_by_vector,new char[15],10) + "\t" : "NA\t" ) +
+                       i2str(right_trimmed_by_adapter,new char[25],10) + "\t" + 
+                       ( qual_trim_flag ? i2str(right_trimmed_by_quality,new char[25],10) + "\t" : "NA\t") +
+                       ( vector_flag ? i2str(right_trimmed_by_vector,new char[25],10) + "\t" : "NA\t" ) +
                        double2str(avg_right_trim_len_se) + "\t" +
-                       i2str(discarded,new char[15],10) + "\t" + //discard
-                       ( contaminants_flag ? i2str(discarded_by_contaminant,new char[15],10) + "\t" : "NA\t" ) +
-                       i2str(discarded_by_read_length,new char[15],10) + "\t" +
-                       i2str(se_accept_cnt,new char[15],10) + "\t" + //se reads kept
+                       i2str(discarded,new char[25],10) + "\t" + //discard
+                       ( contaminants_flag ? i2str(discarded_by_contaminant,new char[25],10) + "\t" : "NA\t" ) +
+                       i2str(discarded_by_read_length,new char[25],10) + "\t" +
+                       i2str(se_accept_cnt,new char[25],10) + "\t" + //se reads kept
                         double2str( (double)se_accept_cnt/(double)cnt*100.0) + "\t" //perc kept
-                        + i2str(se_bases_kept,new char[15],10) + "\t" + //bases kept
+                        + i2str(se_bases_kept,new char[25],10) + "\t" + //bases kept
                         double2str( (double)se_bases_kept/(double)se_bases_anal*100.0) + "\t" + //%
                        double2str(avg_trim_len_se) +
                        (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "\tNA\tNA\tNA\tNA\tNA\tNA") +
