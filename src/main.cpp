@@ -278,17 +278,10 @@ int main(int argc, char *argv[])
         {
            verbose = true;
            continue;
-        } else if( string(argv[i]) == "-qual_only" ) 
-        {
-           lucy_only_flag = true;
-           trim_adapters_flag = false;
-           continue;
-        } else if( string(argv[i]) == "-shuffle" ) 
-        {
+        } else if( string(argv[i]) == "-shuffle" ) {
            shuffle_flag = true;
            continue;
-        } else if( string(argv[i]) == "-dup" ) 
-        {
+        } else if( string(argv[i]) == "-dup" ) {
            rem_dup = true; ++i;
            
            if((i+1)<argc && string(argv[i]) == "-startdw" ) 
@@ -321,7 +314,7 @@ int main(int argc, char *argv[])
         {
            max_al_mism = atoi(argv[++i]);
            continue;
-        } else if( string(argv[i]) == "-no_ts_adapter_trim" ) 
+        } else if( string(argv[i]) == "-no_adapter_trim" ) 
         {
            trim_adapters_flag = false;
            continue;
@@ -1228,13 +1221,13 @@ void PrintHelp() {
             "   -d - Distance between consecutive k-mers, default=1\n"
             "   -kc <value> - Size of k-mer used in sampling contaminat genome, default=15\n"
             "   -qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
-            "   -qual_only - Performs only quality trimming without trimming of adapters, default=off.\n"
             "   -ow - Overwrite existing results, default=off\n"
             "   -minlen <value> - Minimum length of read to accept, default=50 bp.\n"
             "   -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.\n"
             "   -verbose - Verbose output, default=off.\n"
             "   -detrep - Generate detailed report for each read, default=off.\n"
             "   -dup [-startdw 10][-sizedw 35] [-maxdup 3] - Turns on screening duplicated sequences, default=off. Here: -startdw (defalt=10) and -sizedw (default=25) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.\n" 
+            "   -no_adapter_trim - Turn off trimming of adapters, default=off.\n"
             "Roche 454 only arguments:\n"
             "   -t <value> - Number of threads (not yet applicable to Illumina mode), default=4.\n" 
             "   -fastq - Output in FASTQ format, default=off.\n"
@@ -1249,7 +1242,6 @@ void PrintHelp() {
             "   -alen <value> - Minimum adapter length for dovetail overlap, default = 60 bp.\n"
             "   -at <value> - Overlap threshold (only in paired-end mode, default = 0.75.\n"
             "   -overlap <minoverlap=value> - Flag to overlap paired-end reads (only in paired-end mode)\n"
-            "   -no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.\n"
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
 cout <<"Examples\n"
 "Roche 454:\n"

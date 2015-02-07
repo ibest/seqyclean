@@ -7,10 +7,8 @@ long line_counter = 0;
 long counter = 0;
 long long duplicated = 0;
 
-int RocheRoutine()
-{
+int RocheRoutine() {
     cout << "Running the main pipeline..." << endl;
-       
     for(int i=0; i<(int)roche_names.size(); ++i) {
         cout << "Parsing file: " << roche_names[i] << "..." << endl;
         //If SFF format is given -> process it
@@ -123,11 +121,6 @@ void QualityTrimming( vector<Read*>& reads ) {
     for(unsigned int ii=0; ii< reads.size(); ii++) {
         if(reads[ii]->discarded == 0)
            QualTrim( reads[ii], max_a_error, max_e_at_ends );/*This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.*/
-        
-        if( lucy_only_flag  ) {
-           reads[ii]->lclip = reads[ii]->lucy_lclip;
-           reads[ii]->rclip = reads[ii]->lucy_rclip;
-        }
     }
 }
 

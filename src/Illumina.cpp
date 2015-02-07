@@ -558,16 +558,11 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     }
             
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
-    if( qual_trim_flag  ) {
+    if(qual_trim_flag ) {
        QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
        if (read->discarded_by_quality == 1) {
           read->discarded = 1;
           return -1;
-       }
-       if (lucy_only_flag) {
-           read->rclip = read->lucy_rclip;
-           read->lclip = read->lucy_lclip;
-           return 0;
        }
     }
     
@@ -1633,24 +1628,16 @@ int IlluminaDynRoutine_post(Read* read)
             
         
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
-    if( qual_trim_flag  ) 
-    {
+    if(qual_trim_flag) {
        QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
-       if (read->discarded_by_quality == 1)
-       {
+       if (read->discarded_by_quality == 1) {
           read->discarded = 1;
           return -1;
-       }
-       if (lucy_only_flag)
-       {
-           read->rclip = read->lucy_rclip;
-           read->lclip = read->lucy_lclip;
-           return 0;
        }
     }
     
     if( vector_flag ) 
-            CheckVector(read); 
+        CheckVector(read); 
     
     return 0;
 }
