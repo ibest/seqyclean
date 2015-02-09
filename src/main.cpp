@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.8 (2014-11-13)";
+string version = "1.9.9 (2015-02-09)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -1224,7 +1224,7 @@ void PrintHelp() {
             "   -verbose - Verbose output, default=off.\n"
             "   -detrep - Generate detailed report for each read, default=off.\n"
             "   -dup [-startdw 10][-sizedw 35] [-maxdup 3] - Turns on screening duplicated sequences, default=off. Here: -startdw (defalt=10) and -sizedw (default=25) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.\n" 
-            "   -no_adapter_trim - Turn off trimming of adapters, default=off.\n"
+            "   -no_adapter_trim - Turns off trimming of adapters, default=off.\n"
             "Roche 454 only arguments:\n"
             "   -t <value> - Number of threads (not yet applicable to Illumina mode), default=4.\n" 
             "   -fastq - Output in FASTQ format, default=off.\n"

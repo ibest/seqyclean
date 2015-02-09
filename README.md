@@ -1,7 +1,7 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.9.8 (2014-11-13)```
+Version: ```1.9.9 (2015-02-09)```
 
 Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
 
@@ -31,13 +31,13 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -d - Distance between consecutive k-mers, default=1.
 -kc <value> - Size of k-mer used in sampling contaminat genome, default=15.
 -qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20).
--qual_only - Performs only quality trimming without trimming of adapters, default=off.
 -ow - Overwrite existing results, default=off.
 -minlen <value> - Minimum length of read to accept, default=50 bp.
 -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.
 -verbose - Verbose output, default=off.
 -detrep - Generate detailed report for each read, default=off.
 -dup [-startdw][-sizedw][-maxdup] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=35) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.
+-no_adapter_trim - Turns off adapter trimming, default=off.
 ```
 ## Roche 454 arguments
 ```
@@ -56,7 +56,6 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -alen <value> - Minimum adapter length for dovetail overlap for adapter trimming, default = 60 bp.
 -at <value> - overlap threshold (only in paired-end mode, default = 0.75.
 -overlap <value> - Turns on merging overlapping paired-end reads. Parameter <value> is a minimum overlap length, default=16 bp.
--no_ts_adapter_trim - Turn off TruSeq adapters trimming, default=off.
 -new2old - A switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
 ```
 
