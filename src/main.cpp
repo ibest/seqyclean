@@ -274,8 +274,7 @@ int main(int argc, char *argv[])
            }
            
            continue;
-        } else if( string(argv[i]) == "-verbose" ) 
-        {
+        } else if( string(argv[i]) == "-verbose" ) {
            verbose = true;
            continue;
         } else if( string(argv[i]) == "-shuffle" ) {
@@ -335,10 +334,8 @@ int main(int argc, char *argv[])
               }
            }
            continue;
-        } else if(string(argv[i]) == "-v" )
-        {
-           if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) 
-           {
+        } else if(string(argv[i]) == "-v" ) {
+           if ((i+1)<argc && !(isdigit(argv[i+1][0])) ) {
              vector_file = argv[++i]; /*Vector file given*/
              vector_flag = true;
            }
@@ -551,11 +548,11 @@ int main(int argc, char *argv[])
             }
             
             continue;
-        } /*else {
+        } else {
             cout << "Unknown parameter: " << argv[i] << endl;
             PrintHelp();
             return 0;
-        }*/
+        }
     }
     
     /*******************************************/
