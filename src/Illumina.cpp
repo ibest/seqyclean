@@ -333,7 +333,7 @@ void IlluminaDynamic()
                         WriteSEFile( se_file, read1 );
                         se_pe1_accept_cnt+=1;
                         se_pe1_bases_kept += read1->read.length();
-                                                     
+                        
                     } else if( (read1->discarded == 1) && (read2->discarded == 0) ) {
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read2->illumina_readID = read2->illumina_readID.substr(0,read2->illumina_readID.length()-3);                                  
@@ -341,6 +341,7 @@ void IlluminaDynamic()
                         WriteSEFile( se_file, read2 );
                         se_pe2_accept_cnt +=1;
                         se_pe2_bases_kept += read2->read.length();
+                     
                     } else if( (read1->merged == 0) && (read2->merged == 0) ) {
                         pe_discard_cnt+=1;
                         pe_bases_discarded += read1->read.length();
@@ -1278,9 +1279,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         (vector_flag ? "By vector: " +  i2str(right_trimmed_by_vector1,new char[15],10) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat1) + "\n" : "") +
                         ((trim_adapters_flag || qual_trim_flag || vector_flag || polyat_flag) ? "Average right trim length: " + double2str(avg_right_trim_len_pe1) + " bp\n" : "") +
-                        "PE1 reads discarded: " + i2str(discarded1,new char[15],10) + "\n" +
-                        (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant1,new char[15],10) + "\n" : "" ) +
-                        "By read length: " +  i2str(discarded_by_read_length1,new char[15],10) + "\n" +
+                        "PE1 reads discarded: " + i2str(discarded1,new char[25],10) + "\n" +
                         "-----------------------------------------------------------\n" +
                         "PE2 reads analyzed: " + i2str(cnt2,new char[25],10) + ", Bases: " + i2str(pe2_bases_anal,new char[25],10) + "\n" +
                         (vector_flag ? ("# of reads with vector: " + i2str(num_vectors2,new char[15],10) + ", " + double2str( (double)num_vectors2/(double)cnt2*100.0) + "%\n") : "") +
@@ -1296,11 +1295,10 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat2) + "\n" : "") +                      
                         ((trim_adapters_flag || qual_trim_flag || vector_flag || polyat_flag) ? "Average right trim length: " + double2str(avg_right_trim_len_pe2) + " bp\n" : "") +
                         "PE2 reads discarded:" + i2str(discarded2,new char[15],10) + "\n" +
-                        (contaminants_flag ? "By contaminants: " +  i2str(discarded_by_contaminant2,new char[15],10) + "\n" : "" ) +
-                        "By read length: " +  i2str(discarded_by_read_length2,new char[15],10) + "\n" + 
                         "----------------------Summary for PE & SE----------------------\n" +
                         ("Pairs kept: " + i2str(pe_accept_cnt,new char[15],10) + ", " + double2str( (double)pe_accept_cnt/(double)cnt1*100.0) + "%, Bases: " + i2str(pe_bases_kept,new char[32],10) + ", " + double2str( (double)pe_bases_kept/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
                         ("Pairs discarded: " + i2str(pe_discard_cnt,new char[15],10) + ", " + double2str( (double)pe_discard_cnt/(double)cnt1*100.0) + "%, Bases: " + i2str(pe_bases_discarded,new char[32],10) + ", " + double2str( (double)pe_bases_discarded/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
+                        (contaminants_flag ? "Contaminated pairs: " +  i2str(discarded_by_contaminant2,new char[25],10) + "\n" : "" ) +
                         ("Single Reads PE1 kept: " + i2str(se_pe1_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe1_bases_kept,new char[15],10) +"\n") +
                         ("Single Reads PE2 kept: " + i2str(se_pe2_accept_cnt,new char[15],10) + ", Bases: " + i2str(se_pe2_bases_kept,new char[15],10) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
@@ -1308,7 +1306,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         (trim_adapters_flag ? "Adapters: " + i2str(ts_adapters2,new char[15],10) + ", " + double2str( (double)ts_adapters2/(double)cnt2*100.0) + "%\n" : "") +
                         (overlap_flag ? "Overlaps: " + int2str(partial_ov_cnt) + ", "+ double2str( (double)partial_ov_cnt/(double)cnt1*100.0) + "%\n" : "") + 
                         (rem_dup ? "Duplicates: " + int2str(duplicates) + "\n" : "");
-    
+                        
      return stat_str;
     
 }
