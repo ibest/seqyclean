@@ -54,7 +54,7 @@ bool rem_dup = false;
 extern float max_a_error;
 extern float max_e_at_ends;
 extern int num_windows; /* number of windows for window trimming */
-extern double bracket_error;
+//extern double bracket_error;
 extern int window0;
 extern int window1;
 
@@ -208,19 +208,21 @@ int main(int argc, char *argv[])
                num_windows = atoi(argv[++i]);
             }
             continue;
-        } else if (string(argv[i]) == "-be") {  // Bracket error
+        /*} else if (string(argv[i]) == "-be") {  // Bracket error
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
-            }
+            }*/
         } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) {
                max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
+               //std::cout << max_a_error << "\n";
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
                   max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
+                  //std::cout << max_e_at_ends << "\n";
                   if((i+1)<argc && (string(argv[i+1]) == "-w0") ) // Length w0 in nucteotide bases
                   {
                         ++i;

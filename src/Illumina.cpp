@@ -561,9 +561,13 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
     if(qual_trim_flag ) {
        QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
+       //cout << read->lucy_lclip << " " << read->lucy_rclip << "\n";
        if (read->discarded_by_quality == 1) {
           read->discarded = 1;
+          /*cout << "!!!!\n";
+          cout << max_a_error << " " << max_e_at_ends << "\n";*/
           return -1;
+         
        }
     }
     
@@ -654,6 +658,7 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                 read->tru_sec_found = 0;
             }
         }
+        //cout << "!!!!!\n";
     }
     return 0;
 }
@@ -1028,11 +1033,12 @@ void IlluminaDynamicSE()
                         
                         
                         IlluminaDynRoutine(read, adapter_found, query_string);
-                        
+                        //cout << read->lucy_lclip << " " << read->lucy_rclip << "\n";
                         if(read->discarded == 0)
                         {
                            MakeClipPointsIllumina(read);
                         }
+                        //cout << read->lucy_lclip << " " << read->lucy_rclip << "\n";
                         
                         cnt+=1;
           
@@ -1065,7 +1071,9 @@ void IlluminaDynamicSE()
                           read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
                           read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
                           read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
-                 
+                          
+                          
+                          
                           WriteSEFile(se_output_file, read);
                           se_accept_cnt+=1;
                           se_bases_kept += read->read.length();
