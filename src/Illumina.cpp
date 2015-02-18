@@ -729,7 +729,7 @@ void MakeClipPointsIllumina(Read* read)
         } 
         else
         {
-            //Keep in mind that Lucy's clip points are zero-based!
+            //Keep in mind that Lucy's clip points are one-based!
             
             read->lclip = read->lucy_lclip;//max(read->lucy_lclip, 1);
             if(read->lclip > 0)
@@ -755,15 +755,15 @@ void MakeClipPointsIllumina(Read* read)
         
         if (trim_adapters_flag) {
             if (read->tru_sec_pos <= 0) {
-                read->rclip = min((int)read->read.length(),read->lucy_rclip + 1);
+                read->rclip = min((int)read->read.length(),read->lucy_rclip);
             } else {
-                read->rclip = min(read->tru_sec_pos,read->lucy_rclip + 1);
+                read->rclip = min(read->tru_sec_pos,read->lucy_rclip);
             }   
         } else {
-            read->rclip = min((int)read->read.length(),read->lucy_rclip + 1);
+            read->rclip = min((int)read->read.length(),read->lucy_rclip);
         }
         
-        if((read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length )){
+        if((read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length )){
             read->rclip = read->lucy_rclip;
             read->right_trimmed_by_quality = 1;
         } else if((read->rclip == read->tru_sec_pos) && trim_adapters_flag){
