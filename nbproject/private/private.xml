@@ -12,8 +12,6 @@
         <group>
             <file>file:/Users/ilya/Projects/seqyclean/src/main.cpp</file>
             <file>file:/Users/ilya/Projects/seqyclean/src/QualTrim.cpp</file>
-            <file>file:/Users/ilya/Projects/seqyclean/src/ascii.cpp</file>
-            <file>file:/Users/ilya/Projects/seqyclean/src/QualTrim.h</file>
             <file>file:/Users/ilya/Projects/seqyclean/src/Illumina.cpp</file>
         </group>
     </open-files>
