@@ -2,6 +2,10 @@
 <configurationDescriptor version="95">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="bin">
+      </df>
+      <df name="obj">
+      </df>
       <df name="src">
         <in>Dictionary.cpp</in>
         <in>Dictionary.h</in>
@@ -92,8 +96,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -dup</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -dup -ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -ow -dup </runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual -ow -dup</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow</runcommandpicklistitem>
@@ -102,8 +104,10 @@
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fastq -fasta</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fastq</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta</runcommand>
+        <runcommand>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual 1 1 -ow -verbose</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
