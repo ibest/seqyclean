@@ -133,7 +133,7 @@ double end_limit = DEFAULT_END_LIMIT;
 
 /* the terminal window size and allowable error used to do an initial */
 /* trim of low-quality base calls from each end of sequence */
-double bracket_error = DEFAULT_BRACKET_ERROR;
+//double bracket_error = DEFAULT_BRACKET_ERROR;
 int bracket_window = DEFAULT_BRACKET_WINDOW;
 
 /* these globals are necessary so that my "grim" function can */
@@ -143,11 +143,8 @@ int *conf_val_raw;
 float max_a_error = 0.01;
 float max_e_at_ends = 0.01;
 int num_windows = 3; /* number of windows for window trimming */
-<<<<<<< HEAD
-//double bracket_error = DEFAULT_BRACKET_ERROR;
-=======
+
 double bracket_error = DEFAULT_BRACKET_ERROR;
->>>>>>> dev
 int window0 = 50;
 int window1 = 10;
 

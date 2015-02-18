@@ -54,10 +54,7 @@ bool rem_dup = false;
 extern float max_a_error;
 extern float max_e_at_ends;
 extern int num_windows; /* number of windows for window trimming */
-<<<<<<< HEAD
-//extern double bracket_error;
-=======
->>>>>>> dev
+
 extern int window0;
 extern int window1;
 
@@ -211,13 +208,6 @@ int main(int argc, char *argv[])
                num_windows = atoi(argv[++i]);
             }
             continue;
-<<<<<<< HEAD
-        /*} else if (string(argv[i]) == "-be") {  // Bracket error
-            if ((i+1)<argc && isdigit(argv[i+1][0])) {
-               bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
-            }*/
-=======
->>>>>>> dev
         } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
