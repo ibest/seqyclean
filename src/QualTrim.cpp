@@ -736,8 +736,8 @@ void default_windows(void)
 	err_limits[2] = (1.0 + 4.0 * max_avg_error) / 5.0;
 	*/
 
-	err_limits[0] = max_avg_error;//0.08;
-	err_limits[1] = end_limit;//0.3;
+	err_limits[0] = 0.08;
+	err_limits[1] = 0.3;
 
 }  /* default_windows() */
 
