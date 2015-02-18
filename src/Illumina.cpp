@@ -766,7 +766,7 @@ void MakeClipPointsIllumina(Read* read)
                read->right_trimmed_by_adapter = 1;
         }
         
-        cout << read->lclip << " " << read->rclip << "\n";
+        //cout << read->lclip << " " << read->rclip << "\n";
     }
     else if( (!qual_trim_flag) && (vector_flag ) )
     {
