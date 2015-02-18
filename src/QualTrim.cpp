@@ -143,7 +143,7 @@ int *conf_val_raw;
 float max_a_error = 0.01;
 float max_e_at_ends = 0.01;
 int num_windows = 3; /* number of windows for window trimming */
-double bracket_error = 0.02;
+double bracket_error = DEFAULT_BRACKET_ERROR;
 int window0 = 50;
 int window1 = 10;
 

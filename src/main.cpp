@@ -54,7 +54,6 @@ bool rem_dup = false;
 extern float max_a_error;
 extern float max_e_at_ends;
 extern int num_windows; /* number of windows for window trimming */
-extern double bracket_error;
 extern int window0;
 extern int window1;
 
