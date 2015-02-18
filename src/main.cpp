@@ -211,10 +211,13 @@ int main(int argc, char *argv[])
                num_windows = atoi(argv[++i]);
             }
             continue;
+<<<<<<< HEAD
         /*} else if (string(argv[i]) == "-be") {  // Bracket error
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
                bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
             }*/
+=======
+>>>>>>> dev
         } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
