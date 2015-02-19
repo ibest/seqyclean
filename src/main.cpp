@@ -213,7 +213,8 @@ int main(int argc, char *argv[])
             continue;
         } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
-        } else if(string(argv[i+1]) == "-window") {
+            continue;
+        } else if(string(argv[i]) == "-window") {
             for (num_windows=0; (i+2)<argc; num_windows++) {
                 if (!isdigit(argv[i+1][0]))
                     break;
