@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.9 (2015-02-09)";
+string version = "1.9.10 (2015-02-19)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -55,8 +55,12 @@ extern float max_a_error;
 extern float max_e_at_ends;
 extern int num_windows; /* number of windows for window trimming */
 extern int window0;
+//extern double end_limit;
 extern int window1;
-
+extern int bracket_window;
+extern double bracket_error;
+extern int windows[];
+extern double err_limits[];
 
 /*Data structures*/
 vector<Read*> reads;
@@ -210,6 +214,44 @@ int main(int argc, char *argv[])
         } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
+            
+            qual_trim_flag = true;
+            
+            if ((i+1)<argc && isdigit(argv[i+1][0])) {
+               max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
+               if ((i+1)<argc && isdigit(argv[i+1][0])) 
+               {
+                  max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
+                  
+                  if(string(argv[i+1]) == "-window") {
+                      for (num_windows=0; (i+2)<argc; num_windows++) {
+                        if (!isdigit(argv[i+1][0]))
+                            break;
+                        if (num_windows>=MAX_NUMBER_OF_WINDOWS)
+                            printf("maximum number of -window option pairs exceeded");
+                        windows[num_windows]=atoi(argv[++i]);
+                        if (windows[num_windows]<=0)
+                            printf("invalid window size for -window options");
+                        if (num_windows && windows[num_windows]>windows[num_windows-1])
+                            printf("sizes must be in decreasing order for -window options");
+                        if (!isdigit(argv[i+1][0]) && argv[i+1][0]!='.')
+                            printf("incorrect number of -window options");
+                        err_limits[num_windows]=atof(argv[++i]);
+                        if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0)
+                            printf("invalid probability values for -window options");
+                        }
+                        if (num_windows<=0)
+                            printf("incorrect number of -window options");
+                        break;
+                  }
+               }
+            }
+            
+            
+        
+        
+        
+        /*else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
            qual_trim_flag = true;
            if ((i+1)<argc && isdigit(argv[i+1][0])) {
                max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
@@ -267,6 +309,16 @@ int main(int argc, char *argv[])
                    return 0;
                }
            }
+           
+           continue;*/
+        } else if( string(argv[i]) == "-bracket" ) {
+           if (!isdigit(argv[i+1][0]))
+                            break;
+           bracket_window = atoi(argv[++i]);
+           
+           if (!isdigit(argv[i+1][0]))
+                            break;
+           bracket_error = atof(argv[++i]);
            
            continue;
         } else if( string(argv[i]) == "-verbose" ) {
