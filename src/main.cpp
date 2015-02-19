@@ -230,10 +230,10 @@ int main(int argc, char *argv[])
                 err_limits[num_windows]=atof(argv[++i]);
                 if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0)
                     printf("invalid probability values for -window options");
-                }
+            }
                 //if (num_windows<=0)
                 //    printf("incorrect number of -window options");
-                continue;
+            continue;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
             
             qual_trim_flag = true;
@@ -331,7 +331,8 @@ int main(int argc, char *argv[])
                }
            }
            
-           continue;*/
+           */
+            continue;
         } else if( string(argv[i]) == "-bracket" ) {
            if (!isdigit(argv[i+1][0]))
                             break;
@@ -339,7 +340,7 @@ int main(int argc, char *argv[])
            
            if (!isdigit(argv[i+1][0]))
                             break;
-           bracket_error = atof(argv[++i]);
+           bracket_error = atof(argv[++i]); cout << bracket_error << "\n";
            
            continue;
         } else if( string(argv[i]) == "-verbose" ) {
