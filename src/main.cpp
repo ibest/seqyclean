@@ -213,6 +213,26 @@ int main(int argc, char *argv[])
             continue;
         } else if (string(argv[i]) == "-fasta") {  // Output in Fasta format
             fasta_output = true;
+        } else if(string(argv[i+1]) == "-window") {
+            for (num_windows=0; (i+2)<argc; num_windows++) {
+                if (!isdigit(argv[i+1][0]))
+                    break;
+                if (num_windows>=MAX_NUMBER_OF_WINDOWS)
+                    printf("maximum number of -window option pairs exceeded");
+                windows[num_windows]=atoi(argv[++i]);
+                if (windows[num_windows]<=0)
+                    printf("invalid window size for -window options");
+                if (num_windows && windows[num_windows]>windows[num_windows-1])
+                    printf("sizes must be in decreasing order for -window options");
+                if (!isdigit(argv[i+1][0]) && argv[i+1][0]!='.')
+                    printf("incorrect number of -window options");
+                err_limits[num_windows]=atof(argv[++i]);
+                if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0)
+                    printf("invalid probability values for -window options");
+                }
+                //if (num_windows<=0)
+                //    printf("incorrect number of -window options");
+                continue;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
             
             qual_trim_flag = true;
@@ -222,7 +242,7 @@ int main(int argc, char *argv[])
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
                   max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
-                  
+                  /*
                   if(string(argv[i+1]) == "-window") {
                       for (num_windows=0; (i+2)<argc; num_windows++) {
                         if (!isdigit(argv[i+1][0]))
@@ -243,7 +263,7 @@ int main(int argc, char *argv[])
                         if (num_windows<=0)
                             printf("incorrect number of -window options");
                         break;
-                  }
+                  }*/
                }
             }
             
