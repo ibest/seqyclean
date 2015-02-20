@@ -219,21 +219,37 @@ int main(int argc, char *argv[])
             for (num_windows=0; (i+2)<argc; num_windows++) {
                 if (!isdigit(argv[i+1][0]))
                     break;
-                if (num_windows>=MAX_NUMBER_OF_WINDOWS)
+                if (num_windows>=MAX_NUMBER_OF_WINDOWS) {
                     printf("maximum number of -window option pairs exceeded");
+                    PrintHelp();
+                    return -1;
+                }
                 windows[num_windows]=atoi(argv[++i]);
-                if (windows[num_windows]<=0)
+                if (windows[num_windows]<=0) {
                     printf("invalid window size for -window options");
-                if (num_windows && windows[num_windows]>windows[num_windows-1])
+                    PrintHelp();
+                    return -1;
+                }
+                if (num_windows && windows[num_windows]>windows[num_windows-1]) {
                     printf("sizes must be in decreasing order for -window options");
-                if (!isdigit(argv[i+1][0]) && argv[i+1][0]!='.')
+                    PrintHelp();
+                    return -1;
+                }
+                if (!isdigit(argv[i+1][0]) && argv[i+1][0]!='.') {
                     printf("incorrect number of -window options");
-                err_limits[num_windows]=atof(argv[++i]);
-                if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0)
+                    PrintHelp();
+                    return -1;
+                }
+                err_limits[num_windows]=pow(10 ,-1*((double)(atof(argv[++i])/10.0)));
+                if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0) {
                     printf("invalid probability values for -window options");
+                    PrintHelp();
+                    return -1;
+                }
             }
-                //if (num_windows<=0)
-                //    printf("incorrect number of -window options");
+            if (num_windows<=0) {
+                printf("incorrect number of -window options");
+            }
             continue;
         } else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
             
@@ -244,95 +260,8 @@ int main(int argc, char *argv[])
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
                   max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
-                  /*
-                  if(string(argv[i+1]) == "-window") {
-                      for (num_windows=0; (i+2)<argc; num_windows++) {
-                        if (!isdigit(argv[i+1][0]))
-                            break;
-                        if (num_windows>=MAX_NUMBER_OF_WINDOWS)
-                            printf("maximum number of -window option pairs exceeded");
-                        windows[num_windows]=atoi(argv[++i]);
-                        if (windows[num_windows]<=0)
-                            printf("invalid window size for -window options");
-                        if (num_windows && windows[num_windows]>windows[num_windows-1])
-                            printf("sizes must be in decreasing order for -window options");
-                        if (!isdigit(argv[i+1][0]) && argv[i+1][0]!='.')
-                            printf("incorrect number of -window options");
-                        err_limits[num_windows]=atof(argv[++i]);
-                        if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0)
-                            printf("invalid probability values for -window options");
-                        }
-                        if (num_windows<=0)
-                            printf("incorrect number of -window options");
-                        break;
-                  }*/
                }
             }
-            
-            
-        
-        
-        
-        /*else if( string(argv[i]) == "-qual" ) { // Quality trimming enable
-           qual_trim_flag = true;
-           if ((i+1)<argc && isdigit(argv[i+1][0])) {
-               max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
-               if ((i+1)<argc && isdigit(argv[i+1][0])) 
-               {
-                  max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
-                  if((i+1)<argc && (string(argv[i+1]) == "-w0") ) // Length w0 in nucteotide bases
-                  {
-                        ++i;
-                        if ((i+1)<argc && isdigit(argv[i+1][0])) 
-                        {
-                                window0 = atoi(argv[++i]);
-                                if((i+1)<argc && (string(argv[i+1]) == "-w1") ) // Length w1 in nucleotide bases
-                                {
-                                        ++i;
-                                        window1 = atoi(argv[++i]);
-                                }
-                        } else {
-                            cout << "Error: parameter w0 has empty value.\n";
-                            PrintHelp(); // Print help and exit
-                            return 0;
-                        }
-                  }
-               } else if((i+1)<argc && (string(argv[i+1]) == "-w0") )
-               {
-                        ++i;
-                        if ((i+1)<argc && isdigit(argv[i+1][0])) 
-                        {
-                                window0 = atoi(argv[++i]);
-                                if((i+1)<argc && (string(argv[i+1]) == "-w1") )
-                                {
-                                        ++i;
-                                        window1 = atoi(argv[++i]);
-                                }
-                        }
-               } 
-           } else if((i+1)<argc && (string(argv[i+1]) == "-w0") )
-           {
-               ++i;
-               if ((i+1)<argc && isdigit(argv[i+1][0])) 
-               {
-                   window0 = atoi(argv[++i]); // Set length of w0
-                   if((i+1)<argc && (string(argv[i+1]) == "-w1") )
-                   {
-                       ++i;
-                       window1 = atoi(argv[++i]); // Set length of w1
-                   } else {
-                       cout << "Error: parameter w1 has empty value.\n";
-                       PrintHelp();
-                       return 0;
-                   }
-               } else {
-                   cout << "Error: parameter w0 has empty value.\n";
-                   PrintHelp();
-                   return 0;
-               }
-           }
-           
-           */
             continue;
         } else if( string(argv[i]) == "-bracket" ) {
            if (!isdigit(argv[i+1][0]))
@@ -341,7 +270,7 @@ int main(int argc, char *argv[])
            
            if (!isdigit(argv[i+1][0]))
                             break;
-           bracket_error = atof(argv[++i]); //cout << bracket_error << "\n";
+           bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
            
            continue;
         } else if( string(argv[i]) == "-verbose" ) {
@@ -1287,7 +1216,9 @@ void PrintHelp() {
             "   -k <value> - Common size of k-mer, default=15\n"
             "   -d - Distance between consecutive k-mers, default=1\n"
             "   -kc <value> - Size of k-mer used in sampling contaminat genome, default=15\n"
-            "   -qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
+            "   -qual <max_average_error> <max_error_at_ends> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20)\n"
+            "   -bracket <window_size> <max_avg_error> - Bracket window size and maximum average error for quality trimming\n"
+            "   -window window_size max_avg_error [window_size max_avg_error ...] - Parameters for window trimming\n"
             "   -ow - Overwrite existing results, default=off\n"
             "   -minlen <value> - Minimum length of read to accept, default=50 bp.\n"
             "   -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.\n"
