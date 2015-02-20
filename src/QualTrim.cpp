@@ -144,8 +144,8 @@ double max_a_error = 0.01;
 double max_e_at_ends = 0.01;
 int num_windows = 3; /* number of windows for window trimming */
 double bracket_error = DEFAULT_BRACKET_ERROR;
-int window0 = 50;
-int window1 = 10;
+//int window0 = 50;
+//int window1 = 10;
 
 
 void window_trim(
@@ -759,7 +759,8 @@ void default_windows(void)
 */
 void grim(int length, int *left, int *right)
 {
-	/* set up windows for quality trimming */
+    cout << "!!!!\n";
+    /* set up windows for quality trimming */
 	default_windows();
 
 	/* the full-length clean range must have an average probability */
