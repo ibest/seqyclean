@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
             fasta_output = true;
             continue;
         } else if(string(argv[i]) == "-window") {
-            
+            default_windows();
             for (num_windows=0; (i+2)<argc; num_windows++) {
                 if (!isdigit(argv[i+1][0]))
                     break;
