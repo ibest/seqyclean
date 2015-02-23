@@ -539,14 +539,14 @@ void IlluminaDynamic()
 
 int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
 {
-    if((int)read->read.length() > minimum_read_length) {
+    /*if((int)read->read.length() > minimum_read_length) {
         read->illumina_quality_string = read->illumina_quality_string.substr(0, read->read.length());
         read->clear_length = read->read.length();
     } else {
         read->discarded = 1;
         read->discarded_by_read_length = 1;
         return -1;
-    }
+    }*/
     
     if(contaminants_flag) {
        if(CheckContaminants(read->read) == 0) {
