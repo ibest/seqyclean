@@ -626,7 +626,7 @@ void quality_trim(
 
 	/* initialize caller's clean range */
 	*cln_left = *cln_right = 0;
-
+        cout << min_frag_length << endl;
 	/* if sequence is too short, we're done */
 	if (length < min_frag_length)
 		return;
