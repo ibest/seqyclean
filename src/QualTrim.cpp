@@ -305,8 +305,9 @@ void average_error_trim(
 	for (i = 0, *diag = 0.0; i < length; i++)
 	{
 		*diag += prob_err[i];
+                //cout << -10*log10(prob_err[i]) << ", ";
 	}
-        
+        //cout << endl;
         //cout << *diag << " " << length << endl;
         //cout << *cln_left << " " << *cln_right << " " << min_frag_length << " " << max_avg_error << endl;
 
@@ -317,15 +318,18 @@ void average_error_trim(
 		/* calculate cumulative error of last cell on next diagonal */
 		diag_count = length - frag_length + 1;
 		//diag[diag_count] = diag[diag_count - 1] - prob_err[diag_count - 1];
-                diag[diag_count] = diag[diag_count] - prob_err[diag_count];
+                diag[diag_count] = diag[diag_count-1] - prob_err[diag_count-1];
+//cout << diag_count << " " << length << " " << diag[0] << " " << frag_length << endl;
 
 		/* consider each value on this diagonal */
 		for (i = 0, j = frag_length - 1;
 			j < length; i++, j++)
 		{
 			/* calculate average error of bases i..j */
-			this_err = diag[i] / (double)frag_length;
-
+			this_err = diag[i] / (double)(frag_length);
+                        //cout << this_err << " " << diag[i] << " " << frag_length;
+                        //exit(0);
+                        //cout << this_err << " " << diag[0] << " " << frag_length << endl;
 			/* is it good enough ? */
 			if (this_err <= max_avg_error)
 			{
@@ -457,7 +461,7 @@ void multi_window_trim(
 			/* no, trim each of the bottom-level ranges based on average quality */
 			for (i = 0; i < num_ranges; i++)
 			{
-	
+                            //cout << range_start[i] << " " << range_end[i] << " " << min_frag_length << " " << max_avg_error << endl;
                             average_error_trim(prob_err + range_start[i],
 					range_end[i] - range_start[i] + 1,
 					min_frag_length,
