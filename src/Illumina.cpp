@@ -1052,13 +1052,11 @@ void IlluminaDynamicSE()
               
                         if( read->discarded == 0 )
                         {
-                          
                           avg_right_trim_len_se = (avg_right_trim_len_se*se_accept_cnt + (read->initial_length - read->rclip))/(se_accept_cnt+1);
                           avg_left_trim_len_se = (avg_left_trim_len_se*se_accept_cnt + read->lclip)/(se_accept_cnt+1);
-                          cnt_right_trim_se += 1;
-                          cnt_left_trim_se += 1;
+                          avg_trim_len_se = (avg_trim_len_se*se_accept_cnt + (read->rclip - read->lclip))/(se_accept_cnt+1);
+                          
                           se_accept_cnt+=1;
-                          //cout << avg_right_clip << " " << se_accept_cnt << endl;
                           
                           read->read = read->read.substr(0 , read->rclip );
                           read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
@@ -1068,16 +1066,7 @@ void IlluminaDynamicSE()
                           WriteSEFile(se_output_file, read);
                           
                           se_bases_kept += read->read.length();
-                                    
-                          cnt_avg+=1;
-                          avg_bases_se += read->rclip - read->lclip;
-                          avg_trim_len_se += (read->rclip - read->lclip)/se_accept_cnt;
-                          cnt_avg_len+=1; 
-                                   
-                 
                         } 
-                                
-                         
                         
                         if (read->tru_sec_found == 1) ts_adapters++;
                         if (read->vector_found == 1) num_vectors++;
@@ -1103,7 +1092,6 @@ void IlluminaDynamicSE()
                         read->read.clear();
           
                         delete read;
-                        
                         
                         if( ((cnt % 1000 ) == 0) && verbose)
                         {
