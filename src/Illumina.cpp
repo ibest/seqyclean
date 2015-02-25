@@ -15,7 +15,7 @@ vector<string> adapters;
 long long se_bases_kept, se_bases_discarded;
 long long se_discard_cnt = 0;
 long long se_bases_anal = 0;        
-unsigned long avg_trim_len_se;
+double avg_trim_len_se;
 
 long long pe1_bases_anal, pe2_bases_anal, pe_bases_kept, pe_bases_discarded, se_pe1_bases_kept, se_pe2_bases_kept;
 long long pe_discard_cnt;
