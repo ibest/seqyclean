@@ -684,7 +684,7 @@ void quality_trim(
 		*cln_right = right;
 	}
 
-//#ifdef TEST_THIS_CODE
+#ifdef TEST_THIS_CODE
 	if (right > 0)
 	{
 		/* calculate the probability of error of the final clean range */
@@ -700,7 +700,7 @@ void quality_trim(
 			fprintf(stderr, "*** Error: %lf %lf\n", err, max_avg_error);
 		}
 	}
-//#endif
+#endif
 
 	/* free allocated array */
 	free(prob_err);
