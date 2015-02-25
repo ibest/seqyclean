@@ -646,7 +646,7 @@ void quality_trim(
 
 	/* initialize caller's clean range */
 	*cln_left = *cln_right = 0;
-
+        
 	/* if sequence is too short, we're done */
 	if (length < min_frag_length)
 		return;
@@ -871,7 +871,6 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         {
             quality[i] = GetNum(read->illumina_quality_string[i]) - phred_coeff_illumina;//33 or 64 depending on new or old style;
             //cout << quality[i] << " ";
-            
             if (old_style_illumina_flag == true)
             {
                 read->illumina_quality_string[i] = read->illumina_quality_string[i] - phred_coeff_illumina + 33;

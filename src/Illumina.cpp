@@ -15,7 +15,7 @@ vector<string> adapters;
 long long se_bases_kept, se_bases_discarded;
 long long se_discard_cnt = 0;
 long long se_bases_anal = 0;        
-unsigned long avg_trim_len_se;
+double avg_trim_len_se;
 
 long long pe1_bases_anal, pe2_bases_anal, pe_bases_kept, pe_bases_discarded, se_pe1_bases_kept, se_pe2_bases_kept;
 long long pe_discard_cnt;
@@ -304,19 +304,21 @@ void IlluminaDynamic()
                     }
                     
                     if( (read1->discarded == 0) && (read2->discarded == 0) && (read1->merged == false) && (read2->merged == false)) {
+                        avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + (read1->rclip - read1->lclip))/(pe_accept_cnt+1);
+                        avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + (read2->rclip - read2->lclip))/(pe_accept_cnt+1);
+                        
                         if (!shuffle_flag) {
                             WritePEFile(pe_output_file1, read1);
                             WritePEFile(pe_output_file2, read2);
-                            pe_accept_cnt+=1;
                             pe_bases_kept += (long long)read1->read.length();
                             pe_bases_kept += (long long)read2->read.length();
                         } else {
                             WriteShuffleFile( shuffle_file, read1, read2 );
-                            pe_accept_cnt+=1;
                             pe_bases_kept += (long long)read1->read.length();
                             pe_bases_kept += (long long)read2->read.length();
                         }
-                               
+                        pe_accept_cnt+=1;
+                        /*       
                         cnt1_avg+=1;
                         avg_bases_pe1 += (int)read1->read.length();
                         avg_trim_len_pe1 = avg_bases_pe1/cnt1_avg;
@@ -325,7 +327,7 @@ void IlluminaDynamic()
                         avg_trim_len_pe2 = avg_bases_pe2/cnt2_avg;
                                
                         cnt_avg_len1 +=1; cnt_avg_len2 +=1;
-                                                         
+                        */
                     } else if ((read1->discarded == 0) && (read2->discarded == 1)) {
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read1->illumina_readID = read1->illumina_readID.substr(0,read1->illumina_readID.length()-2);                                  
@@ -539,14 +541,14 @@ void IlluminaDynamic()
 
 int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
 {
-    if((int)read->read.length() > minimum_read_length) {
+    /*if((int)read->read.length() > minimum_read_length) {
         read->illumina_quality_string = read->illumina_quality_string.substr(0, read->read.length());
         read->clear_length = read->read.length();
     } else {
         read->discarded = 1;
         read->discarded_by_read_length = 1;
         return -1;
-    }
+    }*/
     
     if(contaminants_flag) {
        if(CheckContaminants(read->read) == 0) {
@@ -1046,29 +1048,24 @@ void IlluminaDynamicSE()
           
                         //Report
                         if (detailed_report) {
-                            rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << (read->lucy_lclip <= 1 ? 1 : read->lucy_lclip) << "\t" << (read->lucy_rclip <= 1 ? 1 : read->lucy_rclip) << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
+                            rep_file << read->illumina_readID.substr(1,read->illumina_readID.length()-1) << "\t" << read->lclip << "\t" << read->rclip << "\t" << read->tru_sec_pos << "\t" << read->b_adapter << "\t" << read->initial_length << "\t" << read->lucy_lclip << "\t" << read->lucy_rclip << "\t" << read->discarded << "\t" << read->contaminants << "\t" << "NA" << "\n";
                         }
 
-                        if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
-                        if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
-                        if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
-                        if( (int)read->read.length() < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
-                        if( (read->rclip - read->lclip) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                        //if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
+                        //if( read->lclip >= (int)read->read.length() ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                        //if( read->rclip > (int)read->read.length() ) { read->rclip = read->read.length(); }
+                        
+                        //if( (int)read->read.length() < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
+                        //if( (read->rclip - read->lclip) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
               
                         if( read->discarded == 0 )
                         {
-                          if(  read->rclip < read->initial_length  )
-                          {
-                             cnt_right_trim_se += 1;
-                             avg_right_clip += read->initial_length - read->rclip;
-                             avg_right_trim_len_se = avg_right_clip/cnt_right_trim_se;
-                          }
-                          if(read->lclip > 0)
-                          {
-                             cnt_left_trim_se += 1;
-                             avg_left_clip += read->lclip; 
-                             avg_left_trim_len_se = avg_left_clip/cnt_left_trim_se;
-                          }
+                          avg_right_trim_len_se = (avg_right_trim_len_se*se_accept_cnt + (read->initial_length - read->rclip))/(se_accept_cnt+1);
+                          avg_left_trim_len_se = (avg_left_trim_len_se*se_accept_cnt + read->lclip)/(se_accept_cnt+1);
+                          avg_trim_len_se = (avg_trim_len_se*se_accept_cnt + (read->rclip - read->lclip))/(se_accept_cnt+1);
+                          //cout << avg_trim_len_se << " " << se_accept_cnt << " " << read->rclip << " " << read->lclip << endl;
+                          se_accept_cnt+=1;
+                          
                           read->read = read->read.substr(0 , read->rclip );
                           read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
                           read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
@@ -1077,21 +1074,9 @@ void IlluminaDynamicSE()
                           
                           
                           WriteSEFile(se_output_file, read);
-                          se_accept_cnt+=1;
+                          
                           se_bases_kept += read->read.length();
-                                    
-                          if( read->discarded == 0 )
-                          {
-                            cnt_avg+=1;
-                            avg_bases_se += read->rclip - read->lclip;
-                            avg_trim_len_se = avg_bases_se/cnt_avg;
-                          }
-                          cnt_avg_len+=1; 
-                                   
-                 
                         } 
-                                
-                         
                         
                         if (read->tru_sec_found == 1) ts_adapters++;
                         if (read->vector_found == 1) num_vectors++;
@@ -1117,7 +1102,6 @@ void IlluminaDynamicSE()
                         read->read.clear();
           
                         delete read;
-                        
                         
                         if( ((cnt % 1000 ) == 0) && verbose)
                         {
@@ -1890,21 +1874,14 @@ int TrimIllumina(Read* read1, Read* read2)
         read2->discarded_by_read_length = 1;
     }
     
-    cnt_right_trim_pe1 += 1;
-    avg_right_clip_1 += tmp_avg_right_clip_1;
-    avg_right_trim_len_pe1 = avg_right_clip_1/cnt_right_trim_pe1;
-                            
-    cnt_left_trim_pe1 += 1;
-    avg_left_clip_1 += tmp_avg_left_clip_1;
-    avg_left_trim_len_pe1 = avg_left_clip_1/cnt_left_trim_pe1;
+    avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + tmp_avg_right_clip_1)/(cnt_right_trim_pe1+1);
+    avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + tmp_avg_left_clip_1)/(cnt_left_trim_pe1+1);
     
-    cnt_right_trim_pe2 += 1;
-    avg_right_clip_2 += tmp_avg_right_clip_2;
-    avg_right_trim_len_pe2 = avg_right_clip_2/cnt_right_trim_pe2;
-                            
-    cnt_left_trim_pe2 += 1;
-    avg_left_clip_2 += tmp_avg_left_clip_2;
-    avg_left_trim_len_pe2 = avg_left_clip_2/cnt_left_trim_pe2;
+    avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + tmp_avg_right_clip_2)/(cnt_right_trim_pe2+1);
+    avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + tmp_avg_left_clip_2)/(cnt_left_trim_pe2+1);
+    
+    cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
+    cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
     
     return 0;
 }
