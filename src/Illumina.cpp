@@ -304,19 +304,21 @@ void IlluminaDynamic()
                     }
                     
                     if( (read1->discarded == 0) && (read2->discarded == 0) && (read1->merged == false) && (read2->merged == false)) {
+                        avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + (read1->rclip - read1->lclip))/(pe_accept_cnt+1);
+                        avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + (read2->rclip - read2->lclip))/(pe_accept_cnt+1);
+                        
                         if (!shuffle_flag) {
                             WritePEFile(pe_output_file1, read1);
                             WritePEFile(pe_output_file2, read2);
-                            pe_accept_cnt+=1;
                             pe_bases_kept += (long long)read1->read.length();
                             pe_bases_kept += (long long)read2->read.length();
                         } else {
                             WriteShuffleFile( shuffle_file, read1, read2 );
-                            pe_accept_cnt+=1;
                             pe_bases_kept += (long long)read1->read.length();
                             pe_bases_kept += (long long)read2->read.length();
                         }
-                               
+                        pe_accept_cnt+=1;
+                        /*       
                         cnt1_avg+=1;
                         avg_bases_pe1 += (int)read1->read.length();
                         avg_trim_len_pe1 = avg_bases_pe1/cnt1_avg;
@@ -325,7 +327,7 @@ void IlluminaDynamic()
                         avg_trim_len_pe2 = avg_bases_pe2/cnt2_avg;
                                
                         cnt_avg_len1 +=1; cnt_avg_len2 +=1;
-                                                         
+                        */
                     } else if ((read1->discarded == 0) && (read2->discarded == 1)) {
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read1->illumina_readID = read1->illumina_readID.substr(0,read1->illumina_readID.length()-2);                                  
@@ -1864,21 +1866,14 @@ int TrimIllumina(Read* read1, Read* read2)
         read2->discarded_by_read_length = 1;
     }
     
-    cnt_right_trim_pe1 += 1;
-    avg_right_clip_1 += tmp_avg_right_clip_1;
-    avg_right_trim_len_pe1 = avg_right_clip_1/cnt_right_trim_pe1;
-                            
-    cnt_left_trim_pe1 += 1;
-    avg_left_clip_1 += tmp_avg_left_clip_1;
-    avg_left_trim_len_pe1 = avg_left_clip_1/cnt_left_trim_pe1;
+    avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + tmp_avg_right_clip_1)/(cnt_right_trim_pe1+1);
+    avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + tmp_avg_left_clip_1)/(cnt_left_trim_pe1+1);
     
-    cnt_right_trim_pe2 += 1;
-    avg_right_clip_2 += tmp_avg_right_clip_2;
-    avg_right_trim_len_pe2 = avg_right_clip_2/cnt_right_trim_pe2;
-                            
-    cnt_left_trim_pe2 += 1;
-    avg_left_clip_2 += tmp_avg_left_clip_2;
-    avg_left_trim_len_pe2 = avg_left_clip_2/cnt_left_trim_pe2;
+    avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + tmp_avg_right_clip_2)/(cnt_right_trim_pe2+1);
+    avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + tmp_avg_left_clip_2)/(cnt_left_trim_pe2+1);
+    
+    cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
+    cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
     
     return 0;
 }
