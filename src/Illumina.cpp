@@ -1052,13 +1052,15 @@ void IlluminaDynamicSE()
               
                         if( read->discarded == 0 )
                         {
-                          se_accept_cnt+=1;
+                          
+                          avg_right_clip = (avg_right_clip*se_accept_cnt + (read->initial_length - read->rclip))/(se_accept_cnt+1);
+                          avg_right_trim_len_se = (avg_right_clip*se_accept_cnt + (read->initial_length - read->rclip))/(se_accept_cnt+1);
+                          avg_left_trim_len_se = (avg_right_clip*se_accept_cnt + read->lclip)/(se_accept_cnt+1);
                           cnt_right_trim_se += 1;
-                          avg_right_clip += (read->initial_length - read->rclip)/se_accept_cnt;
-                          avg_right_trim_len_se += (read->initial_length - read->rclip)/se_accept_cnt;
                           cnt_left_trim_se += 1;
-                          avg_left_trim_len_se = read->lclip/se_accept_cnt;
-                          cout << avg_right_clip << " " << se_accept_cnt << endl;
+                          se_accept_cnt+=1;
+                          //cout << avg_right_clip << " " << se_accept_cnt << endl;
+                          
                           read->read = read->read.substr(0 , read->rclip );
                           read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
                           read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
