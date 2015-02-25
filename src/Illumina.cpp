@@ -1052,33 +1052,25 @@ void IlluminaDynamicSE()
               
                         if( read->discarded == 0 )
                         {
-                          if(  read->rclip < read->initial_length  )
-                          {
-                             cnt_right_trim_se += 1;
-                             avg_right_clip += read->initial_length - read->rclip;
-                             avg_right_trim_len_se = avg_right_clip/cnt_right_trim_se;
-                          }
-                          if(read->lclip > 0)
-                          {
-                             cnt_left_trim_se += 1;
-                             avg_left_clip += read->lclip; 
-                             avg_left_trim_len_se = avg_left_clip/cnt_left_trim_se;
-                          }
+                          se_accept_cnt+=1;
+                          cnt_right_trim_se += 1;
+                          avg_right_clip += (read->initial_length - read->rclip)/se_accept_cnt;
+                          avg_right_trim_len_se += (read->initial_length - read->rclip)/se_accept_cnt;
+                          cnt_left_trim_se += 1;
+                          avg_left_trim_len_se = read->lclip/se_accept_cnt;
+                          
                           read->read = read->read.substr(0 , read->rclip );
                           read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
                           read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
                           read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
                  
                           WriteSEFile(se_output_file, read);
-                          se_accept_cnt+=1;
+                          
                           se_bases_kept += read->read.length();
                                     
-                          if( read->discarded == 0 )
-                          {
-                            cnt_avg+=1;
-                            avg_bases_se += read->rclip - read->lclip;
-                            avg_trim_len_se = avg_bases_se/cnt_avg;
-                          }
+                          cnt_avg+=1;
+                          avg_bases_se += read->rclip - read->lclip;
+                          avg_trim_len_se += (read->rclip - read->lclip)/se_accept_cnt;
                           cnt_avg_len+=1; 
                                    
                  
