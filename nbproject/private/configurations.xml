@@ -98,7 +98,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -454 test_data/in* -o test/test -qual -ow -fasta</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1.fastq -2 test_data/R2.fastq -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U test_data/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -verbose -ow -detrep -minlen 50
@@ -109,8 +108,9 @@
           <runcommandpicklistitem>bin/./seqyclean -U ../lucy_test/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 0.01 0.01 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommand>
+        <runcommand>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 0.01 0.01 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
