@@ -119,7 +119,7 @@ double perr[] =
 	1.258925e-10
 };
 
-int num_windows = 3; /* number of windows for window trimming */
+int num_windows = 2;//3; /* number of windows for window trimming */
 /* the window sizes, and max allowed average probability of error in window */
 /* Note: the max number of windows is 20 */
 int windows[MAX_NUMBER_OF_WINDOWS];
@@ -263,6 +263,8 @@ void window_trim(
 
 	/* store number of clean ranges found for caller */
 	*num_ranges = range_idx;
+        
+
 
 }  /* window_trim() */
 
@@ -297,6 +299,7 @@ void average_error_trim(
 	/* if sequence is too short, we're done */
 	if (length < min_frag_length)
 		return;
+        
 
 	/* allocate space for cumulative error values on the diagonal */
 	diag = (double *)malloc((size_t)(length + 1) * sizeof(double));
@@ -311,7 +314,11 @@ void average_error_trim(
 	for (i = 0, *diag = 0.0; i < length; i++)
 	{
 		*diag += prob_err[i];
+                //cout << -10*log10(prob_err[i]) << ", ";
 	}
+        //cout << endl;
+        //cout << *diag << " " << length << endl;
+        //cout << *cln_left << " " << *cln_right << " " << min_frag_length << " " << max_avg_error << endl;
 
 	frag_length = length;
 	done = FALSE;
@@ -319,15 +326,19 @@ void average_error_trim(
 	{
 		/* calculate cumulative error of last cell on next diagonal */
 		diag_count = length - frag_length + 1;
-		diag[diag_count] = diag[diag_count - 1] - prob_err[diag_count - 1];
+		//diag[diag_count] = diag[diag_count - 1] - prob_err[diag_count - 1];
+                diag[diag_count] = diag[diag_count-1] - prob_err[diag_count-1];
+//cout << diag_count << " " << length << " " << diag[0] << " " << frag_length << endl;
 
 		/* consider each value on this diagonal */
 		for (i = 0, j = frag_length - 1;
 			j < length; i++, j++)
 		{
 			/* calculate average error of bases i..j */
-			this_err = diag[i] / (double)frag_length;
-
+			this_err = diag[i] / (double)(frag_length);
+                        //cout << this_err << " " << diag[i] << " " << frag_length;
+                        //exit(0);
+                        //cout << this_err << " " << diag[0] << " " << frag_length << endl;
 			/* is it good enough ? */
 			if (this_err <= max_avg_error)
 			{
@@ -335,6 +346,7 @@ void average_error_trim(
 				*cln_left = i;
 				*cln_right = j;
 				done = TRUE;
+                                //cout << *cln_left << " " << *cln_right << " " << min_frag_length << " " << max_avg_error << endl;
 				break;
 			}
 			else
@@ -347,7 +359,7 @@ void average_error_trim(
 		/* decrement fragment length of next diagonal */
 		frag_length--;
 	}
-
+            
 	/* make sure the ends of the clean range are OK */
 	if (*cln_right > 0)
 	{
@@ -360,7 +372,8 @@ void average_error_trim(
 	/* check fragment length */
 	if (*cln_right - *cln_left + 1 < min_frag_length)
 	{
-		*cln_left = *cln_right = 0;
+            *cln_left = *cln_right = 0;
+                
 	}
 		
 	/* free allocated array */
@@ -417,7 +430,8 @@ void multi_window_trim(
 	/* trim sequence to largest window size */
 	window_trim(prob_err, length, err_limits[0], windows[0],
 		min_frag_length, &num_ranges, range_start, range_end);
-
+                
+        
 	/* any clean ranges found ? */
 	if (num_ranges > 0)
 	{
@@ -428,7 +442,7 @@ void multi_window_trim(
 		/* yes, any smaller windows to be dealt with ? */
 		if (num_windows > 1)
 		{
-			/* yes, trim each candidate clean range by the smaller windows */
+                    /* yes, trim each candidate clean range by the smaller windows */
 			for (i = 0; i < num_ranges; i++)
 			{
 				/* recursive call */
@@ -439,7 +453,7 @@ void multi_window_trim(
 					windows + 1, err_limits + 1,
 					min_frag_length,
 					&left, &right);
-
+                                
 				if (right > 0)
 				{
 					range_end[i] = right + range_start[i];
@@ -456,7 +470,8 @@ void multi_window_trim(
 			/* no, trim each of the bottom-level ranges based on average quality */
 			for (i = 0; i < num_ranges; i++)
 			{
-				average_error_trim(prob_err + range_start[i],
+                            //cout << range_start[i] << " " << range_end[i] << " " << min_frag_length << " " << max_avg_error << endl;
+                            average_error_trim(prob_err + range_start[i],
 					range_end[i] - range_start[i] + 1,
 					min_frag_length,
 					&left, &right);
@@ -471,6 +486,7 @@ void multi_window_trim(
 					range_start[i] = range_end[i] = 0;
 				}
 			}
+                        
 		}
 
 #ifdef TEST_THIS_CODE
@@ -495,7 +511,9 @@ void multi_window_trim(
 				*cln_right = range_end[i];
 			}
 		}
+                
 	}
+
 
 	/* free allocated arrays */
 	free(range_start);
@@ -680,6 +698,7 @@ void quality_trim(
 		min_frag_length,
 		&min_left, &max_right);
 
+
 	if (max_right > 0)
 	{
 		/* find largest sequence that matches all our window criteria */
@@ -688,6 +707,7 @@ void quality_trim(
 			num_windows, windows, err_limits,
 			min_frag_length,
 			&left, &right);
+
 
 		if (right > 0)
 		{

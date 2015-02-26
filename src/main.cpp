@@ -241,7 +241,9 @@ int main(int argc, char *argv[])
                     PrintHelp();
                     return -1;
                 }
-                err_limits[num_windows]=pow(10 ,-1*((double)(atof(argv[++i])/10.0)));
+                //err_limits[num_windows]=pow(10 ,-1*((double)(atof(argv[++i])/10.0)));
+                err_limits[num_windows]=atof(argv[++i]);
+                
                 if (err_limits[num_windows]>1.0||err_limits[num_windows]<0.0) {
                     printf("invalid probability values for -window options");
                     PrintHelp();
@@ -257,11 +259,18 @@ int main(int argc, char *argv[])
             qual_trim_flag = true;
             
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
+<<<<<<< HEAD
                max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
                //std::cout << max_a_error << "\n";
+=======
+               //max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
+               max_a_error = atof(argv[++i]); // Maximum average error
+               
+>>>>>>> dev
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
-                  max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
+                  //max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
+                  max_e_at_ends = atof(argv[++i]);
                }
             }
             continue;
@@ -272,7 +281,8 @@ int main(int argc, char *argv[])
            
            if (!isdigit(argv[i+1][0]))
                             break;
-           bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
+           //bracket_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) );
+           bracket_error = atof(argv[++i]);
            
            continue;
         } else if( string(argv[i]) == "-verbose" ) {
