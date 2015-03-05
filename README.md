@@ -30,7 +30,9 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -k <value> - Common size of k-mer, default=15.
 -d - Distance between consecutive k-mers, default=1.
 -kc <value> - Size of k-mer used in sampling contaminat genome, default=15.
--qual <value> <value> - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=20), max_error_at_ends (default=20).
+-qual ```max_average_error max_error_at_ends``` - Turns on quality trimming, default=off. Error boundaries: max_average_error (default=0.01), max_error_at_ends (default=0.01).
+-braket ```window_size max_average_error``` - Parameter for quality trimming. By default window_size=10 and max_average_error=0.794.
+-window ```window_size max_average_error``` [```window_size maximum_average_error``` [...]] - Parameters for quality trimming. By default there are two windows with size of 50 and 10 bp with the same max_average_error=0.794.
 -ow - Overwrite existing results, default=off.
 -minlen <value> - Minimum length of read to accept, default=50 bp.
 -polyat [cdna] [cerr] [crng] - Turns on poly A/T trimming, default=off. Parameters: cdna (default=10) - maximum size of a poly tail, cerr (default=3) - maximum number of G/C nucleotides within a tail, cnrg (default=50) - range to look for a tail within a read.
