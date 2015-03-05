@@ -147,7 +147,6 @@ double max_e_at_ends = 0.01;
 double bracket_error = DEFAULT_BRACKET_ERROR;
 
 
-
 void window_trim(
 	double *prob_err,	/* array of phred error probabilities */
 	int length, 		/* number of probabilities (length of sequence) */
