@@ -141,7 +141,7 @@ int bracket_window = DEFAULT_BRACKET_WINDOW;
 /* simulate the old "grim" function */
 int *conf_val_raw; 
 
-int num_windows = 3; /* number of windows for window trimming */
+
 double max_a_error = 0.01;
 double max_e_at_ends = 0.01;
 
