@@ -148,7 +148,6 @@ double max_e_at_ends = 0.01;
 double bracket_error = DEFAULT_BRACKET_ERROR;
 
 
-
 /**************************************************************************/
 /*
 /* Determines some number of candidate clean ranges using a particular
@@ -159,6 +158,7 @@ double bracket_error = DEFAULT_BRACKET_ERROR;
 /*				(  at each end of clean range)
 /*
 */
+
 void window_trim(
 	double *prob_err,	/* array of phred error probabilities */
 	int length, 		/* number of probabilities (length of sequence) */
