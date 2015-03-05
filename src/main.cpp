@@ -308,7 +308,6 @@ int main(int argc, char *argv[])
             qual_trim_flag = true;
             
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
-               //max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
                max_a_error = atof(argv[++i]); // Maximum average error
                
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
