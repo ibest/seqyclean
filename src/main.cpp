@@ -78,7 +78,6 @@ map<long /*seq_id*/, string /*sequence*/ > VectorSeqs;
 /*----------End of data structure definition------------------*/
 
 /*----------Input data------------------------------------*/
-//string input_file_list;
 /*Vectors : */
 char *vector_file;
 /*Contaminations : */
