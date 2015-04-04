@@ -336,15 +336,15 @@ int main(int argc, char *argv[])
         } else if( string(argv[i]) == "-dup" ) {
            rem_dup = true; ++i;
            
-           if((i+1)<argc && string(argv[i]) == "-startdw" ) 
+           if(string(argv[i]) == "-startdw" ) 
            {
                start_dw = atoi(argv[++i]);
            }
-           if((i+1)<argc && string(argv[i]) == "-sizedw" ) 
+           if(string(argv[i]) == "-sizedw" ) 
            {
                size_dw = atoi(argv[++i]);
            }
-           if((i+1)<argc && string(argv[i]) == "-maxdup" ) 
+           if(string(argv[i]) == "-maxdup" ) 
            {
                max_dup = atoi(argv[++i]);
            }
