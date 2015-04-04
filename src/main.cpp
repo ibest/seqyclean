@@ -334,22 +334,17 @@ int main(int argc, char *argv[])
            shuffle_flag = true;
            continue;
         } else if( string(argv[i]) == "-dup" ) {
-           rem_dup = true; ++i;
-           
-           if(string(argv[i]) == "-startdw" ) 
-           {
-               start_dw = atoi(argv[++i]);
-           }
-           if(string(argv[i]) == "-sizedw" ) 
-           {
-               size_dw = atoi(argv[++i]);
-           }
-           if(string(argv[i]) == "-maxdup" ) 
-           {
-               max_dup = atoi(argv[++i]);
-           }
-           
+           rem_dup = true;
            continue;
+        } else if(string(argv[i]) == "-startdw") {
+            start_dw = atoi(argv[++i]);
+            continue;
+        } else if(string(argv[i]) == "-sizedw") {
+            size_dw = atoi(argv[++i]);
+            continue;
+        } else if(string(argv[i]) == "-maxdup") {
+            max_dup = atoi(argv[++i]);
+            continue;
         } else if( string(argv[i]) == "-ow" ) 
         {
            overwrite_flag = true;
