@@ -25,7 +25,7 @@ $sudo apt-get install zlib1g-dev
 
 # Installation
 
-Clone or download the repository. Then ```cd`` to seqyclean home folder, and type ```make```:
+Clone or download the repository. Then ```cd``` to seqyclean home folder, and type ```make```:
 
 ```$make```
 
