@@ -98,7 +98,7 @@ else
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)dup.o $(SRC)dup.cpp 
 	
     Roche.o : 
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)Roche.o $(SRC)Roche.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)Roche.o $(SRC)Roche_lin.cpp 
 	
     Illumina.o : 
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 

@@ -1,7 +1,7 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.9.9 (2015-02-09)```
+Version: ```1.9.9 (2015-12-07)```
 
 Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
 
@@ -22,6 +22,16 @@ Developer version of the ```zlib```:
 ```
 $sudo apt-get install zlib1g-dev
 ```
+
+# Installation
+
+Clone or download the repository. Then ```cd`` to seqyclean home folder, and type ```make```:
+
+```$make```
+
+Note: by default, it builds the binary for OS-X. If you use Lunux, please run ```make``` as follows:
+
+```$make PLATFORM=-DLINUX```
 
 # Usage  
 ```

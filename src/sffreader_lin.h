@@ -2,7 +2,7 @@
 #define	SFFREADER_H
 
 /* 
- * File:   sffreader.h
+ * File:   sffreader_lin.h
  * Author: ilya
  *
  * Created on 28 Август 2012 г., 9:59
