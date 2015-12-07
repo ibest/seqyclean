@@ -25,15 +25,15 @@ $sudo apt-get install zlib1g-dev
 
 # Installation
 
-Clone or download the repository. Then ```cd``` to seqyclean home folder, and type ```make```:
+Clone or download the repository. Then ```cd``` to seqyclean home folder, and type ```make```.
 
-```$make```
 
 Note: by default, it builds the binary for OS-X. If you use Lunux, please run ```make``` as follows:
 
-```$make PLATFORM=-DLINUX```
+```make PLATFORM=-DLINUX```
 
-# Usage  
+# Usage
+  
 ```
 usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]
 ```
@@ -41,6 +41,7 @@ usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o outp
 The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1, -2 for paired-end Illumina reads, -U for single-end reads. See examples below.
             
 ## Common arguments for all library types
+
 ```
 -h, --help - Show this help and exit.
 -v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.
@@ -59,6 +60,7 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -dup [-startdw][-sizedw][-maxdup] - Turns on screening duplicated sequences, default=off. Here startdw (defalt=10) and sizedw (default=35) are starting position and size of the window within a read, -maxdup (default=3) - maximum number of duplicated sequences allowed.
 -no_adapter_trim - Turns off adapter trimming, default=off.
 ```
+
 ## Roche 454 arguments
 ```
 -t <value> - Number of threads (not yet applicable to Illumina mode), default=4.
