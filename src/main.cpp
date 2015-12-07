@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.10 (2015-02-19)";
+string version = "1.9.10 (2015-12-07)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -209,7 +209,7 @@ void PrintHelp() {
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
 cout <<"Examples\n"
 "Roche 454:\n"
-"./seqyclean -454 test_data/in.sff -o test/Test454 -v test_data/vectors.fasta\n"
+"./seqyclean -454 test_data/in_001.sff -o test/Test454 -v test_data/vectors.fasta\n"
 "Paired-end Illumina library:\n"
 "./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina\n"
 "Single-end Illumina library:\n"

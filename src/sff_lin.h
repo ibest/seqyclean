@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 //#include <limits.h>
-//#include <endian.h>
+#include <endian.h>
 #include <zlib.h>
 #include <arpa/inet.h> // htons(), htonl()
 #include "util.h"

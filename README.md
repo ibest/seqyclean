@@ -15,6 +15,14 @@ SeqyClean offers:
 
 It handles SFF and FASTQ file formats.
 
+# Prerequisites
+
+Developer version of the ```zlib```:
+
+```
+$sudo apt-get install zlib1g-dev
+```
+
 # Usage  
 ```
 usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]
@@ -93,4 +101,4 @@ Trimming of adapters, vectors and contaminant screening are performed, quality t
 
 # Contacts
 
-Please ask Ilya (ilyaz@uidaho.edu or zhba3458@vandals.uidaho.edu) in case of any questions.
+Please ask Ilya (zhba3458@vandals.uidaho.edu) in case of any questions.

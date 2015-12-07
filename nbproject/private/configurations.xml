@@ -50,8 +50,10 @@
         <in>rlmid.h</in>
         <in>sff.c</in>
         <in>sff.h</in>
+        <in>sff_lin.h</in>
         <in>sffreader.cpp</in>
         <in>sffreader.h</in>
+        <in>sffreader_lin.h</in>
         <in>timer.h</in>
         <in>util.cpp</in>
         <in>util.h</in>
