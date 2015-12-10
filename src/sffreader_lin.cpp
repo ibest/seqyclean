@@ -45,8 +45,6 @@ sff_common_header h;
 
 /* F U N C T I O N S *********************************************************/
 void process_sff_to_fastq(char *sff_file, int trim_flag) {
-    //reads.clear();
-    //sff_common_header h;
     sff_read_header rh;
     sff_read_data rd;
     FILE *sff_fp, *fastq_fp;
@@ -57,8 +55,6 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
         exit(1);
     }
     
-    //cout << stderr << endl;
-    //sff_file_size = get_sff_file_size(sff_fp);
     get_sff_file_size(sff_fp);
     
     read_sff_common_header(sff_fp, &h);

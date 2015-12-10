@@ -4,12 +4,7 @@
 /* 
  * File:   sffreader_lin.h
  * Author: ilya
- *
- * Created on 28 Август 2012 г., 9:59
  */
-
-
-
 
 #define MATHLIB_STANDALONE
 // System includes
@@ -26,17 +21,10 @@
 #include "sff_lin.h"
 #include "Read.h"
 
-//#include <RInside.h> 
-
 using namespace std;
 
 extern vector<Read*> reads;
-
-
 extern bool keep_fastq_orig;
-
-
-
 
 void process_sff_to_fastq(char *sff_file, int trim_flag);
 void construct_fastq_entry(FILE *fp,
