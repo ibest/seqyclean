@@ -21,9 +21,9 @@
 #include <fstream>
 #include <sstream>
 #include <endian.h>
+#include <byteswap.h>
 #include "util.h"
 #include "sff_lin.h"
-//#include "sff.h"
 #include "Read.h"
 
 //#include <RInside.h> 
