@@ -20,6 +20,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <endian.h>
 #include "util.h"
 #include "sff_lin.h"
 //#include "sff.h"

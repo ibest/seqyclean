@@ -77,7 +77,7 @@ int RocheRoutine() {
     accept_counter = 0;
     discard_counter = 0;
     trim_counter = counter = 0;
-    
+    return 0;
 }
 
 void ParseFastqFile(char* fastq_file, vector<Read*> &reads) {

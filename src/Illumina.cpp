@@ -913,9 +913,9 @@ void IlluminaDynamicSE()
     se_bases_anal = 0;        
     avg_trim_len_se = 0;
     /*Raw implementation of average. Later I will come with a better algorithm*/
-    long long avg_bases_se = 0;
-    long long avg_left_clip = 0;
-    long long avg_right_clip = 0;
+    //long long avg_bases_se = 0;
+    //long long avg_left_clip = 0;
+    //long long avg_right_clip = 0;
     
     long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
     long long cnt_avg_len; cnt_avg_len = 0;

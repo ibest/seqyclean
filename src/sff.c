@@ -225,7 +225,8 @@ void write_padding(FILE *fp, int header_size) {
 void read_padding(FILE *fp, int header_size) {
     int remainder = PADDING_SIZE - (header_size % PADDING_SIZE);
     uint8_t padding[remainder];
-    size_t bytes = fread(padding, sizeof(uint8_t), remainder, fp);
+    //size_t bytes = fread(padding, sizeof(uint8_t), remainder, fp);
+    fread(padding, sizeof(uint8_t), remainder, fp);
 }
 
 void
@@ -506,7 +507,8 @@ void read_manifest(FILE *fp)
         exit(1);
     }
 
-   int i = fread(manifest, sizeof(char), manifest_size, fp);
+   //int i = fread(manifest, sizeof(char), manifest_size, fp);
+   fread(manifest, sizeof(char), manifest_size, fp);
    
 }
 

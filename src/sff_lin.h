@@ -19,13 +19,13 @@
     along with this program; if not, see <http://www.gnu.org/licenses/>
 */
 
-
+#define _DEFAULT_SOURCE
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <limits.h>
+#include <limits.h>
 #include <endian.h>
 #include <zlib.h>
 #include <arpa/inet.h> // htons(), htonl()
@@ -82,9 +82,6 @@
   #error Unknown location for endian.h
 #endif
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
 
 #define SFF_MAGIC   0x2e736666 /* ".sff" */
 #define SFF_VERSION "\0\0\0\1"

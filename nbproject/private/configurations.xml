@@ -25,6 +25,8 @@
         <in>Report.h</in>
         <in>Roche.cpp</in>
         <in>Roche.h</in>
+        <in>Roche_lin.cpp</in>
+        <in>Roche_lin.h</in>
         <in>TrimLucy.cpp</in>
         <in>TrimLucy.h</in>
         <in>UnitTest.cpp</in>
@@ -43,6 +45,7 @@
         <in>iz_SSAHA.cpp</in>
         <in>iz_SSAHA.h</in>
         <in>main.cpp</in>
+        <in>main_lin.cpp</in>
         <in>pairwise.cpp</in>
         <in>pairwise.h</in>
         <in>poly.c</in>
@@ -50,9 +53,11 @@
         <in>rlmid.h</in>
         <in>sff.c</in>
         <in>sff.h</in>
+        <in>sff_lin.c</in>
         <in>sff_lin.h</in>
         <in>sffreader.cpp</in>
         <in>sffreader.h</in>
+        <in>sffreader_lin.cpp</in>
         <in>sffreader_lin.h</in>
         <in>timer.h</in>
         <in>util.cpp</in>
