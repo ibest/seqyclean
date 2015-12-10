@@ -62,7 +62,6 @@ ifeq ($(PLATFORM),-DAPPLE)
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
 	
     sffreader.o: $(SRC)sffreader.cpp $(SRC)sff.h
-	#g++ $(CFLAGS) ${PLATFORM} -I $(SRC) -Wno-deprecated-declarations -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
 	g++ $(CFLAGS) ${PLATFORM} -I $(SRC) -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
     
     sff.o: 
@@ -135,7 +134,7 @@ else
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
 
     sffreader.o: $(SRC)sffreader_lin.cpp $(SRC)sff_lin.h
-	g++ $(CFLAGS) ${PLATFORM} -I $(SRC) -Wno-deprecated-declarations -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader_lin.cpp
+	g++ $(CFLAGS) ${PLATFORM} -I $(SRC) -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader_lin.cpp
 	
     sff.o: 
 	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)sff.o $(SRC)sff_lin.c
