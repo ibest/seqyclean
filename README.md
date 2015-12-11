@@ -28,9 +28,11 @@ $sudo apt-get install zlib1g-dev
 Clone or download the repository. Then ```cd``` to seqyclean home folder, and type ```make```.
 
 
-Note: by default, it builds the binary for OS-X. If you use Lunux, please run ```make``` as follows:
+Note: by default, it builds the binary for OS-X. It should build on Linux as well. If not, try to use this command:
 
 ```make PLATFORM=-DLINUX```
+
+or simply contact me: zhba3458@vandals.uidaho.edu
 
 # Usage
   
