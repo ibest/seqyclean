@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "sff.h"
 
 /* D E F I N E S *************************************************************/
 #define FASTQ_FILENAME_MAX_LENGTH 1024

@@ -7,6 +7,10 @@
  */
 
 #define MATHLIB_STANDALONE
+#define _BSD_SOURCE
+
+#include <endian.h>
+
 // System includes
 #include <zlib.h>
 #include <stdint.h>		// uint64_t, uint32_t, uint16_t
@@ -15,8 +19,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <endian.h>
-#include <byteswap.h>
 #include "util.h"
 #include "sff_lin.h"
 #include "Read.h"

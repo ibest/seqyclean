@@ -19,8 +19,6 @@
     along with this program; if not, see <http://www.gnu.org/licenses/>
 */
 
-#define _DEFAULT_SOURCE
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
