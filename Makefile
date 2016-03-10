@@ -32,7 +32,7 @@ ifeq ($(PLATFORM),-DAPPLE)
 	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
 
     MainPipeLine.o :
-	$(CXX) $(CFLAGS) -Wno-int-to-void-pointer-cast -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	
     KMerRoutine.o :
 	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
@@ -104,7 +104,7 @@ else
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
 
     MainPipeLine.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -Wno-int-to-void-pointer-cast -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	
     KMerRoutine.o :
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
