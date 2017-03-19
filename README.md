@@ -32,7 +32,7 @@ Note: by default, it builds the binary for OS-X. It should build on Linux as wel
 
 ```make PLATFORM=-DLINUX```
 
-or simply contact me: zhba3458@vandals.uidaho.edu
+or simply contact me: ilya.zhbannikov@duke.edu
 
 # Usage
   
@@ -119,7 +119,7 @@ Trimming of adapters, vectors and contaminant screening are performed, quality t
 ```
 @misc{seqyclean,
 author = {Ilya Zhbannikov and Samuel Hunter and James Foster and Matthew Settles},
-title = {SeqyClean, Version: 1.9.9},
+title = {SeqyClean User Manual},
 howpublished = {\url{https://github.com/ibest/seqyclean}},
 year = {2012--2017}
 }
@@ -127,8 +127,7 @@ year = {2012--2017}
 
 ## Plain text
 ```
-Ilya Zhbannikov, Samuel Hunter, James Foster, and Matthew Settles. SeqyClean, version:
-1.9.9. https://github.com/ibest/seqyclean, 2012–2017.
+Ilya Zhbannikov, Samuel Hunter, James Foster, and Matthew Settles. SeqyClean User Manual. https://github.com/ibest/seqyclean, 2012–2017.
 ```
 
 # Contacts
