@@ -115,7 +115,7 @@ Trimming of adapters, vectors and contaminant screening are performed, quality t
 
 # Citing SeqyClean
 ```
-##BibText
+## BibText
 @misc{seqyclean,
 author = {Ilya Zhbannikov and Samuel Hunter and James Foster and Matthew Settles},
 title = {SeqyClean, Version: 1.9.9},
@@ -124,7 +124,7 @@ year = {2012--2017}
 }
 ```
 
-##Plain text
+## Plain text
 ```
 Ilya Zhbannikov, Samuel Hunter, James Foster, and Matthew Settles. SeqyClean, version:
 1.9.9. https://github.com/ibest/seqyclean, 2012–2017.
