@@ -114,8 +114,9 @@ Trimming of adapters, vectors and contaminant screening are performed, quality t
 ```
 
 # Citing SeqyClean
-```
+
 ## BibText
+```
 @misc{seqyclean,
 author = {Ilya Zhbannikov and Samuel Hunter and James Foster and Matthew Settles},
 title = {SeqyClean, Version: 1.9.9},
