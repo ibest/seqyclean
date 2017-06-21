@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.10 (2015-12-07)";
+string version = "1.9.11 (2017-06-21)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;

@@ -142,8 +142,8 @@ int bracket_window = DEFAULT_BRACKET_WINDOW;
 int *conf_val_raw; 
 
 
-double max_a_error = 0.01;
-double max_e_at_ends = 0.01;
+float max_a_error = 0.01;
+float max_e_at_ends = 0.01;
 
 double bracket_error = DEFAULT_BRACKET_ERROR;
 
