@@ -109,7 +109,7 @@ bool detailed_report = false;
 /*----------End of output data definition------------------*/
 
 
-unsigned short minimum_read_length = 50;
+unsigned short minimum_read_length = 100;
 
 /*Poly A/T trimming default parameters*/
 unsigned short cdna = 10;
@@ -310,12 +310,12 @@ int main(int argc, char *argv[])
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
 
                //max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
-               max_a_error = atof(argv[++i]); // Maximum average error
+               max_a_error = pow(10, -1*atof(argv[++i])/10); // Maximum average error
                
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
                   //max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
-                  max_e_at_ends = atof(argv[++i]);
+                  max_e_at_ends = pow(10, -1*atof(argv[++i])/10);
                }
             }
             continue;
