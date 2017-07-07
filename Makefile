@@ -1,81 +1,159 @@
 CXX = g++
-CFLAGS = -Wall -g -L.
+#CFLAGS = -Wall -g -L.
+CFLAGS = -Wall -g
 AR       = ar cr
 SRC = src/
 BIN = bin/
 OBJ = obj/
 LIBRARY := ${OBJ}lgzstream.a
+PLATFORM  = -DAPPLE
 
-all:  mkobj mkbin gzstream.o libgzstream.a abi.o poly.o sff.o sffreader.o ascii.o util.o Read.o QualTrim.o Report.o iz_SSAHA.o pairwise.o Dictionary.o KMerRoutine.o MainPipeLine.o Illumina.o Roche.o dup.o flash.o main.o seqyclean 
+ifeq ($(PLATFORM),-DAPPLE)
+
+    all:  mkobj mkbin gzstream.o libgzstream.a abi.o poly.o sff.o sffreader.o ascii.o util.o Read.o QualTrim.o Report.o iz_SSAHA.o pairwise.o Dictionary.o KMerRoutine.o MainPipeLine.o Illumina.o Roche.o dup.o flash.o main.o seqyclean 
 		
-#					
-seqyclean :   $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)sffreader.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)abi.o $(OBJ)gzstream.o
-	$(CXX) $(CFLAGS) -O3 -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -I$(LIBRARY) -lpthread -lz
+    #					
+    seqyclean :   $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)sffreader.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)abi.o $(OBJ)gzstream.o
+		$(CXX) $(CFLAGS) -O3 -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -I$(LIBRARY) -lpthread -lz
 	
-main.o :  
-	$(CXX) -Wall -g -O3  -c -o $(OBJ)main.o $(SRC)main.cpp 
+    main.o :  
+	$(CXX) $(CFLAGS) -O3  -c -o $(OBJ)main.o $(SRC)main.cpp 
 		
-flash.o : 
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)flash.o $(SRC)flash.cpp 
+    flash.o : 
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)flash.o $(SRC)flash.cpp 
 
-dup.o : 
-	$(CXX) -Wall -g -O3  -c -o $(OBJ)dup.o $(SRC)dup.cpp 
+    dup.o : 
+	$(CXX) $(CFLAGS) -O3  -c -o $(OBJ)dup.o $(SRC)dup.cpp 
 	
-Roche.o : 
-	$(CXX) -Wall -g -O3  -c -o $(OBJ)Roche.o $(SRC)Roche.cpp 
+    Roche.o : 
+	$(CXX) $(CFLAGS) -O3  -c -o $(OBJ)Roche.o $(SRC)Roche.cpp 
 	
-Illumina.o : 
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
+    Illumina.o : 
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
 
-MainPipeLine.o :
-	$(CXX) -Wall -g -Wno-int-to-void-pointer-cast -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
+    MainPipeLine.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	
-KMerRoutine.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
+    KMerRoutine.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
 	
-Dictionary.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)Dictionary.o $(SRC)Dictionary.cpp
+    Dictionary.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Dictionary.o $(SRC)Dictionary.cpp
 
-pairwise.o :  
-	$(CXX) -Wall -g -O3  -c -o $(OBJ)pairwise.o $(SRC)pairwise.cpp
+    pairwise.o :  
+	$(CXX) $(CFLAGS) -O3  -c -o $(OBJ)pairwise.o $(SRC)pairwise.cpp
 	
-iz_SSAHA.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)iz_SSAHA.o $(SRC)iz_SSAHA.cpp
+    iz_SSAHA.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)iz_SSAHA.o $(SRC)iz_SSAHA.cpp
 	
-Report.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)Report.o $(SRC)Report.cpp
+    Report.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Report.o $(SRC)Report.cpp
+		
+    QualTrim.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)QualTrim.o $(SRC)QualTrim.cpp
 	
+    Read.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Read.o $(SRC)Read.cpp
 	
-QualTrim.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)QualTrim.o $(SRC)QualTrim.cpp
+    util.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)util.o $(SRC)util.cpp
 	
-Read.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)Read.o $(SRC)Read.cpp
+    ascii.o :
+	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
 	
-util.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)util.o $(SRC)util.cpp
+    sffreader.o: $(SRC)sffreader.cpp $(SRC)sff.h
+	g++ $(CFLAGS) -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
+    
+    sff.o: 
+	g++ $(CFLAGS) -O3 -c -o $(OBJ)sff.o $(SRC)sff.c
 	
-ascii.o :
-	$(CXX) -Wall -g -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
+    poly.o: 
+	g++ $(CFLAGS) -O3 -c -o $(OBJ)poly.o $(SRC)poly.c
 	
-sffreader.o: $(SRC)sffreader.cpp $(SRC)sff.h
-	g++ -g -I $(SRC) -Wno-deprecated-declarations -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader.cpp
+    abi.o: 
+	g++ $(CFLAGS) -O3 -c -o $(OBJ)abi.o $(SRC)abi.c
 	
-sff.o: 
-	g++ -g -O3 -c -o $(OBJ)sff.o $(SRC)sff.c
-	
-poly.o: 
-	g++ -g -O3 -c -o $(OBJ)poly.o $(SRC)poly.c
-	
-abi.o: 
-	g++ -g -O3 -c -o $(OBJ)abi.o $(SRC)abi.c
-	
-libgzstream.a : $(OBJ)gzstream.o $(SRC)gzstream.h
+    libgzstream.a : $(OBJ)gzstream.o $(SRC)gzstream.h
 	${AR} $(OBJ)libgzstream.a $(OBJ)gzstream.o
 	
-gzstream.o : $(SRC)gzstream.C $(SRC)gzstream.h
+    gzstream.o : $(SRC)gzstream.C $(SRC)gzstream.h
 	#$(CXX) -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
 	gcc -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+
+else
+
+    all:  mkobj mkbin gzstream.o libgzstream.a abi.o poly.o sff.o sffreader.o ascii.o util.o Read.o QualTrim.o Report.o iz_SSAHA.o pairwise.o Dictionary.o KMerRoutine.o MainPipeLine.o Illumina.o Roche.o dup.o flash.o main.o seqyclean 	
+    
+    #					
+    seqyclean :   $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)sffreader.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)abi.o $(OBJ)gzstream.o
+		$(CXX) $(CFLAGS) ${PLATFORM} -O3 -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -I$(LIBRARY) -lpthread -lz
+	
+    main.o :  
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)main.o $(SRC)main.cpp 
+		
+    flash.o : 
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)flash.o $(SRC)flash.cpp 
+
+    dup.o : 
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)dup.o $(SRC)dup.cpp 
+	
+    Roche.o : 
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)Roche.o $(SRC)Roche_lin.cpp 
+	
+    Illumina.o : 
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
+
+    MainPipeLine.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
+	
+    KMerRoutine.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
+	
+    Dictionary.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Dictionary.o $(SRC)Dictionary.cpp
+
+    pairwise.o :  
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)pairwise.o $(SRC)pairwise.cpp
+	
+    iz_SSAHA.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)iz_SSAHA.o $(SRC)iz_SSAHA.cpp
+	
+    Report.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Report.o $(SRC)Report.cpp
+		
+    QualTrim.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)QualTrim.o $(SRC)QualTrim.cpp
+	
+    Read.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Read.o $(SRC)Read.cpp
+	
+    util.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)util.o $(SRC)util.cpp
+	
+    ascii.o :
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
+
+    sffreader.o: $(SRC)sffreader_lin.cpp $(SRC)sff_lin.h
+	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader_lin.cpp
+	
+    sff.o: 
+	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)sff.o $(SRC)sff_lin.c
+	
+    poly.o: 
+	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)poly.o $(SRC)poly.c
+	
+    abi.o: 
+	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)abi.o $(SRC)abi.c
+	
+    libgzstream.a : $(OBJ)gzstream.o $(SRC)gzstream.h
+	${AR} $(OBJ)libgzstream.a $(OBJ)gzstream.o
+	
+    gzstream.o : $(SRC)gzstream.C $(SRC)gzstream.h
+	#$(CXX) -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+	gcc -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+
+
+endif
 
 mkobj :
 	rm -rf ${OBJ}

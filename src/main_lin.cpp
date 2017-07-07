@@ -17,7 +17,7 @@
 #include "Dictionary.h"
 #include "Report.h"
 #include "gzstream.h"
-#include "Roche.h"
+#include "Roche_lin.h"
 #include "rlmid.h"
 #include "Illumina.h"
 
@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.12 (2017-07-07)";
+string version = "1.9.10 (2015-12-07)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -85,7 +85,7 @@ char *vector_file;
 char *cont_file;
 char* rlmids_file;
 // Starting position and a window size for searching for duplicates:
-int start_dw = 10, size_dw = 20, max_dup = 3;
+int start_dw = 10, size_dw = 35, max_dup = 3;
 
 /*Other parameters*/
 /*Illumina*/
@@ -109,7 +109,7 @@ bool detailed_report = false;
 /*----------End of output data definition------------------*/
 
 
-unsigned short minimum_read_length = 100;
+unsigned short minimum_read_length = 50;
 
 /*Poly A/T trimming default parameters*/
 unsigned short cdna = 10;
@@ -224,9 +224,7 @@ int main(int argc, char *argv[])
 {
     double start, finish, elapsed;
     GET_TIME(start);
-    
-    default_windows(); //Call default windows for quality trimming
-    
+
     /*******************************************/
     /* Parse command line arguments */
     /*******************************************/
@@ -267,6 +265,7 @@ int main(int argc, char *argv[])
             fasta_output = true;
             continue;
         } else if(string(argv[i]) == "-window") {
+            default_windows();
             for (num_windows=0; (i+2)<argc; num_windows++) {
                 if (!isdigit(argv[i+1][0]))
                     break;
@@ -311,12 +310,12 @@ int main(int argc, char *argv[])
             if ((i+1)<argc && isdigit(argv[i+1][0])) {
 
                //max_a_error = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum average error
-               max_a_error = pow(10, -1*atof(argv[++i])/10); // Maximum average error
+               max_a_error = atof(argv[++i]); // Maximum average error
                
                if ((i+1)<argc && isdigit(argv[i+1][0])) 
                {
                   //max_e_at_ends = pow( 10 ,-1*((double)(atof(argv[++i])/10.0)) ); // Maximum error at ends
-                  max_e_at_ends = pow(10, -1*atof(argv[++i])/10);
+                  max_e_at_ends = atof(argv[++i]);
                }
             }
             continue;
@@ -338,17 +337,22 @@ int main(int argc, char *argv[])
            shuffle_flag = true;
            continue;
         } else if( string(argv[i]) == "-dup" ) {
-           rem_dup = true;
+           rem_dup = true; ++i;
+           
+           if((i+1)<argc && string(argv[i]) == "-startdw" ) 
+           {
+               start_dw = atoi(argv[++i]);
+           }
+           if((i+1)<argc && string(argv[i]) == "-sizedw" ) 
+           {
+               size_dw = atoi(argv[++i]);
+           }
+           if((i+1)<argc && string(argv[i]) == "-maxdup" ) 
+           {
+               max_dup = atoi(argv[++i]);
+           }
+           
            continue;
-        } else if(string(argv[i]) == "-startdw") {
-            start_dw = atoi(argv[++i]);
-            continue;
-        } else if(string(argv[i]) == "-sizedw") {
-            size_dw = atoi(argv[++i]);
-            continue;
-        } else if(string(argv[i]) == "-maxdup") {
-            max_dup = atoi(argv[++i]);
-            continue;
         } else if( string(argv[i]) == "-ow" ) 
         {
            overwrite_flag = true;

@@ -134,18 +134,30 @@ double end_limit = DEFAULT_END_LIMIT;
 
 /* the terminal window size and allowable error used to do an initial */
 /* trim of low-quality base calls from each end of sequence */
-extern double bracket_error;//DEFAULT_BRACKET_ERROR;
+//double bracket_error = DEFAULT_BRACKET_ERROR;
 int bracket_window = DEFAULT_BRACKET_WINDOW;
 
 /* these globals are necessary so that my "grim" function can */
 /* simulate the old "grim" function */
 int *conf_val_raw; 
 
-double max_a_error = 0.01;
-double max_e_at_ends = 0.01;
+
+float max_a_error = 0.01;
+float max_e_at_ends = 0.01;
 
 double bracket_error = DEFAULT_BRACKET_ERROR;
 
+
+/**************************************************************************/
+/*
+ Determines some number of candidate clean ranges using a particular
+ window size.
+
+ Globals used:
+	double end_limit,	(maximum allowed probability of error for bases)
+				(  at each end of clean range)
+
+*/
 
 void window_trim(
 	double *prob_err,	/* array of phred error probabilities */
@@ -174,12 +186,10 @@ void window_trim(
 
 	/* calculate max allowable cumulative error for window */
 	win_limit = err_limit * (double)window;
-        //cout << err_limit << endl;
+
 	/* calculate cumulative error for first window */
-	for (i = 0, win_err = 0.0; i < window; i++) {
+	for (i = 0, win_err = 0.0; i < window; i++)
 		win_err += prob_err[i];
-                //cout << win_err << " " << prob_err[i] << endl;
-        }
 
 	/* initialize index to storage of candidate clean ranges */
 	range_idx = 0;
@@ -261,14 +271,14 @@ void window_trim(
 
 /**************************************************************************/
 /*
-* Finds the largest subsequence of a sequence whose average probability
-* of error does not exceed a specified maximum.
-*
-* Globals used:
-*	double max_avg_error,	(maximum allowed average probability of error)
-*	double end_limit,	(maximum allowed probability of error for bases)
-*				(  at each end of clean range)
-*
+ Finds the largest subsequence of a sequence whose average probability
+ of error does not exceed a specified maximum.
+
+ Globals used:
+	double max_avg_error,	(maximum allowed average probability of error)
+	double end_limit,	(maximum allowed probability of error for bases)
+				(  at each end of clean range)
+
 */
 void average_error_trim(
 	double *prob_err,	/* array of phred error probabilities */
@@ -282,7 +292,7 @@ void average_error_trim(
 	int diag_count;
 	int done;
 	double *diag, this_err;
-
+        //cout << max_avg_error << " " << end_limit << "\n";
 	/* initialize caller's clean range */
 	*cln_left = *cln_right = 0;
 
@@ -374,16 +384,16 @@ void average_error_trim(
 
 /**************************************************************************/
 /*
-* Determines a single clean range, after recursively considering all of
-* the specified window sizes.  Calls average_error_trim to trim the
-* results of the final window based on overall average probability of
-* error.
-*
-* Globals used:
-*	double max_avg_error,	(maximum allowed average probability of error)
-*	double end_limit,	(maximum allowed probability of error for bases)
-*				(  at each end of clean range)
-*
+ Determines a single clean range, after recursively considering all of
+ the specified window sizes.  Calls average_error_trim to trim the
+ results of the final window based on overall average probability of
+ error.
+
+ Globals used:
+	double max_avg_error,	(maximum allowed average probability of error)
+	double end_limit,	(maximum allowed probability of error for bases)
+				(  at each end of clean range)
+
 */
 void multi_window_trim(
         double *prob_err,       /* array of phred error probabilities */
@@ -479,6 +489,17 @@ void multi_window_trim(
                         
 		}
 
+#ifdef TEST_THIS_CODE
+		if (num_windows == 1)
+		{
+			for (i = 0; i < num_ranges; i++)
+				if (range_end[i] > 0)
+					fprintf(stderr, "%d  ", range_end[i] - range_start[i] + 1);
+		}
+		else if (num_windows == 3)
+			fprintf(stderr, "\n");
+#endif
+
 		/* find the largest clean range */
 		max_clean = -1;
 		for (i = 0; i < num_ranges; i++)
@@ -503,13 +524,13 @@ void multi_window_trim(
 
 /**************************************************************************/
 /*
-* Sets the window size and average probability of error allowed for the
-* terminal windows that "bracket" the candidate clean range.
-*
-* Globals used:
-*	int bracket_window,	(size of terminal window)
-*	double bracket_error	(allowable average prob. error in window)
-*
+ Sets the window size and average probability of error allowed for the
+ terminal windows that "bracket" the candidate clean range.
+
+ Globals used:
+	int bracket_window,	(size of terminal window)
+	double bracket_error	(allowable average prob. error in window)
+
 */
 void set_bracket(int window_size, double max_error)
 {
@@ -521,18 +542,18 @@ void set_bracket(int window_size, double max_error)
 
 /**************************************************************************/
 /*
-* Finds the leftmost window, and the rightmost window, which meet the
-* specified error criterion.  The purpose of this function is to bracket
-* the portion of the sequence that is of decent quality -- i.e. to
-* eliminate the really bad quality stuff that is often found on either
-* end.  The beginning of the first matching window, and the end of the
-* last, bracket the sequence range that will be looked at to find the
-* final clean range.
-*
-* This function is called before the multi_window_trim function, and
-* its results are used to limit the range of sequence that will be
-* considered by that function.
-*
+  Finds the leftmost window, and the rightmost window, which meet the
+ specified error criterion.  The purpose of this function is to bracket
+ the portion of the sequence that is of decent quality -- i.e. to
+ eliminate the really bad quality stuff that is often found on either
+ end.  The beginning of the first matching window, and the end of the
+ last, bracket the sequence range that will be looked at to find the
+ final clean range.
+
+ This function is called before the multi_window_trim function, and
+ its results are used to limit the range of sequence that will be
+ considered by that function.
+
 */
 void bracket_clean_range(
         double *prob_err,       /* array of phred error probabilities */
@@ -556,13 +577,13 @@ void bracket_clean_range(
 
 	/* calculate cumulative allowable error in window */
 	max_cum_error = (double)window_len * max_err;
-        //cout << max_cum_error << " " << window_len << " " << max_err << endl;
+
 	/* calculate cumulative error in first window */
 	for (i = 0, cum_error = 0.0; i < window_len; i++)
 	{
 		cum_error += prob_err[i];
 	}
-        //cout << cum_error << endl;
+
 	/* test first window */
 	if (cum_error <= max_cum_error)
 	{
@@ -612,20 +633,20 @@ void bracket_clean_range(
 
 /**************************************************************************/
 /*
-* Determines the clean range.  Calls multi_window_trim, which calls both
-* window_trim and average_error_trim.
-*
-* Globals used:
-*	int num_windows,	(number of windows)
-*	int *windows,		(array of window sizes (largest to smallest))
-*	double *err_limits,	(array of maximum allowed average probability)
-*				(  for each window size)
-*	double max_avg_error,	(maximum allowed average probability of error)
-*	double end_limit,	(maximum allowed probability of error for bases)
-*				(  at each end of clean range)
-*	int bracket_window,	(size of terminal window)
-*	double bracket_error	(allowable average prob. error in window)
-*
+ Determines the clean range.  Calls multi_window_trim, which calls both
+ window_trim and average_error_trim.
+
+ Globals used:
+	int num_windows,	(number of windows)
+	int *windows,		(array of window sizes (largest to smallest))
+	double *err_limits,	(array of maximum allowed average probability)
+				(  for each window size)
+	double max_avg_error,	(maximum allowed average probability of error)
+	double end_limit,	(maximum allowed probability of error for bases)
+				(  at each end of clean range)
+	int bracket_window,	(size of terminal window)
+	double bracket_error	(allowable average prob. error in window)
+
 */
 void quality_trim(
 	int *quality, 		/* array of phred quality values */
@@ -639,7 +660,7 @@ void quality_trim(
 	int left, right;
 	int min_left, max_right;
 	double *prob_err;
-	double err, sum;
+	
 
 	/* initialize caller's clean range */
 	*cln_left = *cln_right = 0;
@@ -661,7 +682,6 @@ void quality_trim(
 	for (i = 0; i < length; i++)
 	{
 		q = quality[i];
-                //cout << q << " ";
 		if (q > MAX_QUALITY)
 			q = MAX_QUALITY;
 
@@ -677,7 +697,7 @@ void quality_trim(
 		bracket_window, bracket_error,
 		min_frag_length,
 		&min_left, &max_right);
-                
+
 
 	if (max_right > 0)
 	{
@@ -687,8 +707,7 @@ void quality_trim(
 			num_windows, windows, err_limits,
 			min_frag_length,
 			&left, &right);
-                       
-                
+
 
 		if (right > 0)
 		{
@@ -726,6 +745,7 @@ void quality_trim(
 	free(prob_err);
 
 }  /* quality_trim() */
+
 
 
 /**************************************************************************/
@@ -876,6 +896,7 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
                 read->illumina_quality_string[i] = read->illumina_quality_string[i] - phred_coeff_illumina + 33;
                 
             }
+            
         }
         //cout << endl;
         qual_count = i;
@@ -883,7 +904,7 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         /* trim for quality */
 	conf_val_raw = quality;
 	grim(qual_count, &left, &right);
-        
+        //cout << left << " " << right << endl;
 	/* display seq name and clean range */
 	if (right - left < minimum_read_length) {
 		left = right = 0;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="95">
+<configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="src">
@@ -21,6 +21,8 @@
         <in>Report.h</in>
         <in>Roche.cpp</in>
         <in>Roche.h</in>
+        <in>Roche_lin.cpp</in>
+        <in>Roche_lin.h</in>
         <in>TrimLucy.cpp</in>
         <in>TrimLucy.h</in>
         <in>UnitTest.cpp</in>
@@ -39,6 +41,7 @@
         <in>iz_SSAHA.cpp</in>
         <in>iz_SSAHA.h</in>
         <in>main.cpp</in>
+        <in>main_lin.cpp</in>
         <in>pairwise.cpp</in>
         <in>pairwise.h</in>
         <in>poly.c</in>
@@ -46,8 +49,12 @@
         <in>rlmid.h</in>
         <in>sff.c</in>
         <in>sff.h</in>
+        <in>sff_lin.c</in>
+        <in>sff_lin.h</in>
         <in>sffreader.cpp</in>
         <in>sffreader.h</in>
+        <in>sffreader_lin.cpp</in>
+        <in>sffreader_lin.h</in>
         <in>timer.h</in>
         <in>util.cpp</in>
         <in>util.h</in>
@@ -92,19 +99,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/R1* -2 test_data/R2* -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -verbose -ow -detrep -minlen 50
-</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -verbose -ow -detrep -minlen 50 </runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U ../lucy_test/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 24 24 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -qual 0.01 0.01 -no_adapter_trim -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/test_SE.fastq -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/testIlluminaSE_SE.fastq -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/testIlluminaSE_SE.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/testIlluminaPE_PE1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_PE1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pe1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -new2old</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -U ../lucy_tests/fq2_bad_good.fastq -o test3 -bracket 10 1 -window 50 1 10 1 -ow -detrep -minlen 50 -verbose</runcommand>
+        <runcommand>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -new2old</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

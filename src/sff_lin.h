@@ -80,9 +80,6 @@
   #error Unknown location for endian.h
 #endif
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
 
 #define SFF_MAGIC   0x2e736666 /* ".sff" */
 #define SFF_VERSION "\0\0\0\1"
