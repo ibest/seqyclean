@@ -109,9 +109,11 @@ char* itoa(int value, char* result, int base) {
         return result;
 }
 
-string i2str(long long value, char* result, int base) {
+std::string i2str(long long value, char* result, int base) {
         // check that the base if valid
-	if (base < 2 || base > 36) { *result = '\0'; return string(result); }
+    //std::string result;
+    
+    if (base < 2 || base > 36) { *result = '\0'; return string(result); }
 	
         char* ptr = result, *ptr1 = result, tmp_char;
 	long long tmp_value;
