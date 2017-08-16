@@ -85,7 +85,7 @@ char *vector_file;
 char *cont_file;
 char* rlmids_file;
 // Starting position and a window size for searching for duplicates:
-int start_dw = 10, size_dw = 35, max_dup = 3;
+int start_dw = 10, size_dw = 20, max_dup = 3;
 
 /*Other parameters*/
 /*Illumina*/
@@ -227,7 +227,9 @@ int main(int argc, char *argv[])
 {
     double start, finish, elapsed;
     GET_TIME(start);
-
+    
+    default_windows(); //Call default windows for quality trimming
+    
     /*******************************************/
     /* Parse command line arguments */
     /*******************************************/
@@ -268,7 +270,6 @@ int main(int argc, char *argv[])
             fasta_output = true;
             continue;
         } else if(string(argv[i]) == "-window") {
-            default_windows();
             for (num_windows=0; (i+2)<argc; num_windows++) {
                 if (!isdigit(argv[i+1][0]))
                     break;
@@ -340,22 +341,17 @@ int main(int argc, char *argv[])
            shuffle_flag = true;
            continue;
         } else if( string(argv[i]) == "-dup" ) {
-           rem_dup = true; ++i;
-           
-           if((i+1)<argc && string(argv[i]) == "-startdw" ) 
-           {
-               start_dw = atoi(argv[++i]);
-           }
-           if((i+1)<argc && string(argv[i]) == "-sizedw" ) 
-           {
-               size_dw = atoi(argv[++i]);
-           }
-           if((i+1)<argc && string(argv[i]) == "-maxdup" ) 
-           {
-               max_dup = atoi(argv[++i]);
-           }
-           
+           rem_dup = true;
            continue;
+        } else if(string(argv[i]) == "-startdw") {
+            start_dw = atoi(argv[++i]);
+            continue;
+        } else if(string(argv[i]) == "-sizedw") {
+            size_dw = atoi(argv[++i]);
+            continue;
+        } else if(string(argv[i]) == "-maxdup") {
+            max_dup = atoi(argv[++i]);
+            continue;
         } else if( string(argv[i]) == "-ow" ) 
         {
            overwrite_flag = true;
