@@ -99,18 +99,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/test_SE.fastq -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/testIlluminaSE_SE.fastq -o test/test -qual 1 1 -ow -verbose</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/testIlluminaSE_SE.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/testIlluminaPE_PE1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_PE1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pat_pe1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/artif_pe1.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -v test_data/vectors.fasta</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -new2old</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -new2old -gz</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/TestSRR_PE1.fastq -2 test_data/TestSRR_PE2.fastq -o test/test -qual 24 24 -gz</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -qual 24 24 -gz</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -qual 24 24 -gz -no_adapter_trim</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -gz -no_adapter_trim</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim -ow</runcommandpicklistitem>
+          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim -ow -gz</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>bin/./seqyclean -U test_data/TestSRR_SE.fastq -o test/test -qual 24 24 -new2old</runcommand>
+        <runcommand>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim -ow -gz</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

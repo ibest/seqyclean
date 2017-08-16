@@ -1,7 +1,7 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.9.12 (2017-07-07)```
+Version: ```1.10.01 (2017-08-15)```
 
 Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
 
@@ -81,6 +81,7 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -at <value> - overlap threshold (only in paired-end mode, default = 0.75.
 -overlap <value> - Turns on merging overlapping paired-end reads. Parameter <value> is a minimum overlap length, default=16 bp.
 -new2old - A switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
+-gz - A flag that indicates compressed (.gz) output, default=off.
 ```
 
 # Examples

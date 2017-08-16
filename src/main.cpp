@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.9.12 (2017-07-07)";
+string version = "1.10.01 (2017-08-15)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -106,6 +106,7 @@ bool keep_fastq_orig = false;
 bool lucy_only_flag = false;
 bool verbose = false;
 bool detailed_report = false;
+bool compressed_output = false; // write to .gz file with gzstream library
 /*----------End of output data definition------------------*/
 
 
@@ -170,12 +171,13 @@ bool overlap_flag = false;
 string adapter_file;
 bool custom_adapters = false;
 
-void PrintHelp() {
-    cout << "Version: " << version << endl;
-    cout << "**********************************************************************************************************************\n";        
-    cout << "usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]\n"
-            "\n"
-            "Common arguments for all library types:\n"
+void PrintHelp() 
+{
+    std::cout << "Version: " << version << endl;
+    std::cout << "**********************************************************************************************************************\n";        
+    std::cout << "usage: ./seqyclean libflag input_file_name_1 [libflag input_file_name_2] -o output_prefix [options]\n";
+    std::cout <<        "\n";
+    std::cout <<        "Common arguments for all library types:\n"
             "   -h, --help - Show this help and exit.\n"
             "   -v <filename> - Turns on vector trimming, default=off. <filename> - is a path to a FASTA-file containing vector genomes.\n"
             "   -c <filename> - Turns on contaminants screening, default=off, <filename> - is a path to a FASTA-file containing contaminant genomes.\n"
@@ -206,18 +208,19 @@ void PrintHelp() {
             "   -alen <value> - Minimum adapter length for dovetail overlap, default = 60 bp.\n"
             "   -at <value> - Overlap threshold (only in paired-end mode, default = 0.75.\n"
             "   -overlap <minoverlap=value> - Flag to overlap paired-end reads (only in paired-end mode)\n"
-            "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n";
-cout <<"Examples\n"
-"Roche 454:\n"
-"./seqyclean -454 test_data/in_001.sff -o test/Test454 -v test_data/vectors.fasta\n"
-"Paired-end Illumina library:\n"
-"./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina\n"
-"Single-end Illumina library:\n"
-"./seqyclean -U test_data/R1.fastq.gz -o test/Test_Illumina\n";
+            "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n"
+            "   -gz - compressed output (GZip format, .gz).\n";
+//};
+    std::cout <<"Examples\n"
+                "Roche 454:\n"
+                "./seqyclean -454 test_data/in_001.sff -o test/Test454 -v test_data/vectors.fasta\n"
+                "Paired-end Illumina library:\n"
+                "./seqyclean -1 test_data/R1.fastq.gz -2 test_data/R2.fastq.gz -o test/Test_Illumina\n"
+                "Single-end Illumina library:\n"
+                "./seqyclean -U test_data/R1.fastq.gz -o test/Test_Illumina\n";
     
     
-    cout << "Please ask Ilya by email: zhba3458@vandals.uidaho.edu in case of any questions.\n" ;
- 
+    std::cout << "Please ask Ilya by email: zhba3458@vandals.uidaho.edu in case of any questions.\n" ;
 }
 
 int main(int argc, char *argv[]) 
@@ -604,7 +607,12 @@ int main(int argc, char *argv[])
             }
             
             continue;
-        } else {
+        } 
+        else if(string(argv[i]) == "-gz" ) { // Write to .gz format
+           compressed_output = true;
+           continue;
+        }
+        else {
             cout << "Unknown parameter: " << argv[i] << endl;
             PrintHelp();
             return 0;
@@ -760,16 +768,18 @@ int main(int argc, char *argv[])
     } else {
         if(illumina_flag || illumina_se_flag)
         {
-                if(exists( (char*)(output_prefix + "_PE1.fastq").c_str() ) && !overwrite_flag)
-                {
-                    cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
-                    return 0;
-                }
-                if(exists( (char*)(output_prefix + "_PE2.fastq").c_str() ) && !overwrite_flag)
-                {
-                    cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
-                    return 0;
-                }
+            std::string tmpname = output_prefix + (compressed_output ? "_PE1.fastq.gz" : "_PE1.fastq");
+            if(exists( (char*)tmpname.c_str() ) && !overwrite_flag)
+            {
+                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                return 0;
+            }
+            tmpname = output_prefix + (compressed_output ? "_PE2.fastq.gz" : "_PE2.fastq");
+            if(exists( (char*)tmpname.c_str() ) && !overwrite_flag)
+            {
+                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                return 0;
+            }
         }
         if(roche_flag) 
         {
@@ -920,10 +930,11 @@ int main(int argc, char *argv[])
         
                 rep_file_name1 = output_prefix + "_PE1_Report.tsv";
                 rep_file_name2 = output_prefix + "_PE2_Report.tsv";
-                pe_output_filename1 =  output_prefix + ((fasta_output) ? "_PE1.fasta" : "_PE1.fastq") ;
-                pe_output_filename2 =  output_prefix + ((fasta_output) ? "_PE2.fasta" : "_PE2.fastq")  ;
-                shuffle_filename = output_prefix + ((fasta_output) ? "_shuffled.fasta" : "_shuffled.fastq") ;
-                se_filename = output_prefix + ((fasta_output) ? "_SE.fasta" : "_SE.fastq") ;
+                
+                pe_output_filename1 =  output_prefix + ((fasta_output) ? "_PE1.fasta" : compressed_output ? "_PE1.fastq.gz" : "_PE1.fastq") ;
+                pe_output_filename2 =  output_prefix + ((fasta_output) ? "_PE2.fasta" : compressed_output ? "_PE2.fastq.gz" : "_PE2.fastq") ;
+                shuffle_filename = output_prefix + ((fasta_output) ? "_shuffled.fasta" : compressed_output ? "_shuffled.fastq.gz" : "_shuffled.fastq") ;
+                se_filename = output_prefix + ((fasta_output) ? "_SE.fasta" : compressed_output ? "_SE.fastq.gz" : "_SE.fastq") ;
                 
                 
         
@@ -946,7 +957,7 @@ int main(int argc, char *argv[])
                 sum_stat << "Single-end reads: "<< se_filename << endl;
                 
                 if(overlap_flag) {
-                    overlap_file_name = output_prefix + ((fasta_output) ? "_SEOLP.fasta" : "_SEOLP.fastq");
+                    overlap_file_name = output_prefix + ((fasta_output) ? "_SEOLP.fasta" : compressed_output ? "_SEOLP.fastq.gz" : "_SEOLP.fastq");
                     sum_stat << "Single-end overlapped reads: "<< overlap_file_name << endl;
                 }
         
@@ -1051,7 +1062,7 @@ int main(int argc, char *argv[])
                 sum_stat << "Output prefix: " << output_prefix << endl;
         
                 rep_file_name1 = output_prefix + "_SE_Report.tsv";
-                se_output_filename =  output_prefix + ((fasta_output) ? "_SE.fasta" : "_SE.fastq") ;
+                se_output_filename =  output_prefix + ((fasta_output) ? "_SE.fasta" : compressed_output ? "_SE.fastq.gz" : "_SE.fastq") ;
                 
                 cout << "Report file: " << rep_file_name1 << endl;
                 sum_stat << "Report file: " << rep_file_name1<< endl;

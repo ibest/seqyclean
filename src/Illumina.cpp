@@ -1,5 +1,7 @@
 #include "Illumina.h"
 
+extern bool compressed_output;
+
 /*i5 adapter*/
 string tmpl_i5_1 = "AATGATACGGCGACCACCGAGATCTACAC";//"AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"; // "TACACTCTTTCCCTACACGACGCTCTTCCGATCT"
 string tmpl_i5_2 = "ACACTCTTTCCCTACACGACGCTCTTCCGATCT"; 
@@ -91,6 +93,9 @@ void IlluminaDynamic()
     left_trimmed_by_polyat1 = left_trimmed_by_polyat2 = 0;
     
     fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file, overlap_file;
+    
+    ogzstream pe_output_file1_gz, pe_output_file2_gz, shuffle_file_gz, se_file_gz, overlap_file_gz;
+    
     if (detailed_report) {
         rep_file1.open(rep_file_name1.c_str(),ios::out);
         rep_file2.open(rep_file_name2.c_str(),ios::out);
@@ -111,8 +116,18 @@ void IlluminaDynamic()
     
     if (!shuffle_flag)
     {
-        pe_output_file1.open( pe_output_filename1.c_str(), ios::out );
-        pe_output_file2.open( pe_output_filename2.c_str(), ios::out );
+        if(compressed_output)
+        {
+            pe_output_file1_gz.open( pe_output_filename1.c_str() );
+            pe_output_file2_gz.open( pe_output_filename2.c_str() ); 
+        } else 
+        {
+            pe_output_file1.open( pe_output_filename1.c_str(), ios::out );
+            pe_output_file2.open( pe_output_filename2.c_str(), ios::out );
+        }
+        
+        
+       
     } 
     else
     {
@@ -201,7 +216,7 @@ void IlluminaDynamic()
                         
                     if(read1->initial_length <= minimum_read_length)
                     {
-                        cout << "Warming: in PE1 file raw read length is less or equal then minimum_read_length\n" ; 
+                        std::cout << "Warming: in PE1 file raw read length is less or equal then minimum_read_length\n" ; 
                         sum_stat << "Warming: in PE1 file raw read length is less or equal then minimum_read_length\n" ; 
                     }
                     
@@ -214,14 +229,14 @@ void IlluminaDynamic()
                         
                     if(read2->initial_length <= minimum_read_length)
                     {
-                        cout << "Warming: in PE2 file, the raw read length is less or equal than minimum_read_length\n" ; 
+                        std::cout << "Warming: in PE2 file, the raw read length is less or equal than minimum_read_length\n" ; 
                         sum_stat << "Warming: in PE2 file, the raw read length is less or equal than minimum_read_length\n" ; 
                     }
                     
                     // We have to make the length of the reads to be equal:
-                    unsigned int rlen = min(read1->read.length(), read2->read.length());
-                    read1->read = read1->read.substr(0,rlen);
-                    read2->read = read2->read.substr(0,rlen);
+                    //unsigned int rlen = min(read1->read.length(), read2->read.length());
+                    //read1->read = read1->read.substr(0,rlen);
+                    //read2->read = read2->read.substr(0,rlen);
                         
                     //Serial realization - useful for debugging if something does not work as expected
                     //Duplicates removal
@@ -297,7 +312,13 @@ void IlluminaDynamic()
                     } 
                     
                     if(overlap_found && overlap_flag && (c->discarded == 0)) {
-                         WriteSEFile(se_file, c);
+                        if(compressed_output) 
+                        {
+                            WriteSEFileGZ(se_file_gz, c);
+                        } else 
+                        { 
+                            WriteSEFile(se_file, c);
+                        }
                     } else {
                         // Удалить адаптеры, ошибочно считанные нуклеотиды и т.д.:
                         TrimIllumina(read1, read2);
@@ -308,12 +329,28 @@ void IlluminaDynamic()
                         avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + (read2->rclip - read2->lclip))/(pe_accept_cnt+1);
                         
                         if (!shuffle_flag) {
-                            WritePEFile(pe_output_file1, read1);
-                            WritePEFile(pe_output_file2, read2);
+                            if(compressed_output)
+                            {
+                                WritePEFileGZ(pe_output_file1_gz, read1);
+                                WritePEFileGZ(pe_output_file2_gz, read2);
+                            }
+                            else 
+                            {
+                                WritePEFile(pe_output_file1, read1);
+                                WritePEFile(pe_output_file2, read2);
+                            }
                             pe_bases_kept += (long long)read1->read.length();
                             pe_bases_kept += (long long)read2->read.length();
                         } else {
-                            WriteShuffleFile( shuffle_file, read1, read2 );
+                            if(compressed_output)
+                            {
+                                WriteShuffleFileGZ( shuffle_file_gz, read1, read2 );
+                            }
+                            else 
+                            {
+                                WriteShuffleFile( shuffle_file, read1, read2 );
+                            }
+                            
                             pe_bases_kept += (long long)read1->read.length();
                             pe_bases_kept += (long long)read2->read.length();
                         }
@@ -332,15 +369,31 @@ void IlluminaDynamic()
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read1->illumina_readID = read1->illumina_readID.substr(0,read1->illumina_readID.length()-2);                                  
                                   
-                        WriteSEFile( se_file, read1 );
+                        if(compressed_output)
+                        {
+                            WriteSEFileGZ( se_file_gz, read1 );
+                        }
+                        else 
+                        {
+                            WriteSEFile( se_file, read1 );
+                        }
+                        
                         se_pe1_accept_cnt+=1;
                         se_pe1_bases_kept += read1->read.length();
                         
                     } else if( (read1->discarded == 1) && (read2->discarded == 0) ) {
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read2->illumina_readID = read2->illumina_readID.substr(0,read2->illumina_readID.length()-3);                                  
-                                
-                        WriteSEFile( se_file, read2 );
+                        
+                        if(compressed_output)
+                        {
+                            WriteSEFileGZ( se_file_gz, read2 );
+                        }
+                        else 
+                        {
+                            WriteSEFile( se_file, read2 );
+                        }
+                        
                         se_pe2_accept_cnt +=1;
                         se_pe2_bases_kept += read2->read.length();
                      
@@ -448,6 +501,21 @@ void IlluminaDynamic()
         }
         in1.close();
         in2.close();
+        
+        rep_file1.close();
+        rep_file2.close();
+        pe_output_file1.close();
+        pe_output_file2.close();
+        shuffle_file.close();
+        se_file.close();
+        overlap_file.close();
+    
+        pe_output_file1_gz.close();
+        pe_output_file2_gz.close();
+        shuffle_file_gz.close();
+        se_file_gz.close(); 
+        overlap_file_gz.close();
+    
     }
     
     
@@ -886,8 +954,24 @@ void WriteSEOverlap(fstream &overlap_file, Read *read)
     overlap_file << read->illumina_quality_string << endl;
 }
 
+void WriteSEOverlapGZ(ogzstream &overlap_file, Read *read)
+{
+    overlap_file << read->illumina_readID << endl;
+    overlap_file << read->read << endl;
+    overlap_file << '+' << endl;
+    overlap_file << read->illumina_quality_string << endl;
+}
+
 
 void WritePEFile(fstream &pe_output_file, Read *read)
+{
+    pe_output_file << read->illumina_readID << endl;
+    pe_output_file << read->read << endl;
+    pe_output_file << '+' << endl;
+    pe_output_file << read->illumina_quality_string << endl;
+}
+
+void WritePEFileGZ(ogzstream &pe_output_file, Read *read)
 {
     pe_output_file << read->illumina_readID << endl;
     pe_output_file << read->read << endl;
@@ -908,7 +992,29 @@ void WriteShuffleFile(fstream &shuffle_output_file, Read *read1, Read *read2)
     shuffle_output_file << read2->illumina_quality_string << endl;
 }
 
+void WriteShuffleFileGZ(ogzstream &shuffle_output_file, Read *read1, Read *read2)
+{
+    shuffle_output_file << read1->illumina_readID << endl;
+    shuffle_output_file << read1->read << endl;
+    shuffle_output_file << '+' << endl;
+    shuffle_output_file << read1->illumina_quality_string << endl;
+    
+    shuffle_output_file << read2->illumina_readID << endl;
+    shuffle_output_file << read2->read << endl;
+    shuffle_output_file << '+' << endl;
+    shuffle_output_file << read2->illumina_quality_string << endl;
+}
+
 void WriteSEFile(fstream &se_output_file, Read *read)
+{
+    se_output_file << read->illumina_readID << endl;
+    se_output_file << read->read << endl;
+    se_output_file << '+' << endl;
+    se_output_file << read->illumina_quality_string << endl;
+}
+
+
+void WriteSEFileGZ(ogzstream &se_output_file, Read *read)
 {
     se_output_file << read->illumina_readID << endl;
     se_output_file << read->read << endl;
@@ -961,6 +1067,8 @@ void IlluminaDynamicSE()
     long long discarded_by_polyAT = 0;
     
     fstream rep_file, se_output_file;
+    ogzstream se_output_file_gz;
+    
     if (detailed_report) {
         rep_file.open(rep_file_name1.c_str(),ios::out);
         rep_file << "ReadID\tlclip\trclip\tTruSeq_pos\tTruSeq_type\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVectorID\tVecStart\tVecEnd\tVecLen\n";
@@ -973,8 +1081,14 @@ void IlluminaDynamicSE()
     vector<string> record_block;
     
     
-    
-    se_output_file.open( se_output_filename.c_str(), ios::out );
+    if(compressed_output)
+    {
+        se_output_file_gz.open( se_output_filename.c_str());
+    }
+    else 
+    {
+        se_output_file.open( se_output_filename.c_str(), ios::out );
+    }
     
     string st_str;
     //int first_avg = 0;
@@ -1086,8 +1200,14 @@ void IlluminaDynamicSE()
                           read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
                           
                           
-                          
-                          WriteSEFile(se_output_file, read);
+                          if(compressed_output)
+                          {
+                              WriteSEFileGZ(se_output_file_gz, read);
+                          }
+                          else 
+                          {
+                              WriteSEFile(se_output_file, read);
+                          }
                           
                           se_bases_kept += read->read.length();
                         } 
@@ -1163,6 +1283,9 @@ void IlluminaDynamicSE()
                 }
         }
         in.close();
+        
+        se_output_file_gz.close();
+        se_output_file.close();
         
     }
     
@@ -1572,9 +1695,9 @@ void RemoveContaminants(vector<Read*>& illumina_reads)
                                 
                         }
                 }
-                catch(exception& e)
+                catch(std::exception& e)
                 {
-                        cout << e.what() << endl;
+                        std::cout << e.what() << "\n";
                 }
         }
     }

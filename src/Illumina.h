@@ -103,12 +103,17 @@ void IlluminaDynamic();
 void IlluminaDynamic();
 int IlluminaDynRoutine(Read* read, bool& adapter_found, string& query_str);
 void WritePEFile(fstream &pe_output_file, Read *read);
+void WritePEFileGZ(ogzstream &pe_output_file, Read *read);
 void WriteShuffleFile(fstream &shuffle_output_file, Read *read1, Read *read2);
+void WriteShuffleFileGZ(ogzstream &shuffle_output_file, Read *read1, Read *read2);
 void WriteSEFile(fstream &se_output_file, Read *read);
+void WriteSEFileGZ(ogzstream &se_output_file, Read *read);
+void WriteSEOverlap(fstream &overlap_file, Read *read);
+void WriteSEOverlapGZ(ogzstream &overlap_file, Read *read);
 string New2OldNbl(string header);
 void IlluminaDynamicSE();
 void MakeClipPointsIllumina(Read* read);
-void WriteSEOverlap(fstream &overlap_file, Read *read);
+
 int IlluminaDynRoutine_post(Read* read);
 
 
