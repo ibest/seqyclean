@@ -8,12 +8,7 @@ OBJ = obj/
 LIBRARY := ${OBJ}lgzstream.a
 PLATFORM  = -DAPPLE
 #GCCVERSION = $(shell gcc --version | grep ^gcc | sed 's/^.* //g')
-GCCVERSION = $(shell g++ -dumpversion)
-#echo ${GCCVERSION}
-
-if [ "$(GCCVERSION)" > "4.0" ] ; then \
-   $(CFLAGS) = -Wall -g -std=c++11; \
-fi
+#GCCVERSION = $(shell g++ -dumpversion)
 
 ifeq ($(PLATFORM),-DAPPLE)
 
@@ -36,11 +31,12 @@ ifeq ($(PLATFORM),-DAPPLE)
 	$(CXX) $(CFLAGS) -O3  -c -o $(OBJ)Roche.o $(SRC)Roche.cpp 
 	
     Illumina.o : 
-	if [ "$(GCCVERSION)" > "4.2" ] ; then \
-            $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
-        else \
-            $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
-        fi
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp
+	#if [ "$(GCCVERSION)" > "4.2" ] ; then \
+        #    $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
+        #else \
+        #    $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
+        #fi
 	 
 
     MainPipeLine.o :
@@ -113,11 +109,12 @@ else
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)Roche.o $(SRC)Roche_lin.cpp 
 	
     Illumina.o : 
-	if [ "$(GCCVERSION)" > "4.2" ] ; then \
-            $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
-        else \
-            $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
-        fi
+	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp
+	#if [ "$(GCCVERSION)" > "4.2" ] ; then \
+        #    $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
+        #else \
+        #    $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
+        #fi
 
     MainPipeLine.o :
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
