@@ -118,17 +118,46 @@ Trimming of adapters, vectors and contaminant screening are performed, quality t
 
 ## BibText
 ```
-@misc{seqyclean,
-author = {Ilya Zhbannikov and Samuel Hunter and James Foster and Matthew Settles},
-title = {SeqyClean User Manual},
-howpublished = {\url{https://github.com/ibest/seqyclean}},
-year = {2012--2017}
-}
+@inproceedings{Zhbannikov:2017:SPH:3107411.3107446,
+ author = {Zhbannikov, Ilya Y. and Hunter, Samuel S. and Foster, James A. and Settles, Matthew L.},
+ title = {SeqyClean: A Pipeline for High-throughput Sequence Data Preprocessing},
+ booktitle = {Proceedings of the 8th ACM International Conference on Bioinformatics, Computational Biology,and Health Informatics},
+ series = {ACM-BCB '17},
+ year = {2017},
+ isbn = {978-1-4503-4722-8},
+ location = {Boston, Massachusetts, USA},
+ pages = {407--416},
+ numpages = {10},
+ url = {http://doi.acm.org/10.1145/3107411.3107446},
+ doi = {10.1145/3107411.3107446},
+ acmid = {3107446},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {data preprocessing, high-throughput dna sequencing, sequence analysis},
+} 
 ```
 
-## Plain text
+## Plain text (ACM Ref)
 ```
-Ilya Zhbannikov, Samuel Hunter, James Foster, and Matthew Settles. SeqyClean User Manual. https://github.com/ibest/seqyclean, 2012–2017.
+Ilya Y. Zhbannikov, Samuel S. Hunter, James A. Foster, and Matthew L. Settles. 2017. SeqyClean: A Pipeline for High-throughput Sequence Data Preprocessing. In Proceedings of the 8th ACM International Conference on Bioinformatics, Computational Biology,and Health Informatics (ACM-BCB '17). ACM, New York, NY, USA, 407-416. DOI: https://doi.org/10.1145/3107411.3107446
+```
+
+## EndNote
+```
+%0 Conference Paper
+%1 3107446
+%A Ilya Y. Zhbannikov
+%A Samuel S. Hunter
+%A James A. Foster
+%A Matthew L. Settles 
+%T SeqyClean: A Pipeline for High-throughput Sequence Data Preprocessing
+%B Proceedings of the 8th ACM International Conference on Bioinformatics, Computational Biology,and Health Informatics
+%@ 978-1-4503-4722-8
+%C Boston, Massachusetts, USA
+%P 407-416
+%D 2017
+%R 10.1145/3107411.3107446
+%I ACM
 ```
 
 # Contacts
