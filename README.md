@@ -1,7 +1,7 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.10.01 (2017-08-15)```
+Version: ```1.10.02 (2017-08-28)```
 
 Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
 

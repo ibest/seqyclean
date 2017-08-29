@@ -5,6 +5,7 @@
       <df name="src">
         <in>Dictionary.cpp</in>
         <in>Illumina.cpp</in>
+        <in>Illumina_retro_compiler.cpp</in>
         <in>KMerRoutine.cpp</in>
         <in>MainPipeLine.cpp</in>
         <in>QualTrim.cpp</in>
@@ -66,7 +67,9 @@
       </makefileType>
       <item path="src/Dictionary.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/Illumina.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/Illumina.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="src/Illumina_retro_compiler.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/KMerRoutine.cpp" ex="false" tool="1" flavor2="0">
       </item>

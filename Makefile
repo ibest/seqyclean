@@ -7,6 +7,11 @@ BIN = bin/
 OBJ = obj/
 LIBRARY := ${OBJ}lgzstream.a
 PLATFORM  = -DAPPLE
+#GCCVERSION = $(shell gcc --version | grep ^gcc | sed 's/^.* //g')
+GCCVERSION = $(shell g++ -dumpversion)
+#echo ${GCCVERSION}
+
+
 
 ifeq ($(PLATFORM),-DAPPLE)
 
@@ -29,7 +34,12 @@ ifeq ($(PLATFORM),-DAPPLE)
 	$(CXX) $(CFLAGS) -O3  -c -o $(OBJ)Roche.o $(SRC)Roche.cpp 
 	
     Illumina.o : 
-	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
+	if [ "$(GCCVERSION)" > "4.2" ] ; then \
+            $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
+        else \
+            $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
+        fi
+	 
 
     MainPipeLine.o :
 	$(CXX) $(CFLAGS) -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
@@ -101,7 +111,11 @@ else
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)Roche.o $(SRC)Roche_lin.cpp 
 	
     Illumina.o : 
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp 
+	if [ "$(GCCVERSION)" > "4.2" ] ; then \
+            $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
+        else \
+            $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
+        fi
 
     MainPipeLine.o :
 	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
