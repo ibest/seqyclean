@@ -85,7 +85,7 @@ void process_sff_to_fastq(char *sff_file, int trim_flag) {
     
     unsigned int numreads = h.nreads;
     
-    for (int i = 0; i < numreads; i++) { //cout << i << " " << numreads << endl;
+    for (unsigned int i = 0; i < numreads; i++) { //cout << i << " " << numreads << endl;
         read_sff_read_header(sff_fp, &rh);
         read_sff_read_data(sff_fp, &rd, h.flow_len, rh.nbases);
         
@@ -297,8 +297,8 @@ void process_fastq_to_sff(char *sff_file) {
         
         
         readData.quality = (uint8_t*)malloc(sizeof(uint8_t)*(readHeader.nbases));
-        int j=0;
-        for(j=0; j<readHeader.nbases; ++j)
+        
+        for(unsigned int j=0; j<readHeader.nbases; ++j)
         {
             readData.quality[j] = reads[i]->quality[j] - 33;
             

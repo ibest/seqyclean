@@ -1041,8 +1041,8 @@ void IlluminaDynamicSE()
     //long long avg_left_clip = 0;
     //long long avg_right_clip = 0;
     
-    long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
-    long long cnt_avg_len; cnt_avg_len = 0;
+    //long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
+    //long long cnt_avg_len; cnt_avg_len = 0;
                  
     double avg_len_se; avg_len_se = 0.0;
     double cnt_right_trim_se, avg_right_trim_len_se; 

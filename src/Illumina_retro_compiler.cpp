@@ -122,8 +122,8 @@ void IlluminaDynamic()
             pe_output_file2_gz.open( pe_output_filename2.c_str() ); 
         } else 
         {
-            pe_output_file1.open( pe_output_filename1, std::ios::out );
-            pe_output_file2.open( pe_output_filename2, std::ios::out );
+            pe_output_file1.open( pe_output_filename1.c_str(), std::ios::out );
+            pe_output_file2.open( pe_output_filename2.c_str(), std::ios::out );
         }
         
         
@@ -137,7 +137,7 @@ void IlluminaDynamic()
         }
         else
         {
-            shuffle_file.open( shuffle_filename, std::ios::out );
+            shuffle_file.open( shuffle_filename.c_str(), std::ios::out );
         } 
     }
 
@@ -1041,8 +1041,8 @@ void IlluminaDynamicSE()
     //long long avg_left_clip = 0;
     //long long avg_right_clip = 0;
     
-    long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
-    long long cnt_avg_len; cnt_avg_len = 0;
+    //long long cnt_avg; cnt_avg = 0; //Counters needed for calculating the average trimming length
+    //long long cnt_avg_len; cnt_avg_len = 0;
                  
     double avg_len_se; avg_len_se = 0.0;
     double cnt_right_trim_se, avg_right_trim_len_se; 
@@ -1094,7 +1094,7 @@ void IlluminaDynamicSE()
     }
     else 
     {
-        se_output_file.open( se_output_filename, std::ios::out );
+        se_output_file.open( se_output_filename.c_str(), std::ios::out );
     }
     
     std::string st_str;
