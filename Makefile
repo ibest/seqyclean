@@ -11,7 +11,9 @@ PLATFORM  = -DAPPLE
 GCCVERSION = $(shell g++ -dumpversion)
 #echo ${GCCVERSION}
 
-
+if [ "$(GCCVERSION)" > "4.0" ] ; then \
+   $(CFLAGS) = -Wall -g -std=c++11; \
+fi
 
 ifeq ($(PLATFORM),-DAPPLE)
 
