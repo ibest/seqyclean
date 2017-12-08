@@ -53,12 +53,6 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath>bin/seqyclean</executablePath>
-          <ccTool>
-            <incDir>
-              <pElem>src</pElem>
-              <pElem>.</pElem>
-            </incDir>
-          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
@@ -66,46 +60,190 @@
         </preBuild>
       </makefileType>
       <item path="src/Dictionary.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/Illumina.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/Illumina_retro_compiler.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/KMerRoutine.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/MainPipeLine.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/QualTrim.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/Read.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/Report.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/Roche.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/abi.c" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/ascii.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/dup.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/flash.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/gzstream.C" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/iz_SSAHA.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/pairwise.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/poly.c" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/sff.c" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/sffreader.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>src</pElem>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
       <item path="src/util.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include</pElem>
+            <pElem>src</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
       </item>
     </conf>
   </confs>

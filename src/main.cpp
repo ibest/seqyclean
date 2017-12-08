@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.10.02 (2017-08-28)";
+string version = "1.10.03 (2017-12-08)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -162,7 +162,7 @@ bool i64_flag = false;
 bool fasta_output = false;
 
 /*Overlap parameters*/
-unsigned int adapterlength = 60;
+unsigned int adapterlength = 10;
 double overlap_t = 0.75;
 unsigned int minoverlap = 60;
 bool overlap_flag = false;
@@ -205,9 +205,8 @@ void PrintHelp()
             "   -shuffle - Store non-paired Illumina reads in shuffled file, default=off.\n"
             "   -i64 - Turns on 64-quality base, default = off.\n"
             "   -adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters\n"
-            "   -alen <value> - Minimum adapter length for dovetail overlap, default = 60 bp.\n"
-            "   -at <value> - Overlap threshold (only in paired-end mode, default = 0.75.\n"
-            "   -overlap <minoverlap=value> - Flag to overlap paired-end reads (only in paired-end mode)\n"
+            "   -at <value> - This option sets the similarity threshold for adapter trimming by overlap (only in paired-end mode). By default its value is set to 0.75.\n"
+            "   -overlap <value> - This option turns on merging overlapping paired-end reads and <value> is the minimum overlap length. By default the minimum overlap length is 16 base pairs.\n"
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n"
             "   -gz - compressed output (GZip format, .gz).\n";
 //};
@@ -220,7 +219,7 @@ void PrintHelp()
                 "./seqyclean -U test_data/R1.fastq.gz -o test/Test_Illumina\n";
     
     
-    std::cout << "Please ask Ilya by email: zhba3458@vandals.uidaho.edu in case of any questions.\n" ;
+    std::cout << "Please ask Ilya by email: ilya.zhbannikov@duke.edu in case of any questions.\n" ;
 }
 
 int main(int argc, char *argv[]) 
@@ -411,14 +410,14 @@ int main(int argc, char *argv[])
              rlmids_file = argv[++i]; /*Custom file with RL MIDS given*/
            }
            continue;
-        } else if(string(argv[i]) == "-alen" ) // To control adapter length
+        } /*else if(string(argv[i]) == "-alen" ) // To control adapter length
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
              adapterlength = atoi(argv[++i]); 
            }
            continue;
-        } else if(string(argv[i]) == "-at" )
+        }*/ else if(string(argv[i]) == "-at" )
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {

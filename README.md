@@ -1,7 +1,7 @@
 # Description
 
 Program ```SeqyClean```
-Version: ```1.10.02 (2017-08-28)```
+Version: ```1.10.03 (2017-12-08)```
 
 Main purpose of this software is to pre-process NGS data in order to prepare for downstream analysis.
 
@@ -77,9 +77,8 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -shuffle - Store non-paired Illumina reads in shuffled file, default=off.
 -i64 - Turns on 64-quality base, default = off.
 -adp <filename> - Turns on using custom adapters, default=off. <filename> - FASTA file with adapters
--alen <value> - Minimum adapter length for dovetail overlap for adapter trimming, default = 60 bp.
--at <value> - overlap threshold (only in paired-end mode, default = 0.75.
--overlap <value> - Turns on merging overlapping paired-end reads. Parameter <value> is a minimum overlap length, default=16 bp.
+-at <value> - This option sets the similarity threshold for adapter trimming by overlap (only in paired-end mode). By default its value is set to 0.75.
+-overlap <value> - This option turns on merging overlapping paired-end reads and <value> is the minimum overlap length. By default the minimum overlap length is 16 base pairs.
 -new2old - A switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
 -gz - A flag that indicates compressed (.gz) output, default=off.
 ```

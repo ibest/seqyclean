@@ -17,12 +17,12 @@ int strdist(string s1, string s2) {
 }
 
 
-int find_overlap_pos(string seq1, string seq2, int adapterlength) {
+int find_overlap_pos(std::string seq1, std::string seq2, int adapterlength) {
     //compare sequences starting at a dovetailed overlap defined by adapterlength
     //Note: this assumes untrimmed sequences of equal length and reports an overlap
     //when 90% identity otherwise it checks until overlap is < minoverlap
-    string s1 = seq1;
-    string s2 = seq2;
+    std::string s1 = seq1;
+    std::string s2 = seq2;
     unsigned int rlen = s1.length();
     //first check for dovetail:
     if( s1.length() != s2.length() ) {
