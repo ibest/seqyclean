@@ -19,6 +19,8 @@ extern double overlap_t;
 extern unsigned int minoverlap;
 extern bool overlap_flag;
 extern bool i64_flag;
+extern short phred_coeff_illumina64;
+extern short phred_coeff_illumina;
 
 int find_overlap_pos(std::string seq1, std::string seq2, int adapterlength);
 int strdist(std::string s1, std::string s2);

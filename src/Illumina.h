@@ -54,7 +54,7 @@ extern float max_a_error;
 extern float max_e_at_ends;
 
 extern bool old_style_illumina_flag;
-extern int phred_coeff_illumina; //by default assume new illumina (1.8)
+extern short phred_coeff_illumina; //by default assume new illumina (1.8)
 extern bool i64_flag;
 
 extern unsigned int adapterlength;
