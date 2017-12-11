@@ -27,7 +27,7 @@ using namespace std;
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.10.03 (2017-12-08)";
+string version = "1.10.04 (2017-12-11)";
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -157,12 +157,13 @@ vector<char*> pe1_names, pe2_names, roche_names, se_names;
 
 /*Input format parameters*/
 bool old_style_illumina_flag = false;
-int phred_coeff_illumina = 33; //by default assume new illumina (1.8)
+short phred_coeff_illumina = 33; //by default assume new illumina (1.8)
+short phred_coeff_illumina64 = 64;
 bool i64_flag = false;
 bool fasta_output = false;
 
 /*Overlap parameters*/
-unsigned int adapterlength = 10;
+unsigned int adapterlength = 1;
 double overlap_t = 0.75;
 unsigned int minoverlap = 60;
 bool overlap_flag = false;
@@ -653,12 +654,12 @@ int main(int argc, char *argv[])
             }
         } else 
         {
-                if(pe1_names.size() != pe2_names.size())
-                {
+            if(pe1_names.size() != pe2_names.size())
+            {
                         cout<< "Error: numbers of PE1 files and PE2 files do not match!\n";
                         return 0;
-                } else
-                {
+            } else
+            {
                         for(int i=0; i<(int)pe1_names.size(); ++i)
                         {
                                if ( !exists( pe1_names[i] ) )
@@ -724,8 +725,8 @@ int main(int argc, char *argv[])
     {
         if (!exists( vector_file ) )
         {
-                cout<< "Error: vector file provided " <<  vector_file << " does not exist\n";
-                return 0;
+            cout<< "Error: vector file provided " <<  vector_file << " does not exist\n";
+            return 0;
         }
     }
     
@@ -733,8 +734,8 @@ int main(int argc, char *argv[])
     {
         if (!exists( cont_file ) )
         {
-                cout<< "Error: contaminants file provided " <<  cont_file << " does not exist\n";
-                return 0;
+            cout<< "Error: contaminants file provided " <<  cont_file << " does not exist\n";
+            return 0;
         }
     }
     
@@ -749,18 +750,19 @@ int main(int argc, char *argv[])
     }
     if ( (t_prefix != "") && (!exists( (char*)t_prefix.c_str() ) ) )
     {
-         cout<< "Warning: path " <<  t_prefix << " in output prefix does not exist" << endl;
-         cout << "Trying to create...\n";
-         if ( MakeDirectory(t_prefix) == 0 )
-         {
-             cout << "Sucess!\n";
-         } 
-         else
-         {
-             cout << "Could not created following path: " << t_prefix << "\n";
-             return 0;
-         }
-    } else {
+        std::cout<< "Warning: path " <<  t_prefix << " in output prefix does not exist\n";
+        std::cout << "Trying to create...\n";
+        if ( MakeDirectory(t_prefix) == 0 )
+        {
+            cout << "Sucess!\n";
+        } 
+        else
+        {
+            cout << "Could not created following path: " << t_prefix << "\n";
+            return 0;
+        }
+    } else 
+    {
         if(illumina_flag || illumina_se_flag)
         {
             std::string tmpname = output_prefix + (compressed_output ? "_PE1.fastq.gz" : "_PE1.fastq");
@@ -772,7 +774,7 @@ int main(int argc, char *argv[])
             tmpname = output_prefix + (compressed_output ? "_PE2.fastq.gz" : "_PE2.fastq");
             if(exists( (char*)tmpname.c_str() ) && !overwrite_flag)
             {
-                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                std::cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean.\n";
                 return 0;
             }
         }
@@ -780,12 +782,12 @@ int main(int argc, char *argv[])
         {
             if(exists( (char*)(output_prefix + ".sff").c_str() ) && !overwrite_flag)
             {
-                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                std::cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean.\n";
                 return 0;
             }
             if(exists( (char*)(t_prefix + ".fastq").c_str() ) && output_fastqfile_flag && !overwrite_flag)
             {
-                cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean." << endl;
+                std::cout << "The output files you have specified already exist. Please delete these files or change your output file name and re-run SeqyClean.";
                 return 0;
             }
         }
@@ -814,7 +816,7 @@ int main(int argc, char *argv[])
     
     if( (illumina_flag ) && (roche_flag ) ) 
     {
-        cout << "Error! You can not use both 454 and Illumina modes in the same run. Use 454 or Illumina only, but not both!\n";
+        std::cout << "Error! You can not use both 454 and Illumina modes in the same run. Use 454 or Illumina only, but not both!\n";
         sum_stat << "Error! You can not use both 454 and Illumina modes in the same run. Use 454 or Illumina only, but not both!\n";
         sum_stat.close();
         
@@ -826,394 +828,398 @@ int main(int argc, char *argv[])
     }
     
     //Printing parameters
-    cout << "====================Parameters========================\n";
+    std::cout << "====================Parameters========================\n";
     sum_stat << "====================Parameters========================\n";
     
     
-    cout << "Version: " << version << endl;
+    std::cout << "Version: " << version << endl;
     sum_stat << "Version: " << version << endl;
     if(illumina_flag)
     {
-        cout << "--------------------Basic parameters--------------------\n";
+        std::cout << "--------------------Basic parameters--------------------\n";
         sum_stat << "--------------------Basic parameters--------------------\n";
         
         //Sum stat TSV header
-        
-        
         if(!illumina_se_flag)
         {
-        
             sum_stat_tsv << "Version\tPE1PE2\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename1\tRepFilename2\tPE1OutputFilename\tPE2OutputFilename\tShuffledFilename\tSEFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tPE1ReadsAn\tPE1Bases\tPE1TruSeqAdap_found\tPerc_PE1TruSeq\tPE1ReadsWVector_found\tPerc_PE1ReadsWVector\tPE1ReadsWContam_found\tPerc_PE1ReadsWContam\tPE1LeftTrimmedQual\tPE1LeftTrimmedVector\tPE1AvgLeftTrimLen\tPE1RightTrimmedAdap\tPE1RightTrimmedQual\tPE1RightTrimmedVector\tPE1AvgRightTrimLen\tPE1DiscardedTotal\tPE1DiscByContam\tPE1DiscByLength\tPE2ReadsAn\tPE2Bases\tPE2TruSeqAdap_found\tPerc_PE2TruSeq\tPE2ReadsWVector_found\tPerc_PE2ReadsWVector\tPE2ReadsWContam_found\tPerc_PE2ReadsWContam\tPE2LeftTrimmedQual\tPE2LeftTrimmedVector\tPE2AvgLeftTrimLen\tPE2RightTrimmedAdap\tPE2RightTrimmedQual\tPE2RightTrimmedVector\tPE2AvgRightTrimLen\tPE2DiscardedTotal\tPE2DiscByContam\tPE2DiscByLength\tPairsKept\tPerc_Kept\tBases\tPerc_Bases\tPairsDiscarded\tPerc_Discarded\tBases\tPerc_Bases\tSE_PE1_Kept\tSE_PE1_Bases\tSE_PE2_Kept\tSE_PE2_Bases\tAvgTrimmedLenPE1\tAvgTrimmedLenPE2\tperfect_ov\tpartial_ov\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat1\tright_trimmed_by_polyat1\tleft_trimmed_by_polyat2\tright_trimmed_by_polyat2\tdup_scr\tduplicates\tsizedw\tstartdw\tmaxdup\n";
     
-                cout << "Provided data files : " << endl;
-                sum_stat << "Provided data files : " << endl;
-                string filename_str = "";
-                for(int i=0; i<(int)pe1_names.size(); ++i)
-                {
-                        cout << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << endl;
-                        sum_stat << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << endl;
-                        filename_str += "\t" + string(pe1_names[i]) + "\t" + string(pe2_names[i]);
-                }
+            std::cout << "Provided data files : \n";
+            sum_stat << "Provided data files : \n";
+            std::string filename_str = "";
+            for(int i=0; i<(int)pe1_names.size(); ++i)
+            {
+                std::cout << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << "\n";
+                sum_stat << "PE1: " << pe1_names[i] << ", PE2: " << pe2_names[i] << "\n";
+                filename_str += "\t" + std::string(pe1_names[i]) + "\t" + string(pe2_names[i]);
+            }
         
-                cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
-                sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
+            std::cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << "\n";
+            sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << "\n";
     
-                if(vector_flag)
-                {
-                        cout << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-                        sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-                        cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
-                        sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
-                        cout << "Distance between the first bases of two consecutive kmers: " << DISTANCE << endl;
-                        sum_stat << "Distance between the first bases of two consecutive kmers: " << DISTANCE << endl;
+            if(vector_flag)
+            {
+                std::cout << "Vector screening: YES. Vector_file provided: " << vector_file << "\n";
+                sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << "\n";
+                std::cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << "\n";
+                sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << "\n";
+                std::cout << "Distance between the first bases of two consecutive kmers: " << DISTANCE << "\n";
+                sum_stat << "Distance between the first bases of two consecutive kmers: " << DISTANCE << "\n";
+            }else
+            {
+                std::cout << "Vector screening: NO" << "\n";
+                sum_stat << "Vector screening: NO" << "\n";
+            }
+        
+            if(contaminants_flag)
+            {
+                std::cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << "\n";
+                sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << "\n";
+                std::cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << "\n";
+                sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << "\n";
+            }else
+            {
+                std::cout << "Contaminants screening: NO" << "\n";
+                sum_stat << "Contaminants screening: NO" << "\n";
+            }
+        
+            if(qual_trim_flag)
+            {
+                std::cout << "Quality trimming: YES" << "\n";
+                sum_stat << "Quality trimming: YES" << "\n";
+                std::cout << "Maximum error: " << -10*log10(max_a_error) << "\n";
+                sum_stat << "Maximum error: " << -10*log10(max_a_error) << "\n";
+                std::cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << "\n";
+                sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << "\n";
+            }else
+            {
+                std::cout << "Quality trimming: NO" << endl;
+                sum_stat << "Quality trimming: NO" << endl;
+            }
+            if(polyat_flag) 
+            {
+                std::cout << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << "\n";
+                sum_stat << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << "\n";
+            } else 
+            {
+                std::cout << "Poly A/T trimming: NO" << "\n";
+                sum_stat << "Poly A/T trimming: NO" << "\n";
+            }
+            
+            if(rem_dup) 
+            {
+                std::cout << "Duplicates removal: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << "\n";
+                sum_stat << "Duplicates removal: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << "\n";
+            } else 
+            {
+                std::cout << "Duplicates removal: NO" << "\n";
+                sum_stat << "Duplicates removal: NO" << "\n";
+            }
+                
+            std::cout << "--------------------Output files--------------------\n";
+            sum_stat << "--------------------Output files--------------------\n";
+        
+            std::cout << "Output prefix: " << output_prefix << "\n";
+            sum_stat << "Output prefix: " << output_prefix << "\n";
+        
+            rep_file_name1 = output_prefix + "_PE1_Report.tsv";
+            rep_file_name2 = output_prefix + "_PE2_Report.tsv";
+                
+            pe_output_filename1 =  output_prefix + ((fasta_output) ? "_PE1.fasta" : compressed_output ? "_PE1.fastq.gz" : "_PE1.fastq") ;
+            pe_output_filename2 =  output_prefix + ((fasta_output) ? "_PE2.fasta" : compressed_output ? "_PE2.fastq.gz" : "_PE2.fastq") ;
+            shuffle_filename = output_prefix + ((fasta_output) ? "_shuffled.fasta" : compressed_output ? "_shuffled.fastq.gz" : "_shuffled.fastq") ;
+            se_filename = output_prefix + ((fasta_output) ? "_SE.fasta" : compressed_output ? "_SE.fastq.gz" : "_SE.fastq") ;
+                
+                
+        
+            std::cout << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << "\n";
+            sum_stat << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << "\n";
+        
+            if (!shuffle_flag)
+            {
+                std::cout << "PE1 file: " << pe_output_filename1 << "\n";
+                sum_stat << "PE1 file: " << pe_output_filename1 << "\n";
+                std::cout << "PE2 file: " << pe_output_filename2 << "\n";
+                sum_stat << "PE2 file: " << pe_output_filename2 << "\n";
+            } 
+            else
+            {
+                std::cout << "Shuffled file: " << shuffle_filename << "\n";
+                sum_stat << "Shuffled file: " << shuffle_filename << "\n";
+            }    
+            
+            std::cout << "Single-end reads: "<< se_filename << "\n";
+            sum_stat << "Single-end reads: "<< se_filename << "\n";
+                
+            if(overlap_flag) 
+            {
+                overlap_file_name = output_prefix + ((fasta_output) ? "_SEOLP.fasta" : compressed_output ? "_SEOLP.fastq.gz" : "_SEOLP.fastq");
+                sum_stat << "Single-end overlapped reads: "<< overlap_file_name << endl;
+            }
+        
+            std::cout << "--------------------Other parameters--------------------\n";
+            sum_stat << "--------------------Other parameters--------------------\n";
+            std::cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << "\n";
+            sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << "\n";
     
-                } 
-                else
-                {
-                        cout << "Vector screening: NO" << endl;
-                        sum_stat << "Vector screening: NO" << endl;
-                }
+            std::cout << "Minimum read length to accept: " << minimum_read_length << "\n";
+            sum_stat << "Minimum read length to accept: " << minimum_read_length << "\n";
         
-        
-                if(contaminants_flag)
-                {
-                        cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-                        sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-                        cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
-                        sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
-                } 
-                else
-                {
-                        cout << "Contaminants screening: NO" << endl;
-                        sum_stat << "Contaminants screening: NO" << endl;
-                }
-        
-                if(qual_trim_flag)
-                {
-                        cout << "Quality trimming: YES" << endl;
-                        sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximum error: " << -10*log10(max_a_error) << endl;
-                        sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
-                        cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
-                        sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
-                }
-                else
-                {
-                        cout << "Quality trimming: NO" << endl;
-                        sum_stat << "Quality trimming: NO" << endl;
-                }
-                if(polyat_flag) {
-                        cout << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << endl;
-                        sum_stat << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << endl;
-                } else {
-                        cout << "Poly A/T trimming: NO" << endl;
-                        sum_stat << "Poly A/T trimming: NO" << endl;
-                }
-                if(rem_dup) {
-                        cout << "Duplicates removal: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
-                        sum_stat << "Duplicates removal: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
-                } else {
-                        cout << "Duplicates removal: NO" << endl;
-                        sum_stat << "Duplicates removal: NO" << endl;
-                }
+            std::cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << "\n";
+            sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << "\n";
                 
-                cout << "--------------------Output files--------------------\n";
-                sum_stat << "--------------------Output files--------------------\n";
-        
-                cout << "Output prefix: " << output_prefix << endl;
-                sum_stat << "Output prefix: " << output_prefix << endl;
-        
-                rep_file_name1 = output_prefix + "_PE1_Report.tsv";
-                rep_file_name2 = output_prefix + "_PE2_Report.tsv";
+            std::cout << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
+            sum_stat << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
                 
-                pe_output_filename1 =  output_prefix + ((fasta_output) ? "_PE1.fasta" : compressed_output ? "_PE1.fastq.gz" : "_PE1.fastq") ;
-                pe_output_filename2 =  output_prefix + ((fasta_output) ? "_PE2.fasta" : compressed_output ? "_PE2.fastq.gz" : "_PE2.fastq") ;
-                shuffle_filename = output_prefix + ((fasta_output) ? "_shuffled.fasta" : compressed_output ? "_shuffled.fastq.gz" : "_shuffled.fastq") ;
-                se_filename = output_prefix + ((fasta_output) ? "_SE.fasta" : compressed_output ? "_SE.fastq.gz" : "_SE.fastq") ;
-                
-                
-        
-                cout << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
-                sum_stat << "Report files: " << rep_file_name1 << ", " << rep_file_name2 << endl;
-        
-                if (!shuffle_flag)
-                {
-                        cout << "PE1 file: " << pe_output_filename1 << endl;
-                        sum_stat << "PE1 file: " << pe_output_filename1 << endl;
-                        cout << "PE2 file: " << pe_output_filename2 << endl;
-                        sum_stat << "PE2 file: " << pe_output_filename2 << endl;
-                } 
-                else
-                {
-                        cout << "Shuffled file: " << shuffle_filename << endl;
-                        sum_stat << "Shuffled file: " << shuffle_filename << endl;
-                }    
-                cout << "Single-end reads: "<< se_filename << endl;
-                sum_stat << "Single-end reads: "<< se_filename << endl;
-                
-                if(overlap_flag) {
-                    overlap_file_name = output_prefix + ((fasta_output) ? "_SEOLP.fasta" : compressed_output ? "_SEOLP.fastq.gz" : "_SEOLP.fastq");
-                    sum_stat << "Single-end overlapped reads: "<< overlap_file_name << endl;
-                }
-        
-                cout << "--------------------Other parameters--------------------\n";
-                sum_stat << "--------------------Other parameters--------------------\n";
-                cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
-                sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
-    
-                cout << "Minimum read length to accept: " << minimum_read_length << endl;
-                sum_stat << "Minimum read length to accept: " << minimum_read_length << endl;
-        
-                cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
-                sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
-                
-                cout << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
-                sum_stat << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
-                
-                cout << "Q-value: " << phred_coeff_illumina << endl;
-                sum_stat << "Q-value: " << phred_coeff_illumina << endl;
-        
+            std::cout << "Q-value: " << phred_coeff_illumina << "\n";
+            sum_stat << "Q-value: " << phred_coeff_illumina << "\n";
         }
         else
         {
             sum_stat_tsv << "Version\tSE\tAdapters_trim\tVectorTrim\tK_mer_size\tDistance\tContamScr\tkc_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\ttSEOutputFilename\tMax_align_mismatches\tMinReadLen\tnew2old_illumina\tSEReadsAn\tSEBases\tSETruSeqAdap_found\tPerc_SETruSeq\tSEReadsWVector_found\tPerc_SEReadsWVector\tSEReadsWContam_found\tPerc_SEReadsWContam\tSELeftTrimmedQual\tSELeftTrimmedVector\tSEAvgLeftTrimLen\tSERightTrimmedAdap\tSERightTrimmedQual\tSERightTrimmedVector\tSEAvgRightTrimLen\tSEDiscardedTotal\tSEDiscByContam\tSEDiscByLength\tSEReadsKept\tPerc_Kept\tBases\tPerc_Bases\tAvgTrimmedLenSE\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat\tright_trimmed_by_polyat\tdup_scr\tduplicates\tsizedw\tstartdw\tmaxdup\n";
     
-                cout << "Provided data file(s) : " << endl;
-                sum_stat << "Provided data file(s) : " << endl;
-                for(int i=0; i<(int)se_names.size(); ++i)
-                {
-                        cout << "SE: " << se_names[i] << endl;
-                        sum_stat << "SE: " << se_names[i] << endl;
-                }
+            std::cout << "Provided data file(s) : " << "\n";
+            sum_stat << "Provided data file(s) : " << "\n";
+            for(unsigned int i=0; i< se_names.size(); ++i)
+            {
+                std::cout << "SE: " << se_names[i] << "\n";
+                sum_stat << "SE: " << se_names[i] << "\n";
+            }
         
-                cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
-                sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << endl;
+            std::cout << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << "\n";
+            sum_stat << "Adapters trimming: " << (trim_adapters_flag  ? "YES. " : "NO")  << "\n";
     
-                if(vector_flag)
-                {
-                        cout << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-                        sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-                        cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << endl;
-                        sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << endl;
-                        cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
-                        sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << endl;
-    
-                } 
-                else
-                {
-                        cout << "Vector screening: NO" << endl;
-                        sum_stat << "Vector screening: NO" << endl;
-                }
+            if(vector_flag)
+            {
+                std::cout << "Vector screening: YES. Vector_file provided: " << vector_file << "\n";
+                sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << "\n";
+                std::cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << "\n";
+                sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << "\n";
+                std::cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << "\n";
+                sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << "\n";
+            } 
+            else
+            {
+                std::cout << "Vector screening: NO" << "\n";
+                sum_stat << "Vector screening: NO" << "\n";
+            }
         
         
-                if(contaminants_flag)
-                {
-                        cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-                        sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-                        cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
-                        sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << endl;
-                } 
-                else
-                {
-                        cout << "Contaminants screening: NO" << endl;
-                        sum_stat << "Contaminants screening: NO" << endl;
-                }
+            if(contaminants_flag)
+            {
+                std::cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << "\n";
+                sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << "\n";
+                std::cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << "\n";
+                sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << "\n";
+            } 
+            else
+            {
+                std::cout << "Contaminants screening: NO" << "\n";
+                sum_stat << "Contaminants screening: NO" << "\n";
+            }
         
-                if(qual_trim_flag)
-                {
-                        cout << "Quality trimming: YES" << endl;
-                        sum_stat << "Quality trimming: YES" << endl;
-                        cout << "Maximum error: " << -10*log10(max_a_error) << endl;
-                        sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
-                        cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
-                        sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
-                }
-                else
-                {
-                        cout << "Quality trimming: NO" << endl;
-                        sum_stat << "Quality trimming: NO" << endl;
-                }
+            if(qual_trim_flag)
+            {
+                std::cout << "Quality trimming: YES" << "\n";
+                sum_stat << "Quality trimming: YES" << "\n";
+                std::cout << "Maximum error: " << -10*log10(max_a_error) << "\n";
+                sum_stat << "Maximum error: " << -10*log10(max_a_error) << "\n";
+                std::cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << "\n";
+                sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << "\n";
+            }
+            else
+            {
+                std::cout << "Quality trimming: NO" << "\n";
+                sum_stat << "Quality trimming: NO" << "\n";
+            }
                 
-                if(polyat_flag) {
-                        cout << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << endl;
-                        sum_stat << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << endl;
-                } else {
-                        cout << "Poly A/T trimming: NO" << endl;
-                        sum_stat << "Poly A/T trimming: NO" << endl;
-                }
+            if(polyat_flag) 
+            {
+                std::cout << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << "\n";
+                sum_stat << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << "\n";
+            } else 
+            {
+                std::cout << "Poly A/T trimming: NO" << "\n";
+                sum_stat << "Poly A/T trimming: NO" << "\n";
+            }
                 
-                if(rem_dup) {
-                        cout << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
-                        sum_stat << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
-                } else {
-                        cout << "Duplicates screening: NO" << endl;
-                        sum_stat << "Duplicates screening: NO" << endl;
-                }
+            if(rem_dup) 
+            {
+                std::cout << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << "\n";
+                sum_stat << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << "\n";
+            } else 
+            {
+                std::cout << "Duplicates screening: NO" << "\n";
+                sum_stat << "Duplicates screening: NO" << "\n";
+            }
         
-                cout << "--------------------Output files--------------------\n";
-                sum_stat << "--------------------Output files--------------------\n";
+            std::cout << "--------------------Output files--------------------\n";
+            sum_stat << "--------------------Output files--------------------\n";
         
-                cout << "Output prefix: " << output_prefix << endl;
-                sum_stat << "Output prefix: " << output_prefix << endl;
+            cout << "Output prefix: " << output_prefix << "\n";
+            sum_stat << "Output prefix: " << output_prefix << "\n";
         
-                rep_file_name1 = output_prefix + "_SE_Report.tsv";
-                se_output_filename =  output_prefix + ((fasta_output) ? "_SE.fasta" : compressed_output ? "_SE.fastq.gz" : "_SE.fastq") ;
+            rep_file_name1 = output_prefix + "_SE_Report.tsv";
+            se_output_filename =  output_prefix + ((fasta_output) ? "_SE.fasta" : compressed_output ? "_SE.fastq.gz" : "_SE.fastq") ;
                 
-                cout << "Report file: " << rep_file_name1 << endl;
-                sum_stat << "Report file: " << rep_file_name1<< endl;
+            std::cout << "Report file: " << rep_file_name1 << "\n";
+            sum_stat << "Report file: " << rep_file_name1<< "\n";
         
-                cout << "SE file: " << se_output_filename << endl;
-                sum_stat << "SE file: " << se_output_filename << endl;
+            std::cout << "SE file: " << se_output_filename << "\n";
+            sum_stat << "SE file: " << se_output_filename << "\n";
                     
-                cout << "Single-end reads: "<< se_filename << endl;
-                sum_stat << "Single-end reads: "<< se_filename << endl;
+            std::cout << "Single-end reads: "<< se_filename << "\n";
+            sum_stat << "Single-end reads: "<< se_filename << "\n";
         
-                cout << "--------------------Other parameters--------------------\n";
-                sum_stat << "--------------------Other parameters--------------------\n";
-                //cout <//Test is the files provided are old-style illumina< "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
-                sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+            std::cout << "--------------------Other parameters--------------------\n";
+            sum_stat << "--------------------Other parameters--------------------\n";
+            
+            sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << "\n";
     
-                cout << "Minimum read length to accept: " << minimum_read_length << endl;
-                sum_stat << "Minimum read length to accept: " << minimum_read_length << endl;
+            std::cout << "Minimum read length to accept: " << minimum_read_length << "\n";
+            sum_stat << "Minimum read length to accept: " << minimum_read_length << "\n";
         
-                cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
-                sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << endl;
+            std::cout << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << "\n";
+            sum_stat << "New to old-style Illumina headers: " << (new2old_illumina == false ? "NO" : "YES") << "\n";
                 
-                cout << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
-                sum_stat << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << endl;
+            std::cout << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << "\n";
+            sum_stat << "Old-style Illumina: " << (old_style_illumina_flag == false ? "NO" : "YES") << "\n";
                 
-                cout << "Q-value: " << phred_coeff_illumina << endl;
-                sum_stat << "Q-value: " << phred_coeff_illumina << endl;
+            std::cout << "Q-value: " << phred_coeff_illumina << "\n";
+            sum_stat << "Q-value: " << phred_coeff_illumina << "\n";
         }
         
     }
-    //if(roche_flag & !polyat_flag)
+   
     if(roche_flag)
     {
         sum_stat_tsv << "Version\tFiles\tNUM_THREADS\tAdaptersTrimming\tVectorTrimming\tkmer_size\tDistance\tContamScr\tkmer_contam_size\tQualTrim\tQual_max_avg_error\tQual_max_err_at_ends\tOutputPrefix\tRepFilename\tOutputFilename\tMax_align_mismatches\tMinReadLen\tReadsAnalyzed\tBases\tleft_mid_tags_found\tpercentage_left_mid_tags_found\tright_mid_tags_found\tpercentage_right_mid_tags_found\tReadsWithVector_found\tpercentage_ReadsWithVector_found\tReadsWithContam_found\tpercentage_ReadsWithContam_found\tLeftTrimmedByAdapter\tLeftTrimmedByQual\tLeftTrimmedByVector\tAvgLeftTrimLen\tRightTrimmedByAdapter\tRightTrimmedByQual\tRightTrimmedByVector\tAvgRightTrimLen\tDiscardedTotal\tDiscByContam\tDiscByLength\tReadsKept\tPercentageKept\tAvgTrimmedLen\tPolyAT\tcdna\tc_err\tcrng\tleft_trimmed_by_polyat\tright_trimmed_by_polyat\tdup_scr\tduplicates\tsizedw\tstartdw\tmaxdup\n";
     
-        cout << "--------------------Basic parameters--------------------\n";
+        std::cout << "--------------------Basic parameters--------------------\n";
         sum_stat << "--------------------Basic parameters--------------------\n";
         
-        cout << "Provided data file(s) : \n" ;
+        std::cout << "Provided data file(s) : \n" ;
         sum_stat << "Provided data file(s) : \n" ;
         
         for(int i=0; i<(int)roche_names.size(); ++i)
         {
-            cout << roche_names[i] << "\n";
+            std::cout << roche_names[i] << "\n";
             sum_stat << roche_names[i] << "\n";
         }
     
-        cout << string("Adapters trimming: ") + ( trim_adapters_flag  ? "YES. Custom RLMIDS: " + ( custom_rlmids_flag  ? "YES, file_of_RL_MIDS: " + string(rlmids_file) : "NO. Default RL MIDs will be used." ) : " ")  << endl;
-        sum_stat << string("Adapters trimming: ") + ( trim_adapters_flag  ? "YES. Custom RLMIDS: " + ( custom_rlmids_flag  ? "YES, file_of_RL_MIDS: " + string(rlmids_file) : "NO. Default RL MIDs will be used." ) : " " )  << endl;
+        std::cout << string("Adapters trimming: ") + ( trim_adapters_flag  ? "YES. Custom RLMIDS: " + ( custom_rlmids_flag  ? "YES, file_of_RL_MIDS: " + string(rlmids_file) : "NO. Default RL MIDs will be used." ) : " ")  << "\n";
+        sum_stat << string("Adapters trimming: ") + ( trim_adapters_flag  ? "YES. Custom RLMIDS: " + ( custom_rlmids_flag  ? "YES, file_of_RL_MIDS: " + string(rlmids_file) : "NO. Default RL MIDs will be used." ) : " " )  << "\n";
         
         if(vector_flag)
         {
-           cout << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-           sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << endl;
-           cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << " bp\n";
-           sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << " bp\n";
-           cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
-           sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
-    
+            std::cout << "Vector screening: YES. Vector_file provided: " << vector_file << "\n";
+            sum_stat << "Vector screening: YES. Vector_file provided: " << vector_file << "\n";
+            std::cout << "K-mer_size for for vector trimming: " <<  KMER_SIZE << " bp\n";
+            sum_stat << "K-mer_size for vector trimming: " <<  KMER_SIZE << " bp\n";
+            std::cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
+            sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
         } 
         else
         {
-           cout << "Vector screening: NO" << endl;
-           sum_stat << "Vector screening: NO" << endl;
+            std::cout << "Vector screening: NO" << "\n";
+            sum_stat << "Vector screening: NO" << "\n";
         }
         
         if(contaminants_flag)
         {
-           cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-           sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << endl;
-           cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << " bp\n";
-           sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << " bp\n";
+            std::cout << "Contaminants screening: YES. File_of_contaminants: " << cont_file << "\n";
+            sum_stat << "Contaminants screening: YES. File_of_contaminants: " << cont_file << "\n";
+            std::cout << "K-mer size for contaminants: " << KMER_SIZE_CONT << " bp\n";
+            sum_stat << "K-mer size for contaminants: " << KMER_SIZE_CONT << " bp\n";
         } 
         else
         {
-           cout << "Contaminants screening: NO" << endl;
-           sum_stat << "Contaminants screening: NO" << endl;
+            std::cout << "Contaminants screening: NO" << "\n";
+            sum_stat << "Contaminants screening: NO" << "\n";
         }
         
         if(qual_trim_flag)
         {
-           cout << "Quality trimming: YES" << endl;
-           sum_stat << "Quality trimming: YES" << endl;
-           cout << "Maximum error: " << -10*log10(max_a_error) << endl;
-           sum_stat << "Maximum error: " << -10*log10(max_a_error) << endl;
-           cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
-           sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << endl;
+            std::cout << "Quality trimming: YES" << "\n";
+            sum_stat << "Quality trimming: YES" << "\n";
+            std::cout << "Maximum error: " << -10*log10(max_a_error) << "\n";
+            sum_stat << "Maximum error: " << -10*log10(max_a_error) << "\n";
+            std::cout << "Maximum error at ends: " << -10*log10(max_e_at_ends) << "\n";
+            sum_stat << "Maximum error at ends: " << -10*log10(max_e_at_ends) << "\n";
         }
         else
         {
-           cout << "Quality trimming: NO" << endl;
-           sum_stat << "Quality trimming: NO" << endl;
+            std::cout << "Quality trimming: NO" << "\n";
+            sum_stat << "Quality trimming: NO" << "\n";
         }
         
-        if(polyat_flag) {
-           cout << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << endl;
-           sum_stat << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << endl;
- 
-        } else {
-           cout << "Poly A/T trimming: NO" << endl;
-           sum_stat << "Poly A/T trimming: NO" << endl;
+        if(polyat_flag) 
+        {
+            std::cout << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << "\n";
+            sum_stat << "Poly A/T trimming: YES cdna =" << cdna << " c_err = " << c_err << " crnq = " << crng << "\n";
+        } else 
+        {
+            std::cout << "Poly A/T trimming: NO" << "\n";
+            sum_stat << "Poly A/T trimming: NO" << "\n";
         }
         
-        if(rem_dup) {
-           cout << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
-           sum_stat << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
- 
-        } else {
-           cout << "Duplicates screening: NO" << endl;
-           sum_stat << "Duplicates screening: NO" << endl;
+        if(rem_dup) 
+        {
+            std::cout << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+            sum_stat << "Duplicates screening: YES sizedw =" << size_dw << " startdw = " << start_dw << " maxdup = " << max_dup << endl;
+        } else 
+        {
+            std::cout << "Duplicates screening: NO" << "\n";
+            sum_stat << "Duplicates screening: NO" << "\n";
         }
         
-        cout << "--------------------Output files--------------------\n";
+        std::cout << "--------------------Output files--------------------\n";
         sum_stat << "--------------------Output files--------------------\n";
         
-        cout << "Output prefix: " << output_prefix << endl;
-        sum_stat << "Output prefix: " << output_prefix << endl;
+        std::cout << "Output prefix: " << output_prefix << "\n";
+        sum_stat << "Output prefix: " << output_prefix << "\n";
         
-        if (output_sfffile_flag) {
+        if (output_sfffile_flag) 
+        {
             roche_output_file_name = output_prefix + ".sff";
-        } else if(output_fastqfile_flag) {
+        } else if(output_fastqfile_flag) 
+        {
             roche_output_file_name = output_prefix + ".fastq";
-        } else if (fasta_output) {
+        } else if (fasta_output) 
+        {
             roche_output_file_name = output_prefix + ".fasta";
         }
         
         roche_rep_file_name = output_prefix + "_Report.tsv" ;
         
-        cout << "Report file: " << roche_rep_file_name << "\n";
+        std::cout << "Report file: " << roche_rep_file_name << "\n";
         sum_stat << "Report file: " << roche_rep_file_name << "\n";
         
-        cout << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : ((fasta_output) ? ".fasta" : "" ) ) ) << "\n";
+        std::cout << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : ((fasta_output) ? ".fasta" : "" ) ) ) << "\n";
         sum_stat << "Roche output file(s): " << ( roche_output_file_name + (output_fastqfile_flag ? ", " + output_prefix + ".fastq" : ((fasta_output) ? ".fasta" : ""  ) ) ) << "\n";
         
-        
-        cout << "--------------------Other parameters--------------------\n";
+        std::cout << "--------------------Other parameters--------------------\n";
         sum_stat << "--------------------Other parameters--------------------\n";
         
-        cout << "k-mer_size: " <<  KMER_SIZE << " bp\n";
+        std::cout << "k-mer_size: " <<  KMER_SIZE << " bp\n";
         sum_stat << "k-mer_size: " <<  KMER_SIZE << " bp\n";
     
-        cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
-        sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << endl;
+        std::cout << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << "\n";
+        sum_stat << "Maximum number of mismatches allowed in alignment: " <<  max_al_mism << "\n";
     
-        cout << "Minimum read length to accept: " << minimum_read_length << " bp\n";
+        std::cout << "Minimum read length to accept: " << minimum_read_length << " bp\n";
         sum_stat << "Minimum read length to accept: " << minimum_read_length << " bp\n";
         
-        cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
+        std::cout << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
         sum_stat << "Distance between the first bases of two consequitve kmers: " << DISTANCE << " bp\n";
     
-        cout << "number_of_threads: " << NUM_THREADS << endl;
-        sum_stat << "number_of_threads: " << NUM_THREADS << endl;
+        std::cout << "number_of_threads: " << NUM_THREADS << "\n";
+        sum_stat << "number_of_threads: " << NUM_THREADS << "\n";
         
     }
     
-    cout << "====================Starting the process===================="<< endl;
-    sum_stat << "====================Starting the process===================="<< endl;
+    std::cout << "====================Starting the process====================" << "\n";
+    sum_stat << "====================Starting the process====================" << "\n";
     
     // End of making desisions based on command line arguments
     
@@ -1243,13 +1249,12 @@ int main(int argc, char *argv[])
         }
     }
     
-    //if( roche_flag && !polyat_flag )
     if( roche_flag )
     {
         RocheRoutine();
     }
     
-    cout << "Program finished.\n";
+    std::cout << "Program finished.\n";
     sum_stat << "Program finished.\n";
     
     VectorSeqs.clear();
@@ -1259,7 +1264,7 @@ int main(int argc, char *argv[])
     GET_TIME(finish);
     elapsed = finish - start;
     printf("Elapsed time = %e seconds\n", elapsed);
-    sum_stat << "Elapsed time = " << elapsed << " seconds." << endl;
+    sum_stat << "Elapsed time = " << elapsed << " seconds." << "\n";
     sum_stat.close();
     sum_stat_tsv.close();
     output_prefix.clear();

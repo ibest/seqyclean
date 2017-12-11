@@ -368,11 +368,20 @@ string double2str(double num)
     return string(buffer);
 }
 
-string int2str(int num)
+std::string longlong2str(long long num)
 {
     char buffer[256];  // make sure this is big enough!!!
     snprintf(buffer, sizeof(buffer), "%d", num);
-    string ans = buffer;
+    std::string ans = buffer;
+    
+    return ans;
+}
+
+std::string int2str(int num)
+{
+    char buffer[256];  // make sure this is big enough!!!
+    snprintf(buffer, sizeof(buffer), "%d", num);
+    std::string ans = buffer;
     
     return ans;
 }

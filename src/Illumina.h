@@ -113,6 +113,9 @@ void WriteSEOverlapGZ(ogzstream &overlap_file, Read *read);
 string New2OldNbl(std::string header);
 void IlluminaDynamicSE();
 void MakeClipPointsIllumina(Read* read);
+void trim_read(Read *read);
+void update_statistics(Read *read1, Read *read2);
+void update_counters_and_print_statistics(Read *read1, Read *read2);
 
 int IlluminaDynRoutine_post(Read* read);
 

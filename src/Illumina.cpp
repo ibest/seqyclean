@@ -100,8 +100,7 @@ void IlluminaDynamic()
         rep_file1.open(rep_file_name1.c_str(),ios::out);
         rep_file2.open(rep_file_name2.c_str(),ios::out);
     }
-    //if(overlap_flag)
-    //    overlap_file.open(overlap_file_name.c_str(),ios::out);
+    
     if (detailed_report) {
         rep_file1 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
         rep_file2 << "ReadID\tlclip\trclip\tTruSeq_pos\tRaw_read_length\tLlucy\tRlucy\tDiscarded\tContaminants\tVecStart\tVecEnd\tVecLen\n";
@@ -501,12 +500,12 @@ void IlluminaDynamic()
                             std::vector<std::string> t;
                             split_str(st_str, t, "\n");
                             for(unsigned int kk=0; kk < t.size(); ++kk){
-                                   cout << "\033[A\033[2K";
+                                   std::cout << "\033[A\033[2K";
                             }
                             t.clear();
                         }
                             
-                        cout << st_str;
+                        std::cout << st_str;
                             
                     }
                         
@@ -558,7 +557,7 @@ void IlluminaDynamic()
         split_str(st_str, t, "\n");
         for(unsigned int kk=0; kk < t.size()+1; ++kk)
         {
-            cout << "\033[A\033[2K";
+            std::cout << "\033[A\033[2K";
         }
         t.clear();
     }
@@ -641,11 +640,10 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
     if(qual_trim_flag ) {
        QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
-       //cout << read->lucy_lclip << " " << read->lucy_rclip << "\n";
+       
        if (read->discarded_by_quality == 1) {
           read->discarded = 1;
-          /*cout << "!!!!\n";
-          cout << max_a_error << " " << max_e_at_ends << "\n";*/
+          
           return -1;
          
        }
@@ -664,8 +662,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
             std::string ts_adapter = tmpl_i5_1.substr(0,15);
             found = read->read.find(ts_adapter);
             if( found != std::string::npos ){
-                cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << "\n";
+                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << "\n";
                 adapter_found = true;
                 query_str = ts_adapter;
                 read->tru_sec_pos = found;
@@ -675,8 +673,8 @@ int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
                 ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
                 found = read->read.find( ts_adapter );
                 if( found != string::npos ){
-                    cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << "\n";
+                    sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << "\n";
                     adapter_found = true;
                     query_str = ts_adapter;
                     read->tru_sec_pos = found;

@@ -20,8 +20,8 @@ extern unsigned int minoverlap;
 extern bool overlap_flag;
 extern bool i64_flag;
 
-int find_overlap_pos(string seq1, string seq2, int adapterlength);
-int strdist(string s1, string s2);
+int find_overlap_pos(std::string seq1, std::string seq2, int adapterlength);
+int strdist(std::string s1, std::string s2);
 Read *make_consensus(Read *seq1, Read *seq2);
 #endif	/* FLASH_H */
 

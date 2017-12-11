@@ -292,7 +292,7 @@ void average_error_trim(
 	int diag_count;
 	int done;
 	double *diag, this_err;
-        //cout << max_avg_error << " " << end_limit << "\n";
+        
 	/* initialize caller's clean range */
 	*cln_left = *cln_right = 0;
 
@@ -314,12 +314,8 @@ void average_error_trim(
 	for (i = 0, *diag = 0.0; i < length; i++)
 	{
 		*diag += prob_err[i];
-                //cout << -10*log10(prob_err[i]) << ", ";
 	}
-        //cout << endl;
-        //cout << *diag << " " << length << endl;
-        //cout << *cln_left << " " << *cln_right << " " << min_frag_length << " " << max_avg_error << endl;
-
+        
 	frag_length = length;
 	done = FALSE;
 	while (frag_length >= min_frag_length && !done)
@@ -328,7 +324,6 @@ void average_error_trim(
 		diag_count = length - frag_length + 1;
 		//diag[diag_count] = diag[diag_count - 1] - prob_err[diag_count - 1];
                 diag[diag_count] = diag[diag_count-1] - prob_err[diag_count-1];
-//cout << diag_count << " " << length << " " << diag[0] << " " << frag_length << endl;
 
 		/* consider each value on this diagonal */
 		for (i = 0, j = frag_length - 1;
@@ -336,9 +331,7 @@ void average_error_trim(
 		{
 			/* calculate average error of bases i..j */
 			this_err = diag[i] / (double)(frag_length);
-                        //cout << this_err << " " << diag[i] << " " << frag_length;
-                        //exit(0);
-                        //cout << this_err << " " << diag[0] << " " << frag_length << endl;
+                        
 			/* is it good enough ? */
 			if (this_err <= max_avg_error)
 			{
@@ -346,8 +339,7 @@ void average_error_trim(
 				*cln_left = i;
 				*cln_right = j;
 				done = TRUE;
-                                //cout << *cln_left << " " << *cln_right << " " << min_frag_length << " " << max_avg_error << endl;
-				break;
+                                break;
 			}
 			else
 			{
@@ -470,7 +462,6 @@ void multi_window_trim(
 			/* no, trim each of the bottom-level ranges based on average quality */
 			for (i = 0; i < num_ranges; i++)
 			{
-                            //cout << range_start[i] << " " << range_end[i] << " " << min_frag_length << " " << max_avg_error << endl;
                             average_error_trim(prob_err + range_start[i],
 					range_end[i] - range_start[i] + 1,
 					min_frag_length,
@@ -876,7 +867,7 @@ int QualTrim( Read* read, double max_avg_err, double end_lim )
 
 int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
 {       
-   // cout << qual_str << endl;
+   
         //FILE * pFile;
 	int quality[10000];
 	unsigned int qual_count, i;//length, i;
@@ -890,7 +881,7 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
         for( i=0; i< read->read.length(); i++ ) 
         {
             quality[i] = GetNum(read->illumina_quality_string[i]) - phred_coeff_illumina;//33 or 64 depending on new or old style;
-            //cout << quality[i] << " ";
+            
             if (old_style_illumina_flag == true)
             {
                 read->illumina_quality_string[i] = read->illumina_quality_string[i] - phred_coeff_illumina + 33;
@@ -898,13 +889,13 @@ int QualTrimIllumina( Read* read, double max_avg_err, double end_lim )
             }
             
         }
-        //cout << endl;
+        
         qual_count = i;
-        //cout << qual_count << endl;
+        
         /* trim for quality */
 	conf_val_raw = quality;
 	grim(qual_count, &left, &right);
-        //cout << left << " " << right << endl;
+        
 	/* display seq name and clean range */
 	if (right - left < minimum_read_length) {
 		left = right = 0;

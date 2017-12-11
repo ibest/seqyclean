@@ -355,7 +355,7 @@ static void *t_FindRLClip(void *targs) {
   
   line_counter++;
   if(line_counter%50000 == 0)
-     cout << "Line No: " << line_counter << endl;
+     std::cout << "Line No: " << line_counter << endl;
   
   
   pthread_exit(NULL);
@@ -372,7 +372,6 @@ static void *t_TrimRightEnds(void *targs) {
     
      if( (reads[i]->rlmid.rmid_end <= 16) && (reads[i]->rlmid.rmid_start == reads[i]->clear_length) && (reads[i]->discarded == 0) ) {
             rclip_found = false;
-            //cout << reads[i]->readID << endl;
             //Good candidate to trim ends
             //Trimming the right end:
             //Doing pairwise alignment, starting from the (KMER_SIZE-1) and the right end of the read:
@@ -394,11 +393,7 @@ static void *t_TrimRightEnds(void *targs) {
                     
                     //if(scores.mismatches == 0) {
                     if(right_end == vector_head) {
-                        //reads[i]->rclip -= KMER_SIZE-j;
-                        //reads[i]->read = reads[i]->read.substr(0, reads[i]->rclip );
                         rclip_found = true;
-                        //cout << reads[i]->rclip << " " << reads[i]->lclip << endl;
-                        //cout << reads[i]->readID << endl;
                         reads[i]->r_vec_start -= KMER_SIZE-j;
                         break;
                     } 
@@ -424,8 +419,6 @@ static void *t_TrimRightEnds(void *targs) {
                         //reads[i].read = reads[i].read.substr(0, reads[i].rclip );
                         rclip_found = true;
                         reads[i]->r_vec_start -= KMER_SIZE-j;
-                        //cout << reads[i].rclip << " " << reads[i].lclip << endl;
-                        //cout << reads[i].readID << endl;
                         break;
                     } 
                 }
@@ -479,7 +472,6 @@ static void *t_TrimLeftEnds(void *targs) {
                  lclip_found = true;
                  reads[i]->l_vec_end += KMER_SIZE-j;
                  reads[i]->l_vec_start = reads[i]->rlmid.lmid_end;
-                 //if (i == 1) cout << "! " << reads[i].vec_end << endl;
                  break;
               } 
             }
@@ -503,7 +495,6 @@ static void *t_TrimLeftEnds(void *targs) {
                    lclip_found = true;
                    reads[i]->l_vec_end += KMER_SIZE-j;
                    reads[i]->l_vec_start = reads[i]->rlmid.lmid_end;
-                   //if (i == 1) cout << "!! " << reads[i].vec_end << endl;
                    break;
                 } 
             }
@@ -530,7 +521,6 @@ void MainPipeLine() {
     /*Here we are making threads*/
     /*========================================================================*/
     pthread_t threads[NUM_THREADS];
-    //cout << reads[0]->readID << endl;
     /*Remove Keys/Adaptors/Primers/Barcodes*/
     unsigned int i=0;
     for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
@@ -557,10 +547,10 @@ void MainPipeLine() {
     
     /*If vector file is set up, perform vector tails cleaning*/
     if(vector_flag == true) {
-        cout << "Trimming small pieces of vector..." << endl;
-        cout << "Right ends..." << endl;
+        std::cout << "Trimming small pieces of vector...\n";
+        std::cout << "Right ends...\n";
         TrimRightEnds();
-        cout << "Left ends..." << endl;
+        std::cout << "Left ends...\n";
         TrimLeftEnds();
     }
 }
@@ -631,7 +621,7 @@ void GetLClip2(Read* read,bool pflag) {
                 scores = CalcScores2( al_res.seq_1_al, al_res.seq_1_al.length(), 0 );
             
                 delete izssaha;
-                //cout << scores.mismatches << endl;
+                
                 if(scores.mismatches <= 2  ) {
                         if( best_mism > scores.mismatches ) {
                                 best_pos = al_res.pos;
@@ -700,7 +690,7 @@ void GetLClip2(Read* read,bool pflag) {
                 scores = CalcScores2( al_res.seq_1_al, al_res.seq_1_al.length(), 0 );
             
                 delete izssaha;
-                //cout << scores.mismatches << endl;
+                
                 if(scores.mismatches <= 2  ) {
                         if( best_mism > scores.mismatches ) {
                                 best_pos = al_res.pos;
