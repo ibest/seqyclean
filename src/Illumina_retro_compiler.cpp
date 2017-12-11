@@ -465,18 +465,18 @@ void IlluminaDynamic()
                             
                             );
     
-    /*
+    
     if (verbose) 
     {
         std::vector<std::string> t;
         split_str(st_str, t, "\n");
-        for(unsigned int kk=0; kk < t.size()+1; ++kk)
+        for(unsigned int kk=0; kk < t.size(); ++kk)
         {
             std::cout << "\033[A\033[2K";
         }
         t.clear();
     }
-    */
+    
     std::cout << st_str; sum_stat << st_str;
     
     
@@ -519,13 +519,13 @@ void IlluminaDynamic()
     pe_output_file2.close();
     shuffle_file.close();
     se_file.close();
-    overlap_file.close();
+    
     
     pe_output_file1_gz.close();
     pe_output_file2_gz.close();
     shuffle_file_gz.close();
     se_file_gz.close(); 
-    overlap_file_gz.close();
+    
     
 }
 
