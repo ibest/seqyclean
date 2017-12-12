@@ -23,11 +23,13 @@
 
 using namespace std;
 
+std::string version = "1.10.05 (2017-12-12)";
+
 /*Common parameters (default)*/
 short KMER_SIZE = 15;
 short DISTANCE = 1;
 unsigned short NUM_THREADS = 4;
-string version = "1.10.04 (2017-12-11)";
+
 bool contaminants_flag = false;
 bool vector_flag = false;
 bool qual_trim_flag = false;
@@ -163,7 +165,6 @@ bool i64_flag = false;
 bool fasta_output = false;
 
 /*Overlap parameters*/
-unsigned int adapterlength = 1;
 double overlap_t = 0.75;
 unsigned int minoverlap = 60;
 bool overlap_flag = false;

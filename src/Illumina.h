@@ -57,7 +57,7 @@ extern bool old_style_illumina_flag;
 extern short phred_coeff_illumina; //by default assume new illumina (1.8)
 extern bool i64_flag;
 
-extern unsigned int adapterlength;
+
 extern double overlap_t;
 extern unsigned int minoverlap;
 extern bool overlap_flag;
@@ -100,8 +100,7 @@ extern unsigned short cdna, c_err, crng;
 extern bool trim_adapters_flag;
 
 void IlluminaDynamic();
-void IlluminaDynamic();
-int IlluminaDynRoutine(Read* read, bool& adapter_found, std::string& query_str);
+int TrimIlluminaSE(Read* read, bool trim_adapter);
 void WritePEFile(std::fstream &pe_output_file, Read *read);
 void WritePEFileGZ(ogzstream &pe_output_file, Read *read);
 void WriteShuffleFile(std::fstream &shuffle_output_file, Read *read1, Read *read2);
@@ -112,10 +111,10 @@ void WriteSEOverlap(std::fstream &overlap_file, Read *read);
 void WriteSEOverlapGZ(ogzstream &overlap_file, Read *read);
 string New2OldNbl(std::string header);
 void IlluminaDynamicSE();
-void MakeClipPointsIllumina(Read* read);
 void trim_read(Read *read);
 void update_statistics(Read *read1, Read *read2);
 void update_counters_and_print_statistics(Read *read1, Read *read2);
+bool align_ssaha(Read* read, std::string &query_str );
 
 int IlluminaDynRoutine_post(Read* read);
 
@@ -220,10 +219,10 @@ std::string PrintIlluminaStatisticsTSVSE(long long cnt,
 
 
 
-void TrimAdapterSE(Read* read);
+
 bool TrimAdapterPE(Read *read1, Read *read2);
 int TrimIllumina(Read* read1, Read* read2);
-void TrimAdapterSE(Read* read);
+int TrimAdapterSE(Read* read);
 void LoadAdapters(std::string filename, bool custom_adapters);
 
 #endif	/* ILLUMINA_H */

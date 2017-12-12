@@ -66,7 +66,9 @@ std::string st_str; //output statistics
 
 std::fstream rep_file1, rep_file2, pe_output_file1, pe_output_file2, shuffle_file, se_file, overlap_file;
 ogzstream pe_output_file1_gz, pe_output_file2_gz, shuffle_file_gz, se_file_gz, overlap_file_gz;
-    
+ 
+double cur_lclip_pe1 = 0.0; double cur_rclip_pe1 = 0.0;
+double cur_lclip_pe2 = 0.0; double cur_rclip_pe2 = 0.0;
 
 //Dynamic Illumina: does not need space to store reads:
 void IlluminaDynamic()
@@ -225,7 +227,10 @@ void IlluminaDynamic()
                 {
                     cnt1+=1; cnt2+=1;
                     ii=0;
-           
+                    
+                    cur_lclip_pe1 = 0.0; cur_rclip_pe1 = 0.0;
+                    cur_lclip_pe2 = 0.0; cur_rclip_pe2 = 0.0;
+                    
                     Read *read1 = new Read();
                     read1->illumina_readID = record_block1[0];
                     read1->initial_length = record_block1[1].length();
@@ -289,7 +294,7 @@ void IlluminaDynamic()
                             read1->tru_sec_found = 1; read2->tru_sec_found = 1;
                             read1->tru_sec_pos = ov; read2->tru_sec_pos = ov;
                             
-                            IlluminaDynRoutine_post(c);
+                            TrimIlluminaSE(c, false);
                              
                             if((c->rclip < c->lclip) || c->discarded) {
                                 read1->discarded = 1;
@@ -347,8 +352,8 @@ void IlluminaDynamic()
                     
                     if( (read1->discarded == 0) && (read2->discarded == 0) && (read1->merged == false) && (read2->merged == false))
                     {
-                        avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + (read1->rclip - read1->lclip))/(pe_accept_cnt+1);
-                        avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + (read2->rclip - read2->lclip))/(pe_accept_cnt+1);
+                        avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + read1->read.length())/(pe_accept_cnt+1);
+                        avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + read2->read.length())/(pe_accept_cnt+1);
                         
                         if (!shuffle_flag) {
                             if(compressed_output)
@@ -461,10 +466,7 @@ void IlluminaDynamic()
                             perfect_ov_cnt, partial_ov_cnt,
                             duplicates,
                             left_trimmed_by_polyat1, right_trimmed_by_polyat1,
-                            left_trimmed_by_polyat2, right_trimmed_by_polyat2
-                            
-                            );
-    
+                            left_trimmed_by_polyat2, right_trimmed_by_polyat2);
     
     if (verbose) 
     {
@@ -529,324 +531,6 @@ void IlluminaDynamic()
     
 }
 
-int IlluminaDynRoutine(Read* read, bool& adapter_found, string &query_str)
-{
-    /*if((int)read->read.length() > minimum_read_length) {
-        read->illumina_quality_string = read->illumina_quality_string.substr(0, read->read.length());
-        read->clear_length = read->read.length();
-    } else {
-        read->discarded = 1;
-        read->discarded_by_read_length = 1;
-        return -1;
-    }*/
-    
-    if(contaminants_flag) {
-       if(CheckContaminants(read->read) == 0) {
-           read->contam_found = 1;
-           read->discarded_by_contaminant = 1;
-           read->contaminants = 1;
-           read->discarded = 1;
-           return -1;
-       }
-    }
-            
-    //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
-    if(qual_trim_flag ) {
-       QualTrimIllumina( read, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
-       
-       if (read->discarded_by_quality == 1) {
-          read->discarded = 1;
-          return -1;
-         
-       }
-    }
-    
-    if(polyat_flag)
-        PolyAT_Trim(read); 
-    
-    if( vector_flag ) 
-        CheckVector(read); 
-       
-    //First 15 bases of i5 adapter forward
-    if(trim_adapters_flag && illumina_flag_se) {
-        size_t found;
-        if (!adapter_found){
-            std::string ts_adapter = tmpl_i5_1.substr(0,15);
-            found = read->read.find(ts_adapter);
-            if( found != std::string::npos ){
-                std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                adapter_found = true;
-                query_str = ts_adapter;
-                read->tru_sec_pos = found;
-                read->tru_sec_found = 1;
-            }else{
-                //First 20 bases of i5 adapter in reverse complement
-                ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
-                found = read->read.find( ts_adapter );
-                if( found != string::npos ){
-                    std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    adapter_found = true;
-                    query_str = ts_adapter;
-                    read->tru_sec_pos = found;
-                    read->tru_sec_found = 1;
-                } else {
-                    //First 20 bases of i7 adapter forward
-                    ts_adapter = tmpl_i7_1.substr(0,15);
-                    found = read->read.find( ts_adapter );
-                    if( found != std::string::npos ) {
-                        std::cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                        sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                        adapter_found = true;
-                        query_str = ts_adapter;
-                        read->tru_sec_pos = found;
-                        read->tru_sec_found = 1;
-                    } else {
-                        //First 20 bases of i5 adapter in reverse complement
-                        ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
-                        found = read->read.find( ts_adapter );
-                        if( found != std::string::npos ) {
-                            std::cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                            sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                            adapter_found = true;
-                            query_str = ts_adapter;
-                            read->tru_sec_pos = found;
-                            read->tru_sec_found = 1;
-                        } else {
-                            read->tru_sec_pos = -1;
-                            read->tru_sec_found = 0;
-                        }
-                    }
-                }
-            }
-        } else {
-            bool adp_found = false;
-            found = read->read.rfind( query_str );
-            if( found != std::string::npos ) {
-                adp_found = true;
-                read->tru_sec_pos = found;
-                read->tru_sec_found = 1;
-            } else {
-                //SSAHA job starts here
-                iz_SSAHA *izssaha = new iz_SSAHA();
-                AlignResult al_res = izssaha->Find( read->read , query_str );
-                AlignScores scores;
-                if( al_res.found_flag  ) {
-                    scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-                    if(scores.mismatches <= max_al_mism  ) {
-                        adp_found = true;
-                        read->tru_sec_pos = al_res.pos;
-                        read->tru_sec_found = 1;
-                    }
-                }
-                delete izssaha;
-            }
-        
-            if(!adp_found) {
-                read->tru_sec_pos = -1;
-                read->tru_sec_found = 0;
-            }
-        }
-    }
-    return 0;
-}
-
-void MakeClipPointsIllumina(Read* read) 
-{
-   //Clip points
-   if( (qual_trim_flag ) && (vector_flag ) )
-   {
-        if(read->vector_found == 1)
-        {
-           if( read->v_start >= static_cast<int>(read->read.length() - read->v_end) ) //Vector is on the right side
-           {
-               //Lucy clip points are zero-based!
-               
-               read->lclip = read->lucy_lclip >= read->initial_length ? 0 : read->lucy_lclip;
-               
-               if(read->lclip > 0)
-                  read->left_trimmed_by_quality = 1;
-               
-               
-               read->rclip = min(trim_adapters_flag ? ( (read->tru_sec_pos == -1 || read->tru_sec_pos == 0) ? (int)read->read.length() : read->tru_sec_pos) : (int)read->read.length(), min(read->lucy_rclip+1, read->v_start) );
-                    
-               if( (read->rclip == read->lucy_rclip+1) && (read->rclip+1 <= read->initial_length ) )
-               {
-                 read->right_trimmed_by_quality = 1;
-                 read->rclip = read->lucy_rclip;
-               }
-               else if((read->rclip == read->tru_sec_pos) && trim_adapters_flag)
-               {
-                 if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
-                        read->right_trimmed_by_adapter = 1;
-               }
-               else if(read->rclip == read->v_start && (read->rclip < static_cast<int>(read->read.length())))
-               {
-                 read->right_trimmed_by_vector = 1;
-               } else {
-                   read->rclip = static_cast<int>(read->read.length());
-               }
-           }
-           else //Vector is on the left side or the whole read is vector
-           {
-               //Keep in mind that Lucy's clip points are zero-based!
-               
-               read->lclip = max(read->lucy_lclip+1,read->v_end);//max(read->lucy_lclip,max(1, read->v_end ) );
-           
-               if(read->lclip >= read->initial_length)
-                   read->lclip = 0;
-               
-               if( (read->lclip == read->lucy_lclip+1) && (read->lclip > 0) )//&& (read->lucy_lclip > 1)) 
-               {
-                 read->left_trimmed_by_quality = 1;
-                 read->lclip = read->lucy_lclip;
-               }
-               if(read->lclip == read->v_end)
-               {
-                 read->left_trimmed_by_vector = 1;
-               }
-           
-               read->rclip = min(trim_adapters_flag ? ((read->tru_sec_pos == -1 || read->tru_sec_pos == 0) ? static_cast<int>(read->read.length()) : read->tru_sec_pos) : static_cast<int>(read->read.length()), read->lucy_rclip+1 );
-               
-               if( (read->rclip == read->lucy_rclip+1) && (read->rclip+1 < read->initial_length ) )
-               {
-                 read->right_trimmed_by_quality = 1;
-                 read->rclip = read->lucy_rclip;
-               }
-               else if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag) {
-                        read->right_trimmed_by_adapter = 1;
-               } else {
-                   read->rclip = static_cast<int>(read->read.length());
-               }
-           }
-           
-        } 
-        else
-        {
-            //Keep in mind that Lucy's clip points are one-based!
-            
-            read->lclip = read->lucy_lclip;//max(read->lucy_lclip, 1);
-            if((read->lclip > 0) && (read->lclip < read->initial_length)) {
-                read->left_trimmed_by_quality = 1;
-            } else {
-                read->lclip = 0;
-            }
-            
-            read->rclip = min(trim_adapters_flag ? ((read->tru_sec_pos == -1 || read->tru_sec_pos == 0) ? static_cast<int>(read->read.length()) : read->tru_sec_pos) : static_cast<int>(read->read.length()), read->lucy_rclip + 1 );
-            
-            if( (read->rclip == read->lucy_rclip+1) && (read->rclip < read->initial_length ) )
-            {
-              read->right_trimmed_by_quality = 1;
-              read->rclip = read->lucy_rclip;
-            }
-            else if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag) {
-                        read->right_trimmed_by_adapter = 1;
-            } else {
-                read->rclip = static_cast<int>(read->read.length());
-            }
-        }
-        
-    } else if( (qual_trim_flag ) && (!vector_flag) ){
-        //Keep in mind that Lucy's clip points are zero-based!
-        read->lclip = read->lucy_lclip;
-        if(read->lclip > 0)
-           read->left_trimmed_by_quality = 1;
-        
-        if (trim_adapters_flag) {
-            if (read->tru_sec_pos <= 0) {
-                read->rclip = min(static_cast<int>(read->read.length()),read->lucy_rclip);
-            } else {
-                read->rclip = min(read->tru_sec_pos,read->lucy_rclip);
-            }   
-        } else {
-            read->rclip = min(static_cast<int>(read->read.length()),read->lucy_rclip);
-        }
-        
-        if((read->rclip == read->lucy_rclip) && (read->rclip < read->initial_length )){
-            read->rclip = read->lucy_rclip;
-            read->right_trimmed_by_quality = 1;
-        } else if((read->rclip == read->tru_sec_pos) && trim_adapters_flag){
-           if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
-               read->right_trimmed_by_adapter = 1;
-        }
-    }
-    else if( (!qual_trim_flag) && (vector_flag ) )
-    {
-       if( read->v_start >= (static_cast<int>(read->read.length()) - read->v_end) ) //Vector is on the right side
-       {
-          read->lclip = 0;
-            
-          read->rclip = min(trim_adapters_flag ? ((read->tru_sec_pos == -1 || read->tru_sec_pos == 0) ? static_cast<int>(read->read.length()) : read->tru_sec_pos) : static_cast<int>(read->read.length()), read->v_start == -1 ? read->tru_sec_pos : read->v_start );
-                    
-          if( (read->rclip == static_cast<unsigned short>(read->tru_sec_pos)) && trim_adapters_flag)
-          {
-             if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length))
-                        read->right_trimmed_by_adapter = 1;
-          }
-          else if(read->rclip == read->v_start)
-          {
-             read->right_trimmed_by_vector = 1;
-          }
-           
-       }
-       else 
-       {
-          read->lclip = max(0, read->v_end == -1 ? 0 : read->v_end);
-           
-          if(read->lclip == read->v_end)
-          {
-             read->left_trimmed_by_vector = 1;
-          }
-           
-          read->rclip = trim_adapters_flag ? ((read->tru_sec_pos == -1 || read->tru_sec_pos == 0) ? static_cast<int>(read->read.length()) : read->tru_sec_pos) : static_cast<int>(read->read.length());
-          if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
-          {
-                        read->right_trimmed_by_adapter = 1;
-          }
-       }
-                
-       if(read->rclip >= read->clear_length)
-       {
-          read->rclip = read->clear_length; read->right_trimmed_by_adapter = 0;
-       }    
-    }
-    else if((!qual_trim_flag) && (!vector_flag))
-    {
-       read->rclip = trim_adapters_flag ? ( (read->tru_sec_pos == -1 || read->tru_sec_pos == 0) ? static_cast<int>(read->read.length()) : read->tru_sec_pos) : static_cast<int>(read->read.length());
-       if( (read->rclip < static_cast<int>(read->read.length())) && (read->tru_sec_found == 1) && (read->rclip >= minimum_read_length) && trim_adapters_flag)
-          read->right_trimmed_by_adapter = 1;
-            
-       read->lclip = 0;
-    }
-    
-    
-    if(polyat_flag) {
-       if( (read->rclip > read->poly_A_clip) && (read->poly_A_found)) {
-            if(read->rclip == read->tru_sec_pos) {
-               read ->right_trimmed_by_adapter = 0;
-            } else if(read->rclip == read->lucy_rclip) {
-               read->right_trimmed_by_quality = 0;
-            } else if(read->rclip == read->v_start) {
-               read->right_trimmed_by_vector = 0;
-            }
-                    
-            read->rclip = read->poly_A_clip;
-            read->right_trimmed_by_polyat = 1;
-        }
-        if( (read->lclip < read->poly_T_clip) && (read->poly_T_found)) {
-            if(read->lclip == read->lucy_lclip) {
-                read->left_trimmed_by_quality = 0;
-            } else if(read->lclip == read->v_end) {
-                read->left_trimmed_by_vector = 0;
-            } 
-             
-            read->lclip = read->poly_T_clip;
-            read->left_trimmed_by_polyat = 1;
-        }
-   }
-}
-
 string New2OldNbl(string header)
 {
     vector <string> fields1, fields2;
@@ -880,7 +564,7 @@ void WriteSEOverlapGZ(ogzstream &overlap_file, Read *read)
 }
 
 
-void WritePEFile(fstream &pe_output_file, Read *read)
+void WritePEFile(std::fstream &pe_output_file, Read *read)
 {
     pe_output_file << read->illumina_readID << "\n";
     pe_output_file << read->read << "\n";
@@ -922,7 +606,7 @@ void WriteShuffleFileGZ(ogzstream &shuffle_output_file, Read *read1, Read *read2
     shuffle_output_file << read2->illumina_quality_string << "\n";
 }
 
-void WriteSEFile(fstream &se_output_file, Read *read)
+void WriteSEFile(std::fstream &se_output_file, Read *read)
 {
     se_output_file << read->illumina_readID << "\n";
     se_output_file << read->read << "\n";
@@ -945,7 +629,7 @@ void IlluminaDynamicSE()
     se_bases_kept = se_bases_discarded = 0;
     se_discard_cnt = 0;
     se_bases_anal = 0;        
-    avg_trim_len_se = 0;
+    avg_trim_len_se = 0.0;
     /*Raw implementation of average. Later I will come with a better algorithm*/
     //long long avg_bases_se = 0;
     //long long avg_left_clip = 0;
@@ -1008,13 +692,9 @@ void IlluminaDynamicSE()
     }
     
     std::string st_str;
-    //int first_avg = 0;
+    
     for(unsigned int jj=0; jj< se_names.size(); ++jj)
     {
-        
-        bool adapter_found = false;
-        
-        std::string query_string = "NA";
         
         int ii = 0;
         
@@ -1065,7 +745,8 @@ void IlluminaDynamicSE()
             if(ii==3) 
             {
                 ii=0;
-           
+                cur_lclip_pe1 = 0.0; cur_rclip_pe1 = 0.0;
+                
                 Read *read = new Read();
                 read->illumina_readID = record_block[0];
                 read->initial_length = record_block[1].length();
@@ -1075,17 +756,13 @@ void IlluminaDynamicSE()
                 
                 //Serial realization - useful for debugging if something does not work as expected
                 if(rem_dup)
-                    screen_duplicates(read, duplicates);
-      
-                        
-                        
-                IlluminaDynRoutine(read, adapter_found, query_string);
-                
-                if(read->discarded == 0)
                 {
-                   MakeClipPointsIllumina(read);
+                    screen_duplicates(read, duplicates);
                 }
                         
+                        
+                TrimIlluminaSE(read, true);
+                
                 cnt+=1;
           
                 //Report
@@ -1096,59 +773,54 @@ void IlluminaDynamicSE()
                 if( read->rclip >= static_cast<int>(read->read.length()) ) { read->rclip = read->read.length(); }
                 if( read->lclip >= read->rclip ) { read->discarded = 1; read->discarded_by_read_length = 1; } 
                 if( read->lclip >= static_cast<int>(read->read.length()) ) { read->discarded = 1; read->discarded_by_read_length = 1; }
-                        
                 if( static_cast<int>(read->read.length()) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
                 if( (read->rclip - read->lclip) < minimum_read_length ) { read->discarded = 1; read->discarded_by_read_length = 1; }
-                    if( read->discarded == 0 )
+                
+                if( read->discarded == 0 )
+                {
+                    avg_right_trim_len_se = static_cast<double>(avg_right_trim_len_se*se_accept_cnt + cur_rclip_pe1)/static_cast<double>(se_accept_cnt+1);
+                    avg_left_trim_len_se = static_cast<double>(avg_left_trim_len_se*se_accept_cnt + cur_lclip_pe1)/static_cast<double>(se_accept_cnt+1);
+                    avg_trim_len_se = static_cast<double>(avg_trim_len_se*se_accept_cnt + read->read.length())/static_cast<double>(se_accept_cnt+1);
+                    se_accept_cnt+=1;
+                    
+                    if(compressed_output)
                     {
-                        avg_right_trim_len_se = (avg_right_trim_len_se*se_accept_cnt + (read->initial_length - read->rclip))/(se_accept_cnt+1);
-                        avg_left_trim_len_se = (avg_left_trim_len_se*se_accept_cnt + read->lclip)/(se_accept_cnt+1);
-                        avg_trim_len_se = (avg_trim_len_se*se_accept_cnt + (read->rclip - read->lclip))/(se_accept_cnt+1);
-                        se_accept_cnt+=1;
-                          
-                        read->read = read->read.substr(0 , read->rclip );
-                        read->illumina_quality_string = read->illumina_quality_string.substr(0,read->rclip) ; 
-                        read->read = read->read.substr( read->lclip, read->rclip - read->lclip );
-                        read->illumina_quality_string = read->illumina_quality_string.substr( read->lclip, read->rclip - read->lclip );
-                        
-                        if(compressed_output)
-                        {
-                            WriteSEFileGZ(se_output_file_gz, read);
-                        }
-                        else 
-                        {
-                            WriteSEFile(se_output_file, read);
-                        }
+                        WriteSEFileGZ(se_output_file_gz, read);
+                    }
+                    else 
+                    {
+                        WriteSEFile(se_output_file, read);
+                    }
                           
                         se_bases_kept += read->read.length();
-                    } 
+                } 
                         
-                    if (read->tru_sec_found == 1) ts_adapters++;
-                    if (read->vector_found == 1) num_vectors++;
-                    if (read->contam_found == 1) num_contaminants++;
-                    if (read->discarded == 0) accepted++;
-                    if (read->discarded == 1) discarded++;
-                    if (read->discarded_by_contaminant == 1) discarded_by_contaminant++;
-                    if (read->discarded_by_read_length == 1) discarded_by_read_length++;
-                    if (read->left_trimmed_by_quality == 1) left_trimmed_by_quality++;
-                    if (read->left_trimmed_by_vector == 1) left_trimmed_by_vector++;
-                    if (read->right_trimmed_by_quality == 1) right_trimmed_by_quality++;
-                    if (read->right_trimmed_by_adapter == 1) right_trimmed_by_adapter++;
-                    if (read->right_trimmed_by_vector == 1) right_trimmed_by_vector++;
-                    if (read->right_trimmed_by_polyat == 1) right_trimmed_by_polyat++;
-                    if (read->left_trimmed_by_polyat == 1)  left_trimmed_by_polyat++;
-                    if(read->discarded_by_polyAT == 1) discarded_by_polyAT++;
+                if (read->tru_sec_found == 1) ts_adapters++;
+                if (read->vector_found == 1) num_vectors++;
+                if (read->contam_found == 1) num_contaminants++;
+                if (read->discarded == 0) accepted++;
+                if (read->discarded == 1) discarded++;
+                if (read->discarded_by_contaminant == 1) discarded_by_contaminant++;
+                if (read->discarded_by_read_length == 1) discarded_by_read_length++;
+                if (read->left_trimmed_by_quality == 1) left_trimmed_by_quality++;
+                if (read->left_trimmed_by_vector == 1) left_trimmed_by_vector++;
+                if (read->right_trimmed_by_quality == 1) right_trimmed_by_quality++;
+                if (read->right_trimmed_by_adapter == 1) right_trimmed_by_adapter++;
+                if (read->right_trimmed_by_vector == 1) right_trimmed_by_vector++;
+                if (read->right_trimmed_by_polyat == 1) right_trimmed_by_polyat++;
+                if (read->left_trimmed_by_polyat == 1)  left_trimmed_by_polyat++;
+                if(read->discarded_by_polyAT == 1) discarded_by_polyAT++;
                         
-                    record_block.clear();
-                    read->illumina_readID.clear(); 
-                    read->illumina_quality_string.clear();
-                    read->read.clear();
+                record_block.clear();
+                read->illumina_readID.clear(); 
+                read->illumina_quality_string.clear();
+                read->read.clear();
           
-                    delete read;
+                delete read;
                         
-                    if( ((cnt % 1000 ) == 0) && verbose)
-                    {
-                        st_str = PrintIlluminaStatisticsSE(cnt, 
+                if( ((cnt % 1000 ) == 0) && verbose)
+                {
+                    st_str = PrintIlluminaStatisticsSE(cnt, 
                                     se_bases_anal, 
                                     ts_adapters,
                                     num_vectors,
@@ -1173,16 +845,16 @@ void IlluminaDynamicSE()
                                     duplicates
                                    );
                             
-                        if (cnt > 1000)
+                    if (cnt > 1000)
+                    {
+                        std::vector<std::string> t;
+                        split_str(st_str, t, "\n");
+                        for(unsigned int kk=0; kk < t.size(); ++kk)
                         {
-                            std::vector<std::string> t;
-                            split_str(st_str, t, "\n");
-                            for(unsigned int kk=0; kk < t.size(); ++kk)
-                            {
-                                std::cout << "\033[A\033[2K";
-                            }
-                            t.clear();
+                            std::cout << "\033[A\033[2K";
                         }
+                        t.clear();
+                    }
                             
                     std::cout << st_str;
                      
@@ -1304,13 +976,13 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         (qual_trim_flag ? "By quality: " +  int2str(left_trimmed_by_quality1) + "\n" : "" ) +
                         (vector_flag ? "By vector: " +  int2str(left_trimmed_by_vector1) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat1) + "\n" : "") +
-                        ((qual_trim_flag || vector_flag || polyat_flag) ? "Average left trim length: " + double2str(avg_left_trim_len_pe1) + " bp\n" : "") +
+                        "Average left trim length: " + double2str(avg_left_trim_len_pe1) + " bp\n" +
                         ((trim_adapters_flag || qual_trim_flag || vector_flag || polyat_flag) ? "Reads right trimmed ->\n" : "") +
                         (trim_adapters_flag ? "By adapter: " +  int2str(right_trimmed_by_adapter1) + "\n" : "") +
                         (qual_trim_flag ? "By quality: " +  int2str(right_trimmed_by_quality1) + "\n" : "") +
                         (vector_flag ? "By vector: " +  int2str(right_trimmed_by_vector1) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat1) + "\n" : "") +
-                        ((trim_adapters_flag || qual_trim_flag || vector_flag || polyat_flag) ? "Average right trim length: " + double2str(avg_right_trim_len_pe1) + " bp\n" : "") +
+                        "Average right trim length: " + double2str(avg_right_trim_len_pe1) + " bp\n" +
                         "PE1 reads discarded: " + longlong2str(discarded1) + "\n" +
                         "-----------------------------------------------------------\n" +
                         "PE2 reads analyzed: " + int2str(cnt2) + ", Bases: " + int2str(pe2_bases_anal) + "\n" +
@@ -1319,13 +991,13 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         (qual_trim_flag ? "By quality: " +  int2str(left_trimmed_by_quality2) + "\n" : "" ) +
                         (vector_flag ? "By vector: " +  int2str(left_trimmed_by_vector2) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat2) + "\n" : "") +
-                        ((qual_trim_flag || vector_flag || polyat_flag) ? "Average left trim length: " + double2str(avg_left_trim_len_pe2) + " bp\n" : "") +
+                        "Average left trim length: " + double2str(avg_left_trim_len_pe2) + " bp\n" +
                         ((trim_adapters_flag || qual_trim_flag || vector_flag || polyat_flag) ? "Reads right trimmed ->\n" : "") +
                         (trim_adapters_flag ? "By adapter: " +  int2str(right_trimmed_by_adapter2) + "\n" : "") +
                         (qual_trim_flag ? "By quality: " +  int2str(right_trimmed_by_quality2) + "\n" : "") +
                         (vector_flag ? "By vector: " +  int2str(right_trimmed_by_vector2) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat2) + "\n" : "") +                      
-                        ((trim_adapters_flag || qual_trim_flag || vector_flag || polyat_flag) ? "Average right trim length: " + double2str(avg_right_trim_len_pe2) + " bp\n" : "") +
+                        "Average right trim length: " + double2str(avg_right_trim_len_pe2) + " bp\n" +
                         "PE2 reads discarded:" + longlong2str(discarded2) + "\n" +
                         "----------------------Summary for PE & SE----------------------\n" +
                         ("Pairs kept: " + int2str(pe_accept_cnt) + ", " + double2str( (double)pe_accept_cnt/(double)cnt1*100.0) + "%, Bases: " + int2str(pe_bases_kept) + ", " + double2str( (double)pe_bases_kept/(double)(pe1_bases_anal+pe2_bases_anal)*100) +  "%\n") +
@@ -1408,11 +1080,11 @@ string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                     ( contaminants_flag ? int2str(num_contaminants1) + "\t" + double2str( (double)num_contaminants1/(double)cnt1*100.0) + "\t" : "NA\tNA\t" ) +
                     ( qual_trim_flag ? int2str(left_trimmed_by_quality1) + "\t" : "NA\t" ) +
                     ( vector_flag ? int2str(left_trimmed_by_vector1) + "\t" : "NA\t" ) +
-                    int2str(avg_left_trim_len_pe1) + "\t" +
+                    double2str(avg_left_trim_len_pe1) + "\t" +
                     int2str(right_trimmed_by_adapter1) + "\t" +
                     ( qual_trim_flag ? int2str(right_trimmed_by_quality1) + "\t" : "NA\t") +
                     ( vector_flag ? int2str(right_trimmed_by_vector1) + "\t" : "NA\t" ) +
-                    int2str(avg_right_trim_len_pe1) + "\t" +
+                    double2str(avg_right_trim_len_pe1) + "\t" +
                     int2str(discarded1) + "\t" +
                     ( contaminants_flag ? int2str(discarded_by_contaminant1) + "\t" : "NA\t" ) +
                     int2str(discarded_by_read_length1) + "\t" +
@@ -1422,11 +1094,11 @@ string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                     ( contaminants_flag? int2str(num_contaminants2) + "\t" + double2str( (double)num_contaminants2/(double)cnt2*100.0) + "\t" : "NA\tNA\t" ) +
                     (qual_trim_flag ? int2str(left_trimmed_by_quality2) + "\t" : "NA\t" ) +
                     ( vector_flag ? int2str(left_trimmed_by_vector2) + "\t" : "NA\t" ) +
-                    int2str(avg_left_trim_len_pe2) + "\t"  +
+                    double2str(avg_left_trim_len_pe2) + "\t"  +
                     ( qual_trim_flag ? int2str(right_trimmed_by_quality2) + "\t" : "NA\t") +
                     (vector_flag ? int2str(right_trimmed_by_vector2) + "\t" : "NA\t" ) +
                     int2str(right_trimmed_by_adapter2) + "\t" +
-                    int2str(avg_right_trim_len_pe2) + "\t" +
+                    double2str(avg_right_trim_len_pe2) + "\t" +
                     int2str(discarded2) + "\t" +
                     (contaminants_flag ? int2str(discarded_by_contaminant2) + "\t" : "NA\t" ) +
                     int2str(discarded_by_read_length2) + "\t" + 
@@ -1435,7 +1107,7 @@ string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                     (int2str(se_pe1_accept_cnt) + "\t" + int2str(se_pe1_bases_kept) +"\t") +
                     (int2str(se_pe2_accept_cnt) + "\t" + int2str(se_pe2_bases_kept) +"\t") +
                     (int2str(avg_trim_len_pe1) + "\t") +
-                    int2str(avg_trim_len_pe2) +
+                    double2str(avg_trim_len_pe2) +
                     ( overlap_flag ? "\t" + int2str(perfect_ov_cnt) + "\t" + int2str(partial_ov_cnt) : "\tNA\tNA") +
                     (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat1) + "\t" + int2str(right_trimmed_by_polyat1) + "\t" + int2str(left_trimmed_by_polyat2) + "\t" + int2str(right_trimmed_by_polyat2) : "\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA") +
                     ( rem_dup ? "\tYES\t" + int2str(duplicates) + "\t" + int2str(size_dw) + "\t" + int2str(start_dw) + "\t" + int2str(max_dup) + "\n" : "\tNA\tNA\tNA\tNA\tNA\n");
@@ -1463,8 +1135,7 @@ string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                                     double avg_len_se,
                                     long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
                                     long long discarded_by_polyAT,
-                                    long long duplicates
-                                    )
+                                    long long duplicates)
 {
     
    
@@ -1479,19 +1150,19 @@ string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                         (qual_trim_flag ? "By quality: " +  int2str(left_trimmed_by_quality) + "\n" : "" ) +
                         (vector_flag ? "By vector: " +  int2str(left_trimmed_by_vector) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(left_trimmed_by_polyat) + "\n": "") +
-                        "Average left trim length: " + int2str(avg_left_trim_len_se) + " bp\n" +
+                        "Average left trim length: " + double2str(avg_left_trim_len_se) + " bp\n" +
                         "Reads right trimmed ->\n" +
                         (trim_adapters_flag ? "By adapter: " +  int2str(right_trimmed_by_adapter) + "\n": "") +
                         (qual_trim_flag ? "By quality: " +  int2str(right_trimmed_by_quality) + "\n" : "") +
                         (vector_flag ? "By vector: " +  int2str(right_trimmed_by_vector) + "\n" : "" ) +
                         (polyat_flag ? "By poly A/T: " + int2str(right_trimmed_by_polyat) + "\n" : "") +
-                        "Average right trim length: " + int2str(avg_right_trim_len_se) + " bp\n" +
+                        "Average right trim length: " + double2str(avg_right_trim_len_se) + " bp\n" +
                         "SE reads discarded: " + int2str(discarded) + "\n" +
                         ( contaminants_flag ? "By contaminants: " +  int2str(discarded_by_contaminant) + "\n" : "" ) +
                         "By read length: " +  int2str(discarded_by_read_length) + "\n" +
                         "----------------------Summary for SE----------------------\n" +
                         ("Reads kept: " + int2str(se_accept_cnt) + ", " + double2str( (double)se_accept_cnt/(double)cnt*100.0) + "%, Bases: " + int2str(se_bases_kept) + ", " + double2str( (double)se_bases_kept/(double)(se_bases_anal)*100) +  "%\n") +
-                        ("Average trimmed length: " + int2str(avg_trim_len_se) + " bp\n") +
+                        ("Average trimmed length: " + double2str(avg_trim_len_se) + " bp\n") +
                         ( rem_dup ? "Duplicates: " + int2str(duplicates) + "\n" : "");
     
     return ans;
@@ -1558,11 +1229,11 @@ std::string PrintIlluminaStatisticsTSVSE(long long cnt,
                         double2str( (double)num_contaminants/(double)cnt*100.0) + "\t" : "NA\tNA\t" ) + //perc cont
                         ( qual_trim_flag ? int2str(left_trimmed_by_quality) + "\t" : "NA\t" ) +  //left trimmed qual
                         ( vector_flag ? int2str(left_trimmed_by_vector) + "\t" : "NA\t" ) + //left trimmed vect
-                        int2str(avg_left_trim_len_se) + "\t" + //avg left trim len
+                        double2str(avg_left_trim_len_se) + "\t" + //avg left trim len
                         int2str(right_trimmed_by_adapter) + "\t" + 
                         ( qual_trim_flag ? int2str(right_trimmed_by_quality) + "\t" : "NA\t") +
                         ( vector_flag ? int2str(right_trimmed_by_vector) + "\t" : "NA\t" ) +
-                        int2str(avg_right_trim_len_se) + "\t" +
+                        double2str(avg_right_trim_len_se) + "\t" +
                         int2str(discarded) + "\t" + //discard
                         ( contaminants_flag ? int2str(discarded_by_contaminant) + "\t" : "NA\t" ) +
                         int2str(discarded_by_read_length) + "\t" +
@@ -1570,7 +1241,7 @@ std::string PrintIlluminaStatisticsTSVSE(long long cnt,
                         double2str( (double)se_accept_cnt/(double)cnt*100.0) + "\t" + //perc kept
                         int2str(se_bases_kept) + "\t" + //bases kept
                         double2str( (double)se_bases_kept/(double)se_bases_anal*100.0) + "\t" + //%
-                        int2str(avg_trim_len_se) +
+                        double2str(avg_trim_len_se) +
                         (polyat_flag ? "\tYES\t" + int2str(cdna) + "\t" + int2str(c_err) + "\t" + int2str(crng) + "\t" + int2str(left_trimmed_by_polyat) + "\t" + int2str(right_trimmed_by_polyat) : "\tNA\tNA\tNA\tNA\tNA\tNA") +
                         ( rem_dup ? "\tYES\t" + int2str(duplicates) + "\t" + int2str(size_dw) + "\t" + int2str(start_dw) + "\t" + int2str(max_dup) + "\n" : "\tNA\tNA\tNA\tNA\tNA\n");
     
@@ -1625,19 +1296,20 @@ void ClearNNs( vector<Read*>& reads )
     }
 }
 
-int IlluminaDynRoutine_post(Read* read)
+int TrimIlluminaSE(Read* read, bool trim_adapter)
 {
     read->lclip = 0; read->rclip = read->read.length();
     
     if(contaminants_flag )
     {
-       if(CheckContaminants(read->read) == 0) 
-       {
-           read->contam_found = 1;
-           read->discarded_by_contaminant = 1;
-           read->contaminants = 1;
-           read->discarded = 1;
-       }
+        if(CheckContaminants(read->read) == 0) 
+        {
+            read->contam_found = 1;
+            read->discarded_by_contaminant = 1;
+            read->contaminants = 1;
+            read->discarded = 1;
+            return -1;
+        }
     }
 
     // Trim quality
@@ -1650,15 +1322,19 @@ int IlluminaDynRoutine_post(Read* read)
             read->discarded = 1;
             read->lclip = read->rclip = 1;
         } else {
-            if (read->lucy_lclip > 0) {
+            if (read->lucy_lclip > 0) 
+            {
                 read->lclip = read->lucy_lclip;
                 read->left_trimmed_by_quality = 1;
             }
-            if (read->lucy_rclip < read->rclip) {
+            if (read->lucy_rclip < read->rclip) 
+            {
                 read->rclip = read->lucy_rclip;
                 read->right_trimmed_by_quality = 1;
             }
-           
+            
+            cur_lclip_pe1 += static_cast<double>(read->lclip);
+            cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
             trim_read(read);
         }
     }
@@ -1679,6 +1355,8 @@ int IlluminaDynRoutine_post(Read* read)
                 read->left_trimmed_by_vector = 1;
             }
             
+            cur_lclip_pe1 += static_cast<double>(read->lclip);
+            cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
             trim_read(read);
         }
     }
@@ -1695,46 +1373,132 @@ int IlluminaDynRoutine_post(Read* read)
             read->lclip = read->poly_T_clip;
             read->left_trimmed_by_polyat = 1;
         }
-       
+        
+        cur_lclip_pe1 += static_cast<double>(read->lclip);
+        cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
+        trim_read(read);
+    }
+    
+    if(trim_adapter && trim_adapters_flag)
+    {
+        TrimAdapterSE(read);
+        cur_lclip_pe1 += static_cast<double>(read->lclip);
+        cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
         trim_read(read);
     }
     
     // Check for read length
-    if (read->rclip - read->lclip < minimum_read_length) {
+    if (read->rclip - read->lclip < minimum_read_length) 
+    {
 	read->discarded = 1;
         read->discarded_by_read_length = 1;
+        cur_lclip_pe1 = 0.0;
+        cur_rclip_pe1 = 0.0;
     }
     
     return 0;
 }
 
 
-// Сначала - адаптеры, затем - ошибки
-void TrimAdapterSE(Read* read) {
+// Adapter firsts then quality trimming goes second 
+int TrimAdapterSE(Read* read) {
     bool adapter_found = false;
-    for (unsigned int i=0; i<adapters.size() && !adapter_found; i++) {
-        iz_SSAHA *izssaha = new iz_SSAHA();
-        string ts_adapter = adapters[i];
-        AlignResult al_res = izssaha->Find( read->read , ts_adapter );
-        if( al_res.found_flag  ) {
-            AlignScores scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
-            if(scores.mismatches <= max_al_mism  ) {
-               read->tru_sec_pos = al_res.pos;
-               read->tru_sec_found = 1;
-               adapter_found = true;
-               if (read->tru_sec_pos + adapters[i].length() > 0.5*read->read.length()) {
-                    read->lclip = 0; read->rclip = read->tru_sec_pos;
-                    read->read = read->read.substr(0, read->rclip);
-                    read->illumina_quality_string = read->illumina_quality_string.substr(0, read->rclip);
-                } else {
-                    read->lclip = read->tru_sec_pos+adapters[i].length(); read->rclip = read->read.length();
-                    read->read = read->read.substr(read->lclip, read->read.length() - read->lclip);
-                    read->illumina_quality_string = read->illumina_quality_string.substr(read->lclip, read->illumina_quality_string.length() - read->lclip);
+    //First 15 bases of i5 adapter forward
+    //size_t found;
+    
+    /*std::string ts_adapter = tmpl_i5_1.substr(0,15);*/
+    std::string query_str = tmpl_i5_1.substr(0,15);
+    adapter_found = align_ssaha(read, query_str );
+    ///found = read->read.find(ts_adapter);
+    //if( found != std::string::npos )
+    if(adapter_found)
+    {
+        //std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << read->tru_sec_pos << endl;
+        //sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << read->tru_sec_pos << endl;
+        //read->tru_sec_pos = found;
+        //read->tru_sec_found = 1;
+    }else
+    {
+        //First 20 bases of i5 adapter in reverse complement
+        //ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
+        //found = read->read.find( ts_adapter );
+        query_str = MakeRevComplement(tmpl_i5_2).substr(0,15);
+        adapter_found = align_ssaha(read, query_str );
+        //if( found != string::npos )
+        if(adapter_found)
+        {
+            //std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << read->tru_sec_pos << endl;
+            //sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found->tru_sec_pos << endl;
+            //adapter_found = true;
+            //read->tru_sec_pos = found;
+            //read->tru_sec_found = 1;
+        } else 
+        {
+            //First 20 bases of i7 adapter forward
+            //ts_adapter = tmpl_i7_1.substr(0,15);
+            //found = read->read.find( ts_adapter );
+            //if( found != std::string::npos ) 
+            query_str = tmpl_i7_1.substr(0,15);
+            adapter_found = align_ssaha(read, query_str );
+            if(adapter_found)
+            {
+                //std::cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                //sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                //adapter_found = true;
+                //read->tru_sec_pos = found;
+                //read->tru_sec_found = 1;
+            } else 
+            {
+                //First 20 bases of i5 adapter in reverse complement
+                //ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
+                //found = read->read.find( ts_adapter );
+                //if( found != std::string::npos ) 
+                query_str = MakeRevComplement(tmpl_i7_2).substr(0,15);
+                adapter_found = align_ssaha(read, query_str );
+                if(adapter_found)    
+                {
+                    //std::cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    //sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
+                    //adapter_found = true;
+                    //read->tru_sec_pos = found;
+                    //read->tru_sec_found = 1;
+                } else 
+                {
+                    read->tru_sec_pos = -1;
+                    read->tru_sec_found = 0;
+                    adapter_found = false;
                 }
             }
         }
-        delete izssaha;
     }
+    
+    if(adapter_found) 
+    {
+        read->lclip = 0; read->rclip = read->tru_sec_pos;
+    }
+    
+    return adapter_found;
+}
+
+bool align_ssaha(Read* read, std::string &query_str )
+{
+    bool adapter_found =false;
+    iz_SSAHA *izssaha = new iz_SSAHA();
+    AlignResult al_res = izssaha->Find( read->read , query_str );
+    AlignScores scores;
+    if( al_res.found_flag  ) 
+    {
+        scores = CalcScores(al_res.seq_1_al, al_res.seq_2_al, al_res.seq_1_al.length(), 0);
+        if(scores.mismatches <= max_al_mism  ) 
+        {
+            adapter_found = true;
+            read->tru_sec_pos = al_res.pos;
+            read->tru_sec_found = 1;
+        }
+    }
+    delete izssaha;
+    
+    return adapter_found;
 }
 
 int TrimIllumina(Read* read1, Read* read2)
@@ -1772,6 +1536,7 @@ int TrimIllumina(Read* read1, Read* read2)
            
            return -1;
        }
+       
     }
     
     // Trim adapters
@@ -1779,8 +1544,6 @@ int TrimIllumina(Read* read1, Read* read2)
     if (trim_adapters_flag) 
     {
         adapter_found = TrimAdapterPE(read1,read2);
-        trim_read(read1);
-        trim_read(read2);
         update_statistics(read1, read2);
     }
     
@@ -1802,9 +1565,9 @@ int TrimIllumina(Read* read1, Read* read2)
                 read1->rclip = read1->lucy_rclip;
                 read1->right_trimmed_by_quality = 1;
             }
-           
+            cur_lclip_pe1 += static_cast<double>(read1->lclip);
+            cur_rclip_pe1 += static_cast<double>(read1->read.length() - read1->rclip);
             trim_read(read1);
-       
         }
        
         QualTrimIllumina( read2, max_a_error, max_e_at_ends );//This function generates LUCY clips of the read. Later they should be compared and read should be trimmed based on the results of comparison.
@@ -1821,11 +1584,17 @@ int TrimIllumina(Read* read1, Read* read2)
                 read2->rclip = read2->lucy_rclip;
                 read2->right_trimmed_by_quality = 1;
             }
-           
+            cur_lclip_pe2 += static_cast<double>(read2->lclip);
+            cur_rclip_pe2 += static_cast<double>(read2->read.length() - read2->rclip);
             trim_read(read2);
         }
         
         update_statistics(read1, read2);
+        
+        if(read1->discarded && read2->discarded)
+        {
+            return -1; //do not go further-the whole pair is already discarded.
+        }
     }
         
     if( vector_flag ) {
@@ -1833,8 +1602,10 @@ int TrimIllumina(Read* read1, Read* read2)
         CheckVector(read1);
         CheckVector(read2);
         
-        if(read1->vector_found == 1) {
-            if( read1->v_start >= static_cast<int>(read1->read.length() - read1->v_end) ) { //Vector is on the right side
+        if(read1->vector_found == 1) 
+        {
+            if( read1->v_start >= static_cast<int>(read1->read.length() - read1->v_end) ) 
+            { //Vector is on the right side
                 //Lucy clip points are zero-based!
                 read1->rclip = read1->v_start;
                 read1->right_trimmed_by_vector = 1;
@@ -1844,12 +1615,15 @@ int TrimIllumina(Read* read1, Read* read2)
                 read1->lclip = read1->v_end;//max(read->lucy_lclip,max(1, read->v_end ) );
                 read1->left_trimmed_by_vector = 1;
             }
-            
+            cur_lclip_pe1 += static_cast<double>(read1->lclip);
+            cur_rclip_pe1 += static_cast<double>(read1->read.length() - read1->rclip);
             trim_read(read1);
         }
         
-        if(read2->vector_found == 1) {
-            if( read2->v_start >= static_cast<int>(read2->read.length() - read2->v_end) ) { //Vector is on the right side
+        if(read2->vector_found == 1) 
+        {
+            if( read2->v_start >= static_cast<int>(read2->read.length() - read2->v_end) ) 
+            { //Vector is on the right side
                 //Lucy clip points are zero-based!
                 read2->rclip = read2->v_start;
                 read2->right_trimmed_by_vector = 1;
@@ -1859,7 +1633,8 @@ int TrimIllumina(Read* read1, Read* read2)
                 read2->lclip = read2->v_end;//max(read->lucy_lclip,max(1, read->v_end ) );
                 read2->left_trimmed_by_vector = 1;
             }
-            
+            cur_lclip_pe2 += static_cast<double>(read2->lclip);
+            cur_rclip_pe2 += static_cast<double>(read2->read.length() - read2->rclip);
             trim_read(read2);
         }
         
@@ -1868,8 +1643,6 @@ int TrimIllumina(Read* read1, Read* read2)
     }
     
     if(polyat_flag) {
-        
-        
         //Trim poly A/T:
         PolyAT_Trim(read1); 
         PolyAT_Trim(read2);
@@ -1891,27 +1664,37 @@ int TrimIllumina(Read* read1, Read* read2)
             read2->lclip = read2->poly_T_clip;
             read2->left_trimmed_by_polyat = 1;
         }
-       
+        cur_lclip_pe1 += static_cast<double>(read1->lclip);
+        cur_rclip_pe1 += static_cast<double>(read1->read.length() - read1->rclip);
+        cur_lclip_pe2 += static_cast<double>(read2->lclip);
+        cur_rclip_pe2 += static_cast<double>(read2->read.length() - read2->rclip);
+        
         trim_read(read1);
         trim_read(read2);
         update_statistics(read1, read2);
     }
     
     // Check for read length
-    if (read1->rclip - read1->lclip < minimum_read_length) {
+    if (read1->rclip - read1->lclip < minimum_read_length) 
+    {
 	read1->discarded = 1;
         read1->discarded_by_read_length = 1;
+        cur_rclip_pe1 = 0.0;
+        cur_lclip_pe1 = 0.0;
     }
-    if (read2->rclip - read2->lclip < minimum_read_length) {
+    if (read2->rclip - read2->lclip < minimum_read_length) 
+    {
 	read2->discarded = 1;
         read2->discarded_by_read_length = 1;
+        cur_rclip_pe2 = 0.0;
+        cur_lclip_pe2 = 0.0;
     }
     
-    avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + tmp_avg_right_clip_1)/(cnt_right_trim_pe1+1);
-    avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + tmp_avg_left_clip_1)/(cnt_left_trim_pe1+1);
+    avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + cur_rclip_pe1)/(cnt_right_trim_pe1+1);
+    avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + cur_lclip_pe1)/(cnt_left_trim_pe1+1);
     
-    avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + tmp_avg_right_clip_2)/(cnt_right_trim_pe2+1);
-    avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + tmp_avg_left_clip_2)/(cnt_left_trim_pe2+1);
+    avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + cur_rclip_pe2)/(cnt_right_trim_pe2+1);
+    avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + cur_lclip_pe2)/(cnt_left_trim_pe2+1);
     
     cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
     cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
@@ -1921,25 +1704,30 @@ int TrimIllumina(Read* read1, Read* read2)
 
 bool TrimAdapterPE(Read *read1, Read *read2) {
     
-    std::string revcomp = MakeRevComplement(read2->read);
-    int o = find_overlap_pos(read1->read, revcomp, adapterlength);
+    int o = find_overlap_pos(read1->read, MakeRevComplement(read2->read), minoverlap);
     if(o > 0) {
         read1->tru_sec_found = 1; read2->tru_sec_found = 1;
-        read1->tru_sec_pos = o;//o-1; 
-        read2->tru_sec_pos = o;//o-1;
-       
-        read1->read = read1->read.substr(read1->tru_sec_pos, read1->read.length());
-        read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->tru_sec_pos, read1->read.length());
+        read1->tru_sec_pos = o;
+        read2->tru_sec_pos = o;
+        unsigned int rlen = read1->read.length();
+        
+        read1->read = read1->read.substr(read1->tru_sec_pos, rlen - read1->tru_sec_pos);
+        read1->illumina_quality_string = read1->illumina_quality_string.substr(read1->tru_sec_pos, rlen - read1->tru_sec_pos);
         read1->right_trimmed_by_adapter = 1;
         
-        read2->read = read2->read.substr(read2->tru_sec_pos, read1->read.length());
-        read2->illumina_quality_string = read2->illumina_quality_string.substr(read2->tru_sec_pos, read1->read.length());
+        read2->read = read2->read.substr(read2->tru_sec_pos, rlen - read2->tru_sec_pos);
+        read2->illumina_quality_string = read2->illumina_quality_string.substr(read2->tru_sec_pos, rlen - read2->tru_sec_pos);
         read2->right_trimmed_by_adapter = 1;
         
-        read1->lclip = 0; read1->rclip = read1->tru_sec_pos;
-        read2->lclip = 0; read2->rclip = read2->tru_sec_pos;
+        
+        read1->lclip = 0; read1->rclip = read1->read.length();
+        read2->lclip = 0; read2->rclip = read2->read.length();
        
-        // Making a new sequence from these two overlapped:
+        cur_lclip_pe1 += read1->tru_sec_pos;
+        cur_rclip_pe1 += 0;
+        cur_lclip_pe2 += read2->tru_sec_pos;
+        cur_rclip_pe2 += 0;
+        
        
         return true;
     } 
@@ -1980,8 +1768,7 @@ void trim_read(Read *read)
     read->illumina_quality_string = read->illumina_quality_string.substr(0, read->rclip);
     read->read = read->read.substr(read->lclip, read->read.length()-read->lclip);
     read->illumina_quality_string = read->illumina_quality_string.substr(read->lclip, read->illumina_quality_string.length()-read->lclip);
-    
-    // Clear trim points:
+    // Reset trim points
     read->lclip = 0; read->rclip = read->read.length();       
 }
 
