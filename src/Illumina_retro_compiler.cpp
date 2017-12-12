@@ -355,7 +355,14 @@ void IlluminaDynamic()
                         avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + read1->read.length())/(pe_accept_cnt+1);
                         avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + read2->read.length())/(pe_accept_cnt+1);
                         
-                        if (!shuffle_flag) {
+                        avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + cur_rclip_pe1)/(cnt_right_trim_pe1+1);
+                        avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + cur_lclip_pe1)/(cnt_left_trim_pe1+1);
+    
+                        avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + cur_rclip_pe2)/(cnt_right_trim_pe2+1);
+                        avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + cur_lclip_pe2)/(cnt_left_trim_pe2+1);
+    
+                        if (!shuffle_flag) 
+                        {
                             if(compressed_output)
                             {
                                 WritePEFileGZ(pe_output_file1_gz, read1);
@@ -369,7 +376,8 @@ void IlluminaDynamic()
                             pe_bases_kept += static_cast<long long>(read1->read.length());
                             pe_bases_kept += static_cast<long long>(read2->read.length());
                             
-                        } else {
+                        } else 
+                        {
                             if(compressed_output)
                             {
                                 WriteShuffleFileGZ( shuffle_file_gz, read1, read2 );
@@ -384,9 +392,17 @@ void IlluminaDynamic()
                             
                         }
                         pe_accept_cnt+=1;
+                        cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
+                        cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
                         
                     } else if ((read1->discarded == 0) && (read2->discarded == 1))
                     {
+                        avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + read1->read.length())/(pe_accept_cnt+1);
+                        
+                        avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + cur_rclip_pe1)/(cnt_right_trim_pe1+1);
+                        avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + cur_lclip_pe1)/(cnt_left_trim_pe1+1);
+    
+                        
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read1->illumina_readID = read1->illumina_readID.substr(0,read1->illumina_readID.length()-2);                                  
                                   
@@ -401,9 +417,15 @@ void IlluminaDynamic()
                         
                         se_pe1_accept_cnt+=1;
                         se_pe1_bases_kept += read1->read.length();
+                        cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
                         
                     } else if( (read1->discarded == 1) && (read2->discarded == 0) )
                     {
+                        avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + read2->read.length())/(pe_accept_cnt+1);
+                        
+                        avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + cur_rclip_pe2)/(cnt_right_trim_pe2+1);
+                        avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + cur_lclip_pe2)/(cnt_left_trim_pe2+1);
+    
                         if( new2old_illumina && !old_style_illumina_flag ) //if convert to old-style illumina headers is true and not old illumina files.
                             read2->illumina_readID = read2->illumina_readID.substr(0,read2->illumina_readID.length()-3);                                  
                         
@@ -418,7 +440,7 @@ void IlluminaDynamic()
                         
                         se_pe2_accept_cnt +=1;
                         se_pe2_bases_kept += read2->read.length();
-                     
+                        cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
                     }
                     
                     update_counters_and_print_statistics(read1, read2);
@@ -1403,66 +1425,24 @@ int TrimIlluminaSE(Read* read, bool trim_adapter)
 // Adapter firsts then quality trimming goes second 
 int TrimAdapterSE(Read* read) {
     bool adapter_found = false;
-    //First 15 bases of i5 adapter forward
-    //size_t found;
     
-    /*std::string ts_adapter = tmpl_i5_1.substr(0,15);*/
+    //First 15 bases of i5 adapter forward
     std::string query_str = tmpl_i5_1.substr(0,15);
     adapter_found = align_ssaha(read, query_str );
-    ///found = read->read.find(ts_adapter);
-    //if( found != std::string::npos )
-    if(adapter_found)
-    {
-        //std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << read->tru_sec_pos << endl;
-        //sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << read->tru_sec_pos << endl;
-        //read->tru_sec_pos = found;
-        //read->tru_sec_found = 1;
-    }else
-    {
-        //First 20 bases of i5 adapter in reverse complement
-        //ts_adapter = MakeRevComplement(tmpl_i5_2).substr(0,15);
-        //found = read->read.find( ts_adapter );
+    if(!adapter_found)
+    {   
         query_str = MakeRevComplement(tmpl_i5_2).substr(0,15);
         adapter_found = align_ssaha(read, query_str );
-        //if( found != string::npos )
-        if(adapter_found)
+        
+        if(!adapter_found)
         {
-            //std::cout << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << read->tru_sec_pos << endl;
-            //sum_stat << "i5 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found->tru_sec_pos << endl;
-            //adapter_found = true;
-            //read->tru_sec_pos = found;
-            //read->tru_sec_found = 1;
-        } else 
-        {
-            //First 20 bases of i7 adapter forward
-            //ts_adapter = tmpl_i7_1.substr(0,15);
-            //found = read->read.find( ts_adapter );
-            //if( found != std::string::npos ) 
             query_str = tmpl_i7_1.substr(0,15);
             adapter_found = align_ssaha(read, query_str );
-            if(adapter_found)
+            if(!adapter_found)
             {
-                //std::cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                //sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                //adapter_found = true;
-                //read->tru_sec_pos = found;
-                //read->tru_sec_found = 1;
-            } else 
-            {
-                //First 20 bases of i5 adapter in reverse complement
-                //ts_adapter = MakeRevComplement(tmpl_i7_2).substr(0,15);
-                //found = read->read.find( ts_adapter );
-                //if( found != std::string::npos ) 
                 query_str = MakeRevComplement(tmpl_i7_2).substr(0,15);
                 adapter_found = align_ssaha(read, query_str );
-                if(adapter_found)    
-                {
-                    //std::cout << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    //sum_stat << "i7 adapter in forward first found in the read " << read->illumina_readID << ", in the position: " << found << endl;
-                    //adapter_found = true;
-                    //read->tru_sec_pos = found;
-                    //read->tru_sec_found = 1;
-                } else 
+                if(!adapter_found)    
                 {
                     read->tru_sec_pos = -1;
                     read->tru_sec_found = 0;
@@ -1690,14 +1670,7 @@ int TrimIllumina(Read* read1, Read* read2)
         cur_lclip_pe2 = 0.0;
     }
     
-    avg_right_trim_len_pe1 = (avg_right_trim_len_pe1*cnt_right_trim_pe1 + cur_rclip_pe1)/(cnt_right_trim_pe1+1);
-    avg_left_trim_len_pe1 = (avg_left_trim_len_pe1*cnt_left_trim_pe1 + cur_lclip_pe1)/(cnt_left_trim_pe1+1);
     
-    avg_right_trim_len_pe2 = (avg_right_trim_len_pe2*cnt_right_trim_pe2 + cur_rclip_pe2)/(cnt_right_trim_pe2+1);
-    avg_left_trim_len_pe2 = (avg_left_trim_len_pe2*cnt_left_trim_pe2 + cur_lclip_pe2)/(cnt_left_trim_pe2+1);
-    
-    cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
-    cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
     
     return 0;
 }

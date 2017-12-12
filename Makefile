@@ -7,7 +7,7 @@ BIN = bin/
 OBJ = obj/
 LIBRARY := ${OBJ}lgzstream.a
 PLATFORM  = -DAPPLE
-OPT=-O
+OPT=-O3
 #GCCVERSION = $(shell gcc --version | grep ^gcc | sed 's/^.* //g')
 #GCCVERSION = $(shell g++ -dumpversion)
 
@@ -88,7 +88,7 @@ ifeq ($(PLATFORM),-DAPPLE)
 	
     gzstream.o : $(SRC)gzstream.C $(SRC)gzstream.h
 	#$(CXX) -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
-	gcc -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+	gcc -I $(SRC) $(OPT) -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
 
 else
 
@@ -96,22 +96,22 @@ else
     
     #					
     seqyclean :   $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)sffreader.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)abi.o $(OBJ)gzstream.o
-		$(CXX) $(CFLAGS) ${PLATFORM} -O3 -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -I$(LIBRARY) -lpthread -lz
+		$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -o  $(BIN)seqyclean $(OBJ)main.o $(OBJ)flash.o $(OBJ)dup.o $(OBJ)Roche.o $(OBJ)Illumina.o $(OBJ)MainPipeLine.o $(OBJ)KMerRoutine.o $(OBJ)Dictionary.o $(OBJ)pairwise.o $(OBJ)iz_SSAHA.o $(OBJ)Report.o $(OBJ)QualTrim.o $(OBJ)Read.o $(OBJ)util.o $(OBJ)ascii.o $(OBJ)sffreader.o $(OBJ)sff.o $(OBJ)poly.o $(OBJ)abi.o $(OBJ)gzstream.o -I$(LIBRARY) -lpthread -lz
 	
     main.o :  
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)main.o $(SRC)main.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT)  -c -o $(OBJ)main.o $(SRC)main.cpp 
 		
     flash.o : 
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)flash.o $(SRC)flash.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)flash.o $(SRC)flash.cpp 
 
     dup.o : 
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)dup.o $(SRC)dup.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT)  -c -o $(OBJ)dup.o $(SRC)dup.cpp 
 	
     Roche.o : 
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)Roche.o $(SRC)Roche_lin.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT)  -c -o $(OBJ)Roche.o $(SRC)Roche_lin.cpp 
 	
     Illumina.o : 
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp
 	#if [ "$(GCCVERSION)" > "4.2" ] ; then \
         #    $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
         #else \
@@ -119,53 +119,53 @@ else
         #fi
 
     MainPipeLine.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	
     KMerRoutine.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)KMerRoutine.o $(SRC)KMerRoutine.cpp
 	
     Dictionary.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Dictionary.o $(SRC)Dictionary.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)Dictionary.o $(SRC)Dictionary.cpp
 
     pairwise.o :  
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3  -c -o $(OBJ)pairwise.o $(SRC)pairwise.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT)  -c -o $(OBJ)pairwise.o $(SRC)pairwise.cpp
 	
     iz_SSAHA.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)iz_SSAHA.o $(SRC)iz_SSAHA.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)iz_SSAHA.o $(SRC)iz_SSAHA.cpp
 	
     Report.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Report.o $(SRC)Report.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)Report.o $(SRC)Report.cpp
 		
     QualTrim.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)QualTrim.o $(SRC)QualTrim.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)QualTrim.o $(SRC)QualTrim.cpp
 	
     Read.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Read.o $(SRC)Read.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)Read.o $(SRC)Read.cpp
 	
     util.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)util.o $(SRC)util.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)util.o $(SRC)util.cpp
 	
     ascii.o :
-	$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
+	$(CXX) $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)ascii.o $(SRC)ascii.cpp
 
     sffreader.o: $(SRC)sffreader_lin.cpp $(SRC)sff_lin.h
-	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)sffreader.o $(SRC)sffreader_lin.cpp
+	g++ $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)sffreader.o $(SRC)sffreader_lin.cpp
 	
     sff.o: 
-	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)sff.o $(SRC)sff_lin.c
+	g++ $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)sff.o $(SRC)sff_lin.c
 	
     poly.o: 
-	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)poly.o $(SRC)poly.c
+	g++ $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)poly.o $(SRC)poly.c
 	
     abi.o: 
-	g++ $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)abi.o $(SRC)abi.c
+	g++ $(CFLAGS) ${PLATFORM} $(OPT) -c -o $(OBJ)abi.o $(SRC)abi.c
 	
     libgzstream.a : $(OBJ)gzstream.o $(SRC)gzstream.h
 	${AR} $(OBJ)libgzstream.a $(OBJ)gzstream.o
 	
     gzstream.o : $(SRC)gzstream.C $(SRC)gzstream.h
 	#$(CXX) -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
-	gcc -I $(SRC) -O -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
+	gcc -I $(SRC) $(OPT) -Wall -c -o $(OBJ)gzstream.o $(SRC)gzstream.C 
 
 
 endif
