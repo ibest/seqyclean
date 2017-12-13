@@ -81,6 +81,8 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -overlap <value> - This option turns on merging overlapping paired-end reads and <value> is the minimum overlap length. By default the minimum overlap length is 16 base pairs.
 -new2old - A switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).
 -gz - A flag that indicates compressed (.gz) output, default=off.
+-minoverlap - Minimum overlap length for paired-end reads, default=16.(only for paired-end mode).
+-alen - Maximum adapter length, default=30 bp.(only for paired-end mode).
 ```
 
 # Examples
