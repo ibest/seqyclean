@@ -85,6 +85,10 @@ The parameter ```libflag``` here is a library type: -454 for Roche 454 reads, -1
 -alen - Maximum adapter length, default=30 bp.(only for paired-end mode).
 ```
 
+###Please note
+We call 'Adapter' for Illumina reads the thing, which contains: [Adapter P5/P7 + Index I5/I7 + Linker (primer hybridization)]. In other words 'Adapter' the total foreign sequence attached to 5' or 3' end of the piece of DNA.
+
+
 # Examples
 ## Roche 454
 Output in SFF, no quality trimming, vector trimming is performed:
