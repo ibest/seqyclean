@@ -166,7 +166,7 @@ bool fasta_output = false;
 
 /*Overlap parameters*/
 double overlap_t = 0.75;
-unsigned int minoverlap = 60;
+unsigned int minoverlap = 16;
 bool overlap_flag = false;
 
 /*Adapter parameters*/
