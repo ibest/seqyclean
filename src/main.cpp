@@ -23,7 +23,7 @@
 
 using namespace std;
 
-std::string version = "1.10.06 (2017-12-13)";
+std::string version = "1.10.07 (2017-12-14)";
 
 /*Common parameters (default)*/
 short KMER_SIZE = 15;
@@ -212,7 +212,6 @@ void PrintHelp()
             "   -overlap <value> - This option turns on merging overlapping paired-end reads and <value> is the minimum overlap length. By default the minimum overlap length is 16 base pairs.\n"
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n"
             "   -gz - compressed output (GZip format, .gz).\n"
-            "   -minoverlap - Minimum overlap length for paired-end reads, default=16.(only for paired-end mode).\n"
             "   -alen - Maximum adapter length, default=30 bp.(only for paired-end mode)\n";
 //};
     std::cout <<"Examples\n"
@@ -483,7 +482,7 @@ int main(int argc, char *argv[])
            if(allowable_distance > 50) allowable_distance = 15;
            
            continue; 
-        }else if(string(argv[i]) == "-minoverlap" ) 
+        }/*else if(string(argv[i]) == "-minoverlap" ) 
         { // Minimum overlap
            if ( isdigit(argv[i+1][0]) ) 
            {
@@ -495,7 +494,7 @@ int main(int argc, char *argv[])
                return 0;
            }
            continue;
-        } 
+        } */
         else if(string(argv[i]) == "-minlen" ) { // Minimum read length
            if ( isdigit(argv[i+1][0]) ) {
                 minimum_read_length = atoi(argv[++i]);

@@ -145,8 +145,8 @@ std::string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                                     long long duplicates,
                                     long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
                                     long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
-                                    long long left_trimmed_by_adapter1, long long left_trimmed_by_adapter2
-                                    );
+                                    long long left_trimmed_by_adapter1, long long left_trimmed_by_adapter2,
+        unsigned long long ts_adapters);
 
 std::string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2, 
                                     unsigned long long pe1_bases_anal, unsigned long long pe2_bases_anal, 
@@ -172,7 +172,7 @@ std::string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                                     long long perfect_ov_cnt, long long partial_ov_cnt,
                                     long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
                                     long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
-                                    long long duplicates);
+                                    long long duplicates, unsigned long long ts_adapters);
 
 std::string PrintIlluminaStatisticsSE(long long cnt, unsigned long long se_bases_anal, 
                                     long long ts_adapters,

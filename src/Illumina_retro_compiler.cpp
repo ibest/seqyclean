@@ -39,7 +39,9 @@ double cnt_right_trim_pe1, avg_right_trim_len_pe1, cnt_right_trim_pe2, avg_right
 double cnt_left_trim_pe1, avg_left_trim_len_pe1, cnt_left_trim_pe2, avg_left_trim_len_pe2;
 long long cnt1, cnt2;
 long long pe_accept_cnt, se_pe1_accept_cnt, se_pe2_accept_cnt; 
-long long ts_adapters1, ts_adapters2; 
+long long ts_adapters1, ts_adapters2;
+unsigned long long ts_adapters;
+unsigned long long adapters_found;
 long long num_vectors1, num_vectors2; 
 long long num_contaminants1, num_contaminants2; 
 long long accepted1,accepted2; 
@@ -87,6 +89,7 @@ void IlluminaDynamic()
     cnt1 = cnt2 = 0;
     pe_accept_cnt = se_pe1_accept_cnt = se_pe2_accept_cnt = 0;
     ts_adapters1 = ts_adapters2 = 0;
+    ts_adapters = 0;
     num_vectors1 = num_vectors2 = 0;
     num_contaminants1 = num_contaminants2 = 0;
     accepted1 = accepted2 = 0;
@@ -257,11 +260,6 @@ void IlluminaDynamic()
                         sum_stat << "Warming: in PE2 file, the raw read length is less or equal than minimum_read_length\n" ; 
                     }
                     
-                    // We have to make the length of the reads to be equal:
-                    //unsigned int rlen = min(read1->read.length(), read2->read.length());
-                    //read1->read = read1->read.substr(0,rlen);
-                    //read2->read = read2->read.substr(0,rlen);
-                        
                     //Serial realization - useful for debugging if something does not work as expected
                     //Duplicates removal
                     if(rem_dup)
@@ -320,6 +318,7 @@ void IlluminaDynamic()
                                     WriteSEFile(se_file, c);
                                 }
                             }
+                            
                             update_counters_and_print_statistics(read1, read2);
                             
                             //clean_up
@@ -396,6 +395,7 @@ void IlluminaDynamic()
                         cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
                         cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
                         
+                        update_counters_and_print_statistics(read1, read2);
                     } else if ((read1->discarded == 0) && (read2->discarded == 1))
                     {
                         avg_trim_len_pe1 = (avg_trim_len_pe1*pe_accept_cnt + read1->read.length())/(pe_accept_cnt+1);
@@ -420,6 +420,7 @@ void IlluminaDynamic()
                         se_pe1_bases_kept += read1->read.length();
                         cnt_right_trim_pe1 += 1;cnt_left_trim_pe1 += 1;
                         
+                        update_counters_and_print_statistics(read1, read2);
                     } else if( (read1->discarded == 1) && (read2->discarded == 0) )
                     {
                         avg_trim_len_pe2 = (avg_trim_len_pe2*pe_accept_cnt + read2->read.length())/(pe_accept_cnt+1);
@@ -442,9 +443,11 @@ void IlluminaDynamic()
                         se_pe2_accept_cnt +=1;
                         se_pe2_bases_kept += read2->read.length();
                         cnt_right_trim_pe2 += 1;cnt_left_trim_pe2 += 1;
+                        
+                        update_counters_and_print_statistics(read1, read2);
                     }
                     
-                    update_counters_and_print_statistics(read1, read2);
+                    
                     
                     record_block1.clear();
                     read1->illumina_readID.clear(); 
@@ -490,7 +493,8 @@ void IlluminaDynamic()
                             duplicates,
                             left_trimmed_by_polyat1, right_trimmed_by_polyat1,
                             left_trimmed_by_polyat2, right_trimmed_by_polyat2,
-                            left_trimmed_by_adapter1, left_trimmed_by_adapter2);
+                            left_trimmed_by_adapter1, left_trimmed_by_adapter2,
+                            ts_adapters);
     
     if (verbose) 
     {
@@ -530,7 +534,7 @@ void IlluminaDynamic()
                             perfect_ov_cnt, partial_ov_cnt,
                             left_trimmed_by_polyat1, right_trimmed_by_polyat1,
                             right_trimmed_by_polyat2, right_trimmed_by_polyat2,
-                            duplicates
+                            duplicates, ts_adapters
                             ) 
                  << endl;
                 
@@ -991,7 +995,8 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                                 long long duplicates,
                                 long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
                                 long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
-                                long long left_trimmed_by_adapter1, long long left_trimmed_by_adapter2)
+                                long long left_trimmed_by_adapter1, long long left_trimmed_by_adapter2,
+        unsigned long long ts_adapters)
 {
     
      std::string stat_str = std::string("====================Summary Statistics====================\n");
@@ -1034,7 +1039,7 @@ string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                         ("Single Reads PE2 kept: " + int2str(se_pe2_accept_cnt) + ", Bases: " + ulonglong2str(se_pe2_bases_kept) +"\n") +
                         ("Average trimmed length PE1: " + double2str(avg_trim_len_pe1) + " bp\n") +
                         ("Average trimmed length PE2: " + double2str(avg_trim_len_pe2) + " bp\n") +
-                        (trim_adapters_flag ? "Adapters found: " + int2str(ts_adapters2) + ", " + double2str( (double)ts_adapters2/(double)cnt2*100.0) + "%\n" : "") +
+                        (trim_adapters_flag ? "Adapters found: " + ulonglong2str(ts_adapters1 + ts_adapters2) + ", " + double2str( (double)(ts_adapters1+ts_adapters2)/(double)cnt2*100.0) + "%\n" : "") +
                         (overlap_flag ? "Overlaps found: " + int2str(partial_ov_cnt) + ", "+ double2str( (double)partial_ov_cnt/(double)cnt1*100.0) + "%\n" : "") + 
                         (rem_dup ? "Duplicates found: " + int2str(duplicates) + "\n" : "");
                         
@@ -1066,7 +1071,7 @@ string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                                     long long perfect_ov_cnt, long long partial_ov_cnt,
                                     long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
                                     long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
-                                    long long duplicates
+                                    long long duplicates, unsigned long long ts_adapters
                                     )
 {
     
@@ -1430,13 +1435,11 @@ int TrimIlluminaSE(Read* read, bool trim_adapter)
 
 // Adapter firsts then quality trimming goes second 
 int TrimAdapterSE(Read* read) {
-    
-    
     //First 15 bases of i5 adapter forward
     for(unsigned int i=0; i < adapters.size(); ++i) 
     {
         bool adapter_found = false;
-        std::string query_str = adapters.at(i);//.substr(0,15);
+        std::string query_str = adapters.at(i);
         adapter_found = align_ssaha(read, query_str );
         if(adapter_found)
         {
@@ -1444,13 +1447,16 @@ int TrimAdapterSE(Read* read) {
             {
                 read->lclip = read->tru_sec_pos + query_str.length();
                 read->rclip = read->read.length();
+                ts_adapters1++;
             } else 
             {
                 read->lclip = 0;
                 read->rclip = read->tru_sec_pos;
+                ts_adapters2++;
             }
             trim_read(read);
-        //    return adapter_found;
+            read->tru_sec_found = true;
+            read->left_trimmed_by_adapter = 1;
         }
         else
         {   
@@ -1462,21 +1468,24 @@ int TrimAdapterSE(Read* read) {
                 {
                     read->lclip = read->tru_sec_pos + query_str.length();
                     read->rclip = read->read.length();
+                    ts_adapters1++;
                 } else 
                 {
                     read->lclip = 0;
                     read->rclip = read->tru_sec_pos;
+                    ts_adapters2++;
                 }
+                read->tru_sec_found = true;
                 trim_read(read);
-             //   return adapter_found;
+                read->right_trimmed_by_adapter = 1;
             }
         }
     
-        if(!adapter_found)
+        /*if(!adapter_found)
         {
             read->lclip = 0;
             read->rclip = read->read.length();
-        }
+        }*/
         
     }
     
@@ -1545,13 +1554,12 @@ int TrimIllumina(Read* read1, Read* read2)
     // Trim adapters
     if (trim_adapters_flag) 
     {
-        TrimAdapterPE(read1,read2);
-        /*if(!TrimAdapterPE(read1,read2))
+        if(!TrimAdapterPE(read1,read2))
         {
             //pass - trim adapters like SE
             TrimAdapterSE(read1);
             TrimAdapterSE(read2);        
-        }*/
+        }
         update_statistics(read1, read2);
     }
     
@@ -1707,7 +1715,7 @@ bool TrimAdapterPE(Read *read1, Read *read2) {
     
     int o = find_overlap_pos_adapter(read1->read, MakeRevComplement(read2->read), adapterlen);
     if(o > 0) {
-        read1->tru_sec_found = 1; read2->tru_sec_found = 1;
+        read1->tru_sec_found = 1; read2->tru_sec_found = 1; ts_adapters1++;ts_adapters2++;
         read1->tru_sec_pos = o;
         read2->tru_sec_pos = o;
         unsigned int rlen = read1->read.length();
@@ -1803,7 +1811,11 @@ void update_counters_and_print_statistics(Read *read1, Read *read2)
     }
           
     
-    if (read1->tru_sec_found == 1) ts_adapters1++;
+    /*if (read1->tru_sec_found == 1) 
+    {
+        ts_adapters1++; 
+        ts_adapters++;
+    }*/
     if (read1->vector_found == 1) num_vectors1++;
     if (read1->contam_found == 1) num_contaminants1++;
     if (read1->discarded == 0) accepted1++;
@@ -1819,7 +1831,11 @@ void update_counters_and_print_statistics(Read *read1, Read *read2)
     if (read1->left_trimmed_by_polyat == 1) left_trimmed_by_polyat1++;
     if (read1->left_trimmed_by_adapter == 1) left_trimmed_by_adapter1++;
           
-    if (read2->tru_sec_found == 1) ts_adapters2++;
+    /*if (read2->tru_sec_found == 1) 
+    {
+        ts_adapters2++; 
+        ts_adapters++;
+    }*/
     if (read2->vector_found == 1) num_vectors2++;
     if (read2->contam_found == 1) num_contaminants2++;
     if (read2->discarded == 0) accepted2++;
@@ -1841,6 +1857,8 @@ void update_counters_and_print_statistics(Read *read1, Read *read2)
         pe_bases_discarded += static_cast<unsigned long long>(read1->read.length());
         pe_bases_discarded += static_cast<unsigned long long>(read2->read.length());
     }
+    
+    
     
     if( ((cnt1 % 1000 ) == 0) && verbose) 
     {
@@ -1869,7 +1887,8 @@ void update_counters_and_print_statistics(Read *read1, Read *read2)
                                     duplicates,
                                     left_trimmed_by_polyat1, right_trimmed_by_polyat1,
                                     left_trimmed_by_polyat2, right_trimmed_by_polyat2,
-                                    left_trimmed_by_adapter1, left_trimmed_by_adapter2
+                                    left_trimmed_by_adapter1, left_trimmed_by_adapter2,
+                                    adapters_found
                                    );
                             
         if (cnt1 > 1000) 
