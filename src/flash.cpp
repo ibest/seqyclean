@@ -45,6 +45,35 @@ int find_overlap_pos(std::string seq1, std::string seq2, int minoverlap) {
     return -10000;
 }
 
+int find_overlap_pos_adapter(std::string seq1, std::string seq2, int adaplen) {
+    // adaplen - maximum allowable adapter length
+    //compare sequences starting at a dovetailed overlap defined by adapterlength
+    //Note: this assumes untrimmed sequences of equal length and reports an overlap
+    //when 75% identity otherwise it checks until overlap is < minoverlap
+    std::string s1 = seq1;
+    std::string s2 = seq2;
+    unsigned int rlen = s1.length();
+    
+    //first check for dovetail:
+    /*if( s1.length() != s2.length() ) {
+        std::cout << "!!! " << s1.length() << " " << s2.length() << std::endl; 
+        std::cout << s1 << "\n" << s2 << "\n";
+        return -10000;
+    }*/
+    
+    //if(((int)s1.length() < adapterlength) || ((int)s2.length() < adapterlength) ) return -10000;
+    
+    for(unsigned int i = 0; i < adaplen+1; i++) 
+    {
+        if ((1-(double)(strdist(s1.substr(i,rlen-i), s2.substr(0,rlen-i)))/(double)(rlen-i)) >= overlap_t ) 
+        {
+            return i;
+        }
+    }
+    
+    return -10000;
+}
+
 Read *make_consensus(Read *seq1, Read *seq2) {
     //given two sequences of equal length (these are overlaps only) call a consensus
     //set qualities, and return a new sequence

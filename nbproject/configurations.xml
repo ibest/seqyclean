@@ -4,7 +4,6 @@
     <df root="." name="0">
       <df name="src">
         <in>Dictionary.cpp</in>
-        <in>Illumina.cpp</in>
         <in>Illumina_retro_compiler.cpp</in>
         <in>KMerRoutine.cpp</in>
         <in>MainPipeLine.cpp</in>
@@ -67,14 +66,6 @@
       <item path="src/Dictionary.cpp" ex="false" tool="1" flavor2="0">
         <ccTool flags="2">
           <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="src/Illumina.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool>
-          <incDir>
-            <pElem>src</pElem>
             <pElem>.</pElem>
           </incDir>
         </ccTool>

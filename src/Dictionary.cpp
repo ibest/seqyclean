@@ -1,5 +1,13 @@
 #include "Dictionary.h"
 
+/*i5 adapter*/
+ std::string tmpl_i5_1 = "AATGATACGGCGACCACCGAGATCTACAC";
+ std::string tmpl_i5_2;
+ /*i7 adapter*/
+ std::string tmpl_i7_1 = "GATCGGAAGAGCACACGTCTGAACTCCAGTCAC";
+ std::string tmpl_i7_2; 
+
+
 /*Builds a new Vector Dictionary. Here it assumes that frequency is 1*/
 int BuildVectorDictionary(string filename) {
     string str;

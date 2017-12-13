@@ -23,7 +23,7 @@
 
 using namespace std;
 
-std::string version = "1.10.05 (2017-12-12)";
+std::string version = "1.10.06 (2017-12-13)";
 
 /*Common parameters (default)*/
 short KMER_SIZE = 15;
@@ -49,7 +49,7 @@ bool polyat_flag = false;
 bool trim_adapters_flag = true;
 bool illumina_flag = false;
 bool illumina_flag_se = false;
-int max_al_mism = 5; /*Maximum number of mismatches allowed in alignment operation*/
+int max_al_mism = 7; /*Maximum number of mismatches allowed in alignment operation*/
 bool overwrite_flag = false;
 bool rem_dup = false;
 /*-----Quality trimming parameters------*/
@@ -94,10 +94,10 @@ int start_dw = 10, size_dw = 20, max_dup = 3;
 char* illumina_file_name_R1;
 char* illumina_file_name_R2;
 char* illumina_file_name_se;
-string adapter_type_R1;
-string adapter_type_R2;
-string query_str1;
-string query_str2;
+std::string adapter_type_R1;
+std::string adapter_type_R2;
+std::string query_str1;
+std::string query_str2;
 
 /*Output data and parameters to observe the computational process*/
 bool output_sfffile_flag = true;
@@ -165,9 +165,10 @@ bool i64_flag = false;
 bool fasta_output = false;
 
 /*Overlap parameters*/
-double overlap_t = 0.75;
-unsigned int minoverlap = 60;
+double overlap_t = 0.7;
+unsigned int minoverlap = 16;
 bool overlap_flag = false;
+unsigned int adapterlen = 30;
 
 /*Adapter parameters*/
 string adapter_file;
@@ -210,7 +211,9 @@ void PrintHelp()
             "   -at <value> - This option sets the similarity threshold for adapter trimming by overlap (only in paired-end mode). By default its value is set to 0.75.\n"
             "   -overlap <value> - This option turns on merging overlapping paired-end reads and <value> is the minimum overlap length. By default the minimum overlap length is 16 base pairs.\n"
             "   -new2old - Switch to fix read IDs, default=off ( As is detailed in: http://contig.wordpress.com/2011/09/01/newbler-input-iii-a-quick-fix-for-the-new-illumina-fastq-header/#more-342 ).\n"
-            "   -gz - compressed output (GZip format, .gz).\n";
+            "   -gz - compressed output (GZip format, .gz).\n"
+            "   -minoverlap - Minimum overlap length for paired-end reads, default=16.(only for paired-end mode).\n"
+            "   -alen - Maximum adapter length, default=30 bp.(only for paired-end mode)\n";
 //};
     std::cout <<"Examples\n"
                 "Roche 454:\n"
@@ -412,14 +415,14 @@ int main(int argc, char *argv[])
              rlmids_file = argv[++i]; /*Custom file with RL MIDS given*/
            }
            continue;
-        } /*else if(string(argv[i]) == "-alen" ) // To control adapter length
+        } else if(string(argv[i]) == "-alen" ) // To control adapter length
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
-             adapterlength = atoi(argv[++i]); 
+             adapterlen = atoi(argv[++i]); 
            }
            continue;
-        }*/ else if(string(argv[i]) == "-at" )
+        } else if(string(argv[i]) == "-at" )
         {
            if ( (i+1)<argc && (isdigit(argv[i+1][0])) ) 
            {
@@ -480,7 +483,20 @@ int main(int argc, char *argv[])
            if(allowable_distance > 50) allowable_distance = 15;
            
            continue; 
-        } else if(string(argv[i]) == "-minlen" ) { // Minimum read length
+        }else if(string(argv[i]) == "-minoverlap" ) 
+        { // Minimum overlap
+           if ( isdigit(argv[i+1][0]) ) 
+           {
+                minoverlap = atoi(argv[++i]);
+           } else 
+           {
+               cout << "Error: parameter \'minoverlap\' has empty value.\n";
+               PrintHelp();
+               return 0;
+           }
+           continue;
+        } 
+        else if(string(argv[i]) == "-minlen" ) { // Minimum read length
            if ( isdigit(argv[i+1][0]) ) {
                 minimum_read_length = atoi(argv[++i]);
            } else {

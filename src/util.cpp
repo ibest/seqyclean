@@ -371,11 +371,21 @@ string double2str(double num)
 std::string longlong2str(long long num)
 {
     char buffer[256];  // make sure this is big enough!!!
-    snprintf(buffer, sizeof(buffer), "%d", num);
+    snprintf(buffer, sizeof(buffer), "%ll", num);
     std::string ans = buffer;
     
     return ans;
 }
+
+std::string ulonglong2str(unsigned long long num)
+{
+    char buffer[256];  // make sure this is big enough!!!
+    snprintf(buffer, sizeof(buffer), "%llu", num);
+    std::string ans = buffer;
+    
+    return ans;
+}
+
 
 std::string int2str(int num)
 {

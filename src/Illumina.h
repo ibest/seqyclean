@@ -61,6 +61,7 @@ extern bool i64_flag;
 extern double overlap_t;
 extern unsigned int minoverlap;
 extern bool overlap_flag;
+extern unsigned int adapterlen;
 
 extern bool overwrite_flag;
 
@@ -120,7 +121,7 @@ int IlluminaDynRoutine_post(Read* read);
 
 
 std::string PrintIlluminaStatistics(long long cnt1, long long cnt2, 
-                                    long long pe1_bases_anal, long long pe2_bases_anal, 
+                                    unsigned long long pe1_bases_anal, unsigned long long pe2_bases_anal, 
                                     long long ts_adapters1, long long ts_adapters2, 
                                     long long num_vectors1, long long num_vectors2, 
                                     long long num_contaminants1, long long num_contaminants2, 
@@ -134,20 +135,21 @@ std::string PrintIlluminaStatistics(long long cnt1, long long cnt2,
                                     long long discarded1, long long discarded2,
                                     long long discarded_by_contaminant1, long long discarded_by_contaminant2,
                                     long long discarded_by_read_length1, long long discarded_by_read_length2,
-                                    long long pe_accept_cnt, long long  pe_bases_kept, 
-                                    long long pe_discard_cnt,long long pe_bases_discarded, 
-                                    long long se_pe1_accept_cnt, long long  se_pe1_bases_kept,
-                                    long long se_pe2_accept_cnt, long long se_pe2_bases_kept,
+                                    long long pe_accept_cnt, unsigned long long  pe_bases_kept, 
+                                    long long pe_discard_cnt,unsigned long long pe_bases_discarded, 
+                                    long long se_pe1_accept_cnt, unsigned long long  se_pe1_bases_kept,
+                                    long long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
                                     long long perfect_ov_cnt, long long partial_ov_cnt,
                                     long long duplicates,
                                     long long left_trimmed_by_polyat1, long long right_trimmed_by_polyat1,
-                                    long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2
+                                    long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
+                                    long long left_trimmed_by_adapter1, long long left_trimmed_by_adapter2
                                     );
 
 std::string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2, 
-                                    long long pe1_bases_anal, long long pe2_bases_anal, 
+                                    unsigned long long pe1_bases_anal, unsigned long long pe2_bases_anal, 
                                     long long ts_adapters1, long long ts_adapters2, 
                                     long long num_vectors1, long long num_vectors2, 
                                     long long num_contaminants1, long long num_contaminants2, 
@@ -161,10 +163,10 @@ std::string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                                     long long discarded1, long long discarded2,
                                     long long discarded_by_contaminant1, long long discarded_by_contaminant2,
                                     long long discarded_by_read_length1, long long discarded_by_read_length2,
-                                    long long pe_accept_cnt, long long pe_bases_kept, 
-                                    long long pe_discard_cnt,long long pe_bases_discarded, 
-                                    long long se_pe1_accept_cnt, long long se_pe1_bases_kept,
-                                    long long se_pe2_accept_cnt, long long se_pe2_bases_kept,
+                                    long long pe_accept_cnt, unsigned long long pe_bases_kept, 
+                                    long long pe_discard_cnt,unsigned long long pe_bases_discarded, 
+                                    long long se_pe1_accept_cnt, unsigned long long se_pe1_bases_kept,
+                                    long long se_pe2_accept_cnt, unsigned long long se_pe2_bases_kept,
                                     double avg_trim_len_pe1, double avg_trim_len_pe2,
                                     double avg_len_pe1, double avg_len_pe2,
                                     long long perfect_ov_cnt, long long partial_ov_cnt,
@@ -172,7 +174,7 @@ std::string PrintIlluminaStatisticsTSV(long long cnt1, long long cnt2,
                                     long long left_trimmed_by_polyat2, long long right_trimmed_by_polyat2,
                                     long long duplicates);
 
-std::string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal, 
+std::string PrintIlluminaStatisticsSE(long long cnt, unsigned long long se_bases_anal, 
                                     long long ts_adapters,
                                     long long num_vectors,
                                     long long num_contaminants, 
@@ -186,8 +188,8 @@ std::string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                                     long long discarded, 
                                     long long discarded_by_contaminant,
                                     long long discarded_by_read_length,
-                                    long long se_accept_cnt, long long se_bases_kept, 
-                                    long long se_discard_cnt,long long  se_bases_discarded, 
+                                    long long se_accept_cnt, unsigned long long se_bases_kept, 
+                                    long long se_discard_cnt,unsigned long long  se_bases_discarded, 
                                     double avg_trim_len_se,
                                     double avg_len_se,
                                     long long left_trimmed_by_polyat, long long right_trimmed_by_polyat,
@@ -196,7 +198,7 @@ std::string PrintIlluminaStatisticsSE(long long cnt, long long se_bases_anal,
                                     );
 
 std::string PrintIlluminaStatisticsTSVSE(long long cnt,
-                                    long long se_bases_anal, 
+                                    unsigned long long se_bases_anal, 
                                     long long ts_adapters, 
                                     long long num_vectors,  
                                     long long num_contaminants, 

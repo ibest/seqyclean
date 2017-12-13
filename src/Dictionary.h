@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DICTIONARY_H
 #define	DICTIONARY_H
 
@@ -57,13 +59,7 @@ typedef struct {
    bool complement;
 } t_args;
 
- /*i5 adapter*/
- extern string tmpl_i5_1;
- extern string tmpl_i5_2;
- /*i7 adapter*/
- extern string tmpl_i7_1;
- extern string tmpl_i7_2; 
-
+ 
 /*Builds a new Vector Dictionary. Here it assumes that frequency is 1*/
 int BuildVectorDictionary(string filename);
 void ParseString(string str, int rec_id);
