@@ -526,7 +526,7 @@ void MainPipeLine() {
     for( i=0; i<reads.size()-NUM_THREADS; i+=NUM_THREADS ) {
         
         for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
+           pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(size_t)(t+i) );
         }
     
         for(unsigned short t=0; t<NUM_THREADS; t++) {
@@ -537,7 +537,7 @@ void MainPipeLine() {
     
     /*Processing the rest of the set of reads: */
     for(unsigned int t=0; t< reads.size() - i; t++) {
-       pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(t+i) );
+       pthread_create( &threads[t], NULL, &t_FindRLClip, (void *)(size_t)(t+i) );
        
     }
    
@@ -566,7 +566,7 @@ void TrimRightEnds() {
         if(i > lim ) break;
         
         for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_create( &threads[t], NULL, &t_TrimRightEnds, (void *)(t+i) );//(void *)&t_args);
+           pthread_create( &threads[t], NULL, &t_TrimRightEnds, (void *)(size_t)(t+i) );
         }
     
         for(int t=0; t<NUM_THREADS; t++) {
@@ -586,7 +586,7 @@ void TrimLeftEnds() {
         if(i > lim ) break;
         
        for(unsigned short t=0; t<NUM_THREADS; t++) {
-           pthread_create( &threads[t], NULL, &t_TrimLeftEnds, (void *)(t+i) );//(void *)&t_args);
+           pthread_create( &threads[t], NULL, &t_TrimLeftEnds, (void *)(size_t)(t+i) );
        }
     
         for(unsigned short t=0; t<NUM_THREADS; t++) {

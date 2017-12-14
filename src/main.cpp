@@ -365,6 +365,10 @@ int main(int argc, char *argv[])
            if ( ( (i+1)<argc ) && (argv[i+1][0] != '-') ) 
            {
               minoverlap = atoi(argv[++i]);
+              if(minoverlap <= 0)
+              {
+                  minoverlap = 1;
+              }
            }
            continue;
         } else if( string(argv[i]) == "-max_mism" ) 

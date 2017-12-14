@@ -54,6 +54,10 @@ int find_overlap_pos_adapter(std::string seq1, std::string seq2, int adaplen) {
     std::string s2 = seq2;
     unsigned int rlen = s1.length();
     
+    if(adaplen >= rlen)
+    {
+        adaplen = rlen - 1;
+    }
     //first check for dovetail:
     /*if( s1.length() != s2.length() ) {
         std::cout << "!!! " << s1.length() << " " << s2.length() << std::endl; 

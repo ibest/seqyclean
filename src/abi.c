@@ -124,7 +124,8 @@ void prepare_abi_mask()
   abi_mask=acc;
 }
 
-void abi_align(char *a, int width, char *b, int height, int *start, int *end)
+//void abi_align(char *a, int width, char *b, int height, int *start, int *end)
+void abi_align(unsigned char *a, int width, unsigned char *b, int height, int *start, int *end)
 //char *a, *b;
 //int width, height;
 //int *start, *end;
