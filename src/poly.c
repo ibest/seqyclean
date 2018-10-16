@@ -18,7 +18,7 @@ void PolyAT_Trim(Read* read)
     int left, right;
     left = right = 0;
     
-    if(qual_trim_flag) {
+    /*if(qual_trim_flag) {
         left = poly_at_left( (char*)read->read.substr( read->lucy_lclip, read->read.length() - read->lucy_lclip ).c_str(), read->lucy_rclip - read->lucy_lclip); 
         if (left) 
         {
@@ -44,6 +44,20 @@ void PolyAT_Trim(Read* read)
                 read->poly_A_clip = read->read.length()- right;
                 read->poly_A_found = true;
         }
+    }*/
+    
+    
+    left = poly_at_left( (char*)read->read.c_str(), read->read.length()); 
+    if (left) 
+    {
+        read->poly_T_clip = left;
+        read->poly_T_found = true;
+    }
+    right = poly_at_right((char*)read->read.c_str(), read->read.length());
+    if (right) 
+    {
+        read->poly_A_clip = read->read.length()- right;
+        read->poly_A_found = true;
     }
  }
 

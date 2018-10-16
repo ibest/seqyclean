@@ -73,8 +73,7 @@ double cur_lclip_pe1 = 0.0; double cur_rclip_pe1 = 0.0;
 double cur_lclip_pe2 = 0.0; double cur_rclip_pe2 = 0.0;
 
 //Dynamic Illumina: does not need space to store reads:
-void IlluminaDynamic()
-{
+void IlluminaDynamic() {
     cnt_avg_len1 = cnt_avg_len2 = 0;
     avg_len_pe1 = avg_len_pe2 = 0.0;
     cnt1_avg = cnt2_avg = 0;
@@ -107,8 +106,7 @@ void IlluminaDynamic()
     tmp_avg_right_clip_1 = 0; tmp_avg_left_clip_1 = 0;
     tmp_avg_right_clip_2 = 0; tmp_avg_left_clip_2 = 0;
     
-    if (detailed_report) 
-    {
+    if (detailed_report) {
         rep_file1.open(rep_file_name1.c_str(),ios::out);
         rep_file2.open(rep_file_name2.c_str(),ios::out);
     }
@@ -788,7 +786,7 @@ void IlluminaDynamicSE()
                     screen_duplicates(read, duplicates);
                 }
                         
-                        
+                       
                 TrimIlluminaSE(read, true);
                 
                 cnt+=1;
@@ -1331,6 +1329,7 @@ void ClearNNs( vector<Read*>& reads )
 int TrimIlluminaSE(Read* read, bool trim_adapter)
 {
     read->lclip = 0; read->rclip = read->read.length();
+    // std::cout << read->readID << " " << read->read.length() << " " << read->lclip << " " << read->rclip << "\n"; 
     
     if(contaminants_flag )
     {
@@ -1350,7 +1349,8 @@ int TrimIlluminaSE(Read* read, bool trim_adapter)
         cur_lclip_pe1 += static_cast<double>(read->lclip);
         cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
     }
-
+        
+    
     // Trim quality
     //If quality trimming flag is set up -> perform the quality trimming before vector/contaminants/adaptors clipping.
     if( qual_trim_flag  ) {
@@ -1374,6 +1374,8 @@ int TrimIlluminaSE(Read* read, bool trim_adapter)
             
             cur_lclip_pe1 += static_cast<double>(read->lclip);
             cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
+            
+            
             trim_read(read);
         }
     }
@@ -1403,7 +1405,7 @@ int TrimIlluminaSE(Read* read, bool trim_adapter)
     if(polyat_flag) {
         //Trim poly A/T:
         PolyAT_Trim(read); 
-        
+       
         if( (read->rclip > read->poly_A_clip) && (read->poly_A_found)) {
             read->rclip = read->poly_A_clip;
             read->right_trimmed_by_polyat = 1;
@@ -1415,7 +1417,9 @@ int TrimIlluminaSE(Read* read, bool trim_adapter)
         
         cur_lclip_pe1 += static_cast<double>(read->lclip);
         cur_rclip_pe1 += static_cast<double>(read->read.length() - read->rclip);
+        
         trim_read(read);
+        
     }
     
     
@@ -1785,6 +1789,7 @@ void trim_read(Read *read)
     {
         read->discarded = true;
     }
+        
 }
 
 void update_statistics(Read *read1, Read *read2) {

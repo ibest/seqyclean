@@ -23,7 +23,7 @@
 
 using namespace std;
 
-std::string version = "1.10.07 (2017-12-14)";
+std::string version = "1.10.08 (2018-10-15)";
 
 /*Common parameters (default)*/
 short KMER_SIZE = 15;

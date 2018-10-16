@@ -33,14 +33,7 @@ ifeq ($(PLATFORM),-DAPPLE)
 	
     Illumina.o : 
 	$(CXX) $(CFLAGS) $(OPT) -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp
-	#$(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp
-	#if [ "$(GCCVERSION)" > "4.2" ] ; then \
-        #    $(CXX) $(CFLAGS) -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina.cpp;\
-        #else \
-        #    $(CXX) $(CFLAGS) ${PLATFORM} -O3 -c -o $(OBJ)Illumina.o $(SRC)Illumina_retro_compiler.cpp ;\
-        #fi
 	 
-
     MainPipeLine.o :
 	$(CXX) $(CFLAGS) $(OPT) -c -o $(OBJ)MainPipeLine.o $(SRC)MainPipeLine.cpp 
 	
