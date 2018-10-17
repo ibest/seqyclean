@@ -2,6 +2,10 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="bin">
+      </df>
+      <df name="obj">
+      </df>
       <df name="src">
         <in>Dictionary.cpp</in>
         <in>Dictionary.h</in>
@@ -59,6 +63,8 @@
         <in>util.cpp</in>
         <in>util.h</in>
       </df>
+      <df name="test">
+      </df>
       <df name="test_data">
         <df name="areads">
         </df>
@@ -90,6 +96,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -101,18 +109,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -qual 24 24 -gz</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -qual 24 24 -gz -no_adapter_trim</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -gz -no_adapter_trim</runcommandpicklistitem>
-          <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim -ow</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -no_adapter_trim -ow -gz</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -overlap -ow -gz</runcommandpicklistitem>
           <runcommandpicklistitem>bin/./seqyclean -1 test_data/test_PE1.fastq.gz -2 test_data/test_PE2.fastq.gz -o test/test -ow -gz</runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/areads/frag_1.fastq -2 test_data/areads/frag_2.fastq -ow -o test/test -minlen 20 -minoverlap 20 -alen 30 -overlap -adp test_data/areads/adapters.fa </runcommandpicklistitem>
           <runcommandpicklistitem>./bin/seqyclean -1 test_data/areads/frag_1.fastq -2 test_data/areads/frag_2.fastq -ow -o test/test -minlen 20 -minoverlap 20 -alen 30 -overlap -adp test_data/areads/adapters.fa</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 test_data/areads/frag_1.fastq -2 test_data/areads/frag_2.fastq -ow -o test/test -minlen 20 -adp test_data/areads/adapters.fa</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 /Users/ilya/Projects/seqyclean_test/thsu/R1.fastq -2 /Users/ilya/Projects/seqyclean_test/thsu/R2.fastq -ow -o /Users/ilya/Projects/seqyclean_test/thsu/test -minlen 20</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 /Users/ilya/Projects/seqyclean_tests/thsu/R1.fastq -2 /Users/ilya/Projects/seqyclean_tests/thsu/R2.fastq -ow -o /Users/ilya/Projects/seqyclean_test/thsu/test -minlen 20</runcommandpicklistitem>
+          <runcommandpicklistitem>./bin/seqyclean -1 /Users/ilya/Projects/seqyclean_tests/thsu/R1.fastq -2 /Users/ilya/Projects/seqyclean_tests/thsu/R2.fastq -ow -o /Users/ilya/Projects/seqyclean_tests/thsu/test -minlen 20</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>./bin/seqyclean -1 test_data/areads/frag_1.fastq -2 test_data/areads/frag_2.fastq -ow -o test/test -minlen 20 -minoverlap 20 -alen 30 -overlap -adp test_data/areads/adapters.fa</runcommand>
+        <runcommand>./bin/seqyclean -1 /Users/ilya/Projects/seqyclean_tests/thsu/R1.fastq -2 /Users/ilya/Projects/seqyclean_tests/thsu/R2.fastq -ow -o /Users/ilya/Projects/seqyclean_tests/thsu/test -minlen 20</runcommand>
         <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>

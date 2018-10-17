@@ -3,6 +3,7 @@
 //modify this to down-weight difference in low-quality bases
 int strdist(std::string s1, std::string s2) {
     int sum = 0;
+    
     if((s1.length() == s2.length()) && (s1.length() > 0)) {
         for(unsigned int i=0; i < s1.length(); i++) {
             if(s1[i] != s2[i]) sum++;
@@ -13,6 +14,7 @@ int strdist(std::string s1, std::string s2) {
         std::cout << "Index read: " << s2 << "\n";
         sum = -1;
     }
+    
     return sum;
 }
 
@@ -52,7 +54,8 @@ int find_overlap_pos_adapter(std::string seq1, std::string seq2, int adaplen) {
     //when 75% identity otherwise it checks until overlap is < minoverlap
     std::string s1 = seq1;
     std::string s2 = seq2;
-    unsigned int rlen = s1.length();
+    unsigned int rlen = min(s1.length(), s2.length());
+    //unsigned int rlen = s1.length();
     
     if(adaplen >= rlen)
     {
